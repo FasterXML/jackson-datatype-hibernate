@@ -53,13 +53,14 @@ Hibernate (http://hibernate.org) data types.
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
       <!-- For now, assume module interface stable enough to support 1.x since 1.7 -->
-      <version>[1.7.0,1.9.9)</version>
+      <!--  .. but before 1.7.0 release, must use SNAPSHOT -->
+      <version>1.7.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
       <!-- Let's start with assumption that Hibernate 3.3.x versions are ok -->
-      <version>[3.3.0,3.4.0)</version>
+      <version>[3.3.0.GA,3.4.0)</version>
     </dependency>
 
      <!-- and for testing, JUnit is needed -->
