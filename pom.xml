@@ -48,7 +48,7 @@ Hibernate (http://hibernate.org) data types.
   </organization>
 
   <dependencies>
-    <-- Extends Jackson; supports Hibernate datatypes, so: -->
+    <!-- Extends Jackson; supports Hibernate datatypes, so: -->
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
