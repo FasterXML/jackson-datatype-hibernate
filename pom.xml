@@ -137,7 +137,6 @@ Hibernate (http://hibernate.org) data types.
               <Import-Package>
 </Import-Package>
               <Private-Package>
-com.fasterxml.classmate.util
 </Private-Package>
               <Export-Package>
 com.fasterxml.jackson.module.hibernate
