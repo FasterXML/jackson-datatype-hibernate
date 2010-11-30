@@ -18,8 +18,7 @@ public class HibernateModule extends Module
     @Override
     public void setupModule(SetupContext context)
     {
-        // !!! TODO:
-//        context.addSerializers(new HibernateSerializers());
+        context.addSerializers(new HibernateSerializers());
     }
 
 }
