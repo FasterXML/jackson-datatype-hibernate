@@ -18,9 +18,10 @@ public class HibernateSerializers implements Serializers
     {
         _moduleFeatures = features;
     }
-    
-    public JsonSerializer<?> findSerializer(JavaType type, SerializationConfig config,
-            BeanDescription beanDesc)
+
+    public JsonSerializer<?> findSerializer(
+            SerializationConfig config, JavaType type,
+            BeanDescription beanDesc, BeanProperty beanProperty )
     {
         Class<?> raw = type.getRawClass();
         /* All Hibernate collection types (including maps!) implement this interface; but

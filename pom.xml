@@ -9,7 +9,7 @@
   <artifactId>jackson-module-hibernate</artifactId>
   <name>Jackson-module-Hibernate</name>
   <version>0.1.0-SNAPSHOT</version>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <description>Add-on module for Jackson (http://jackson.codehaus.org) to support
 Hibernate (http://hibernate.org) data types.
   </description>
@@ -52,6 +52,13 @@ Hibernate (http://hibernate.org) data types.
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
+      <!-- For now, assume module interface stable enough to support 1.x since 1.7 -->
+      <!--  .. but before 1.7.0 release, must use SNAPSHOT -->
+      <version>1.7.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-core-asl</artifactId>
       <!-- For now, assume module interface stable enough to support 1.x since 1.7 -->
       <!--  .. but before 1.7.0 release, must use SNAPSHOT -->
       <version>1.7.0-SNAPSHOT</version>
