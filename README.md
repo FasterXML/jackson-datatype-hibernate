@@ -8,22 +8,22 @@ h2. Using with Spring MVC
 
 First step: sub-class ObjectMapper and register the module
 
-   public class HibernateAwareObjectMapper extends ObjectMapper {
-     public HibernateAwareObjectMapper() {
-       HibernateModule hm = new HibernateModule();
-       registerModule(hm);
-       configure(Feature.FAIL_ON_EMPTY_BEANS, false);
-     }
+    public class HibernateAwareObjectMapper extends ObjectMapper {
+      public HibernateAwareObjectMapper() {
+        HibernateModule hm = new HibernateModule();
+        registerModule(hm);
+        configure(Feature.FAIL_ON_EMPTY_BEANS, false);
+      }
 
-     public void setPrettyPrint(boolean prettyPrint) {
-       configure(Feature.INDENT_OUTPUT, prettyPrint);
-     }
-   }
+      public void setPrettyPrint(boolean prettyPrint) {
+        configure(Feature.INDENT_OUTPUT, prettyPrint);
+      }
+    }
 
 Second step register the new ObjectMapper:
 
-  <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-    <property name="messageConverters">
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+     <property name="messageConverters">
       <array>
         <bean id="jsonConverter"
       	   class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
@@ -32,7 +32,7 @@ Second step register the new ObjectMapper:
           </property>
         </bean>
       </array>
-    </property>
-  </bean>
+     </property>
+    </bean>
 
 This seems to do the trick.
