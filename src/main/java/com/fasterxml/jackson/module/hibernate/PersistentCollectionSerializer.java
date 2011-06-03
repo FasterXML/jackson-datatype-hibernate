@@ -6,6 +6,7 @@ import org.hibernate.collection.PersistentCollection;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.BeanProperty;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.ResolvableSerializer;
@@ -21,6 +22,11 @@ public class PersistentCollectionSerializer
     extends JsonSerializer<PersistentCollection>
     implements ResolvableSerializer
 {
+    /**
+     * Property that has collection value to handle
+     */
+    protected final BeanProperty _property;
+
     protected final boolean _forceLazyLoading;
     
     /**
@@ -40,8 +46,10 @@ public class PersistentCollectionSerializer
     /**********************************************************
      */
     
-    public PersistentCollectionSerializer(JavaType serializationType, boolean forceLazyLoading)
+    public PersistentCollectionSerializer(BeanProperty property, JavaType serializationType,
+            boolean forceLazyLoading)
     {
+        _property = property;
         _serializationType = serializationType;
         _forceLazyLoading = forceLazyLoading;
     }
@@ -52,7 +60,7 @@ public class PersistentCollectionSerializer
      */
     public void resolve(SerializerProvider provider) throws JsonMappingException
     {
-        _serializer = provider.findValueSerializer(_serializationType);
+        _serializer = provider.findValueSerializer(_serializationType, _property);
     }
     
     /*

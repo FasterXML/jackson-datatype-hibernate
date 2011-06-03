@@ -10,7 +10,7 @@ import org.codehaus.jackson.type.JavaType;
 
 import com.fasterxml.jackson.module.hibernate.HibernateModule.Feature;
 
-public class HibernateSerializers implements Serializers
+public class HibernateSerializers extends Serializers.None
 {
     protected final int _moduleFeatures;
     
@@ -19,6 +19,7 @@ public class HibernateSerializers implements Serializers
         _moduleFeatures = features;
     }
 
+    @Override
     public JsonSerializer<?> findSerializer(
             SerializationConfig config, JavaType type,
             BeanDescription beanDesc, BeanProperty beanProperty )
@@ -33,7 +34,7 @@ public class HibernateSerializers implements Serializers
         if (PersistentCollection.class.isAssignableFrom(raw)) {
             if (Map.class.isAssignableFrom(raw)) {
                 // Let's just cast back to Map<K,V>, using whatever parametrization we have (if any)
-                return new PersistentCollectionSerializer(type.widenBy(Map.class),
+                return new PersistentCollectionSerializer(beanProperty, type.widenBy(Map.class),
                         isEnabled(Feature.FORCE_LAZY_LOADING));
             }
             if (Collection.class.isAssignableFrom(raw)) {
@@ -43,7 +44,7 @@ public class HibernateSerializers implements Serializers
                 } else {
                     type = type.widenBy(Collection.class);
                 }
-                return new PersistentCollectionSerializer(type, isEnabled(Feature.FORCE_LAZY_LOADING));
+                return new PersistentCollectionSerializer(beanProperty, type, isEnabled(Feature.FORCE_LAZY_LOADING));
             }
             /* Other types could be supported in future, but for now this'll have
              * to do.
@@ -51,8 +52,7 @@ public class HibernateSerializers implements Serializers
         }
 
         if (HibernateProxy.class.isAssignableFrom(raw)) {
-//            return new HibernateProxySerializer(type, config);
-//            return new PersistentCollectionSerializer(type, isEnabled(Feature.FORCE_LAZY_LOADING));
+            return new HibernateProxySerializer(beanProperty, isEnabled(Feature.FORCE_LAZY_LOADING));
         }
         return null;
     }
