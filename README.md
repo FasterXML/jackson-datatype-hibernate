@@ -2,7 +2,7 @@ Project to build Jackson (http://jackson.codehaus.org) module (jar) to support J
 
 == Usage ==
 
-h2. Using with Spring MVC
+=== Using with Spring MVC ===
 
 (as contributed by Frank Hess)
 
