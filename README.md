@@ -1,8 +1,8 @@
 Project to build Jackson (http://jackson.codehaus.org) module (jar) to support JSON serialization and deserialization of Hibernate (http://hibernate.org) specific datatypes and properties; especially lazy-loading aspects.
 
-== Usage ==
+## Usage
 
-=== Using with Spring MVC ===
+### Using with Spring MVC
 
 (as contributed by Frank Hess)
 
