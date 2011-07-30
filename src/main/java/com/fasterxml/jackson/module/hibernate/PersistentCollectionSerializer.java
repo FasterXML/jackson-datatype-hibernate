@@ -56,7 +56,7 @@ public class PersistentCollectionSerializer
 
     /**
      * We need to resolve actual serializer after the fact since Serializers API
-     * does not allow callbacks (to avoid infinite loops)
+     * does not allow callbacks (to avoid infinite loops).
      */
     public void resolve(SerializerProvider provider) throws JsonMappingException
     {
@@ -70,25 +70,35 @@ public class PersistentCollectionSerializer
      */
     
     @Override
-    public void serialize(PersistentCollection value, JsonGenerator jgen, SerializerProvider provider)
+    public void serialize(PersistentCollection coll, JsonGenerator jgen, SerializerProvider provider)
         throws IOException, JsonProcessingException
     {
         // If lazy-loaded, not yet loaded, may serialize as null?
-        if (!_forceLazyLoading && !value.wasInitialized()) {
+        if (!_forceLazyLoading && !coll.wasInitialized()) {
             jgen.writeNull();
             return;
         }
-        _serializer.serialize(value, jgen, provider);
+        Object value = coll.getValue();
+        if (value == null) {
+            provider.defaultSerializeNull(jgen);
+        } else {
+            _serializer.serialize(value, jgen, provider);
+        }
     }
 
-    public void serializeWithType(PersistentCollection value, JsonGenerator jgen, SerializerProvider provider,
+    public void serializeWithType(PersistentCollection coll, JsonGenerator jgen, SerializerProvider provider,
             TypeSerializer typeSer)
         throws IOException, JsonProcessingException
     {
-        if (!_forceLazyLoading && !value.wasInitialized()) {
+        if (!_forceLazyLoading && !coll.wasInitialized()) {
             jgen.writeNull();
             return;
         }
-        _serializer.serializeWithType(value, jgen, provider, typeSer);
+        Object value = coll.getValue();
+        if (value == null) {
+            provider.defaultSerializeNull(jgen);
+        } else {
+            _serializer.serializeWithType(value, jgen, provider, typeSer);
+        }
     }
 }
