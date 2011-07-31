@@ -1,5 +1,7 @@
 package com.fasterxml.jackson.module.hibernate;
 
+import java.util.*;
+
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.collection.PersistentMap;
 import org.hibernate.proxy.HibernateProxy;
@@ -7,6 +9,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.codehaus.jackson.map.*;
 import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.MapType;
+import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
 
 import com.fasterxml.jackson.module.hibernate.HibernateModule.Feature;
@@ -31,7 +34,7 @@ public class HibernateSerializers extends Serializers.None
          * may get some types here...
          */
         if (PersistentCollection.class.isAssignableFrom(raw)) {
-            // TODO: handle iterator types?
+            // TODO: handle iterator types? Or PersistentArrayHolder?
         }
         
         if (HibernateProxy.class.isAssignableFrom(raw)) {
@@ -48,7 +51,11 @@ public class HibernateSerializers extends Serializers.None
         Class<?> raw = type.getRawClass();
         // only handle PersistentCollection style collections...
         if (PersistentCollection.class.isAssignableFrom(raw)) {
-            return new PersistentCollectionSerializer(property, type, isEnabled(Feature.FORCE_LAZY_LOADING));
+            /* And for those, figure out "fallback type"; we MUST have some idea of
+             * type to deserialize, aside from nominal PersistentXxx type.
+             */
+            return new PersistentCollectionSerializer(property, _figureFallbackType(config, type),
+                    isEnabled(Feature.FORCE_LAZY_LOADING));
         }
         return null;
     }
@@ -61,12 +68,32 @@ public class HibernateSerializers extends Serializers.None
     {
         Class<?> raw = type.getRawClass();
         if (PersistentMap.class.isAssignableFrom(raw)) {
-            return new PersistentCollectionSerializer(property, type, isEnabled(Feature.FORCE_LAZY_LOADING));
+            return new PersistentCollectionSerializer(property, _figureFallbackType(config, type),
+                    isEnabled(Feature.FORCE_LAZY_LOADING));
         }
         return null;
     }
     
     public final boolean isEnabled(HibernateModule.Feature f) {
         return (_moduleFeatures & f.getMask()) != 0;
+    }
+
+    protected JavaType _figureFallbackType(SerializationConfig config,
+            JavaType persistentType)
+    {
+        // Alas, PersistentTypes are NOT generics-aware... meaning can't specify parameterization
+        Class<?> raw = persistentType.getRawClass();
+        TypeFactory tf = config.getTypeFactory();
+        if (Map.class.isAssignableFrom(raw)) {
+            return tf.constructMapType(Map.class, Object.class, Object.class);
+        }
+        if (List.class.isAssignableFrom(raw)) {
+            return tf.constructCollectionType(List.class, Object.class);
+        }
+        if (Set.class.isAssignableFrom(raw)) {
+            return tf.constructCollectionType(Set.class, Object.class);
+        }
+        // ok, just Collection of some kind
+        return tf.constructCollectionType(Collection.class, Object.class);
     }
 }

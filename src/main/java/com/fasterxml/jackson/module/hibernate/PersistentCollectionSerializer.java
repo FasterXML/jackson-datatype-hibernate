@@ -6,12 +6,7 @@ import org.hibernate.collection.PersistentCollection;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.BeanProperty;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.ResolvableSerializer;
-import org.codehaus.jackson.map.SerializerProvider;
-import org.codehaus.jackson.map.TypeSerializer;
+import org.codehaus.jackson.map.*;
 import org.codehaus.jackson.type.JavaType;
 
 /**
@@ -20,7 +15,8 @@ import org.codehaus.jackson.type.JavaType;
  */
 public class PersistentCollectionSerializer
     extends JsonSerializer<PersistentCollection>
-    implements ResolvableSerializer
+    implements ContextualSerializer<PersistentCollection>,
+        ResolvableSerializer
 {
     /**
      * Property that has collection value to handle
@@ -46,18 +42,36 @@ public class PersistentCollectionSerializer
     /**********************************************************************
      */
     
-    public PersistentCollectionSerializer(BeanProperty property, JavaType serializationType,
+    public PersistentCollectionSerializer(BeanProperty property, JavaType type,
             boolean forceLazyLoading)
     {
         _property = property;
-        _serializationType = serializationType;
+        _serializationType = type;
         _forceLazyLoading = forceLazyLoading;
     }
 
     /**
-     * We need to resolve actual serializer after the fact since Serializers API
-     * does not allow callbacks (to avoid infinite loops).
+     * We need to resolve actual serializer once we know the context; specifically
+     * must know type of property being serialized.
+     * If not known
      */
+    public JsonSerializer<PersistentCollection> createContextual(SerializationConfig config,
+            BeanProperty property)
+        throws JsonMappingException
+    {
+        /* If we have property, should be able to get actual polymorphic type
+         * information.
+         * May need to refine in future, in case nested types are used, since
+         * 'property' refers to field/method and main type, but contents of
+         * that type may also be resolved... in which case this would fail.
+         */
+        if (property != null) {
+            return new PersistentCollectionSerializer(property, property.getType(),
+                    _forceLazyLoading);
+        }
+        return this;
+    }
+
     public void resolve(SerializerProvider provider) throws JsonMappingException
     {
         _serializer = provider.findValueSerializer(_serializationType, _property);
@@ -82,10 +96,13 @@ public class PersistentCollectionSerializer
         if (value == null) {
             provider.defaultSerializeNull(jgen);
         } else {
+            if (_serializer == null) { // sanity check...
+                throw new JsonMappingException("PersitentCollection does not have serializer set");
+            }
             _serializer.serialize(value, jgen, provider);
         }
     }
-
+    
     public void serializeWithType(PersistentCollection coll, JsonGenerator jgen, SerializerProvider provider,
             TypeSerializer typeSer)
         throws IOException, JsonProcessingException
@@ -98,6 +115,9 @@ public class PersistentCollectionSerializer
         if (value == null) {
             provider.defaultSerializeNull(jgen);
         } else {
+            if (_serializer == null) { // sanity check...
+                throw new JsonMappingException("PersitentCollection does not have serializer set");
+            }
             _serializer.serializeWithType(value, jgen, provider, typeSer);
         }
     }

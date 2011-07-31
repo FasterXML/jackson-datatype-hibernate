@@ -195,10 +195,6 @@ public class Customer  implements java.io.Serializable
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
     }
-
-
-
-
 }
 
 

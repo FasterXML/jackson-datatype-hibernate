@@ -28,7 +28,7 @@ public class HibernateTest extends BaseTest {
     		emf.close();
     	}
     }
-    
+
     @Test
     public void testGetEntityManager() {
     	EntityManager em = emf.createEntityManager();
@@ -82,11 +82,10 @@ public class HibernateTest extends BaseTest {
     	ObjectMapper mapper = mapperWithModule();
         String json = mapper.writeValueAsString(salesEmployee);
 
-        // TODO: verify
-        assertNotNull(json);
-        System.out.println("--- JSON ---");
-        System.out.println(json);
-        System.out.println("--- /JSON ---");
+        // Ok; let's try reading back
+        Employee result = mapper.readValue(json, Employee.class);
+        assertNotNull(result);
+        assertNotNull(result.getCustomers());
+        assertEquals(salesEmployee.getCustomers().size(), result.getCustomers().size());
     }
-    
 }
