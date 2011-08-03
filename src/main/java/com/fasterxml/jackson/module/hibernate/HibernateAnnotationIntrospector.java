@@ -15,6 +15,36 @@ import org.codehaus.jackson.map.introspect.NopAnnotationIntrospector;
  */
 public class HibernateAnnotationIntrospector extends NopAnnotationIntrospector
 {
+    /**
+     * Whether we should check for existence of @Transient or not.
+     * Default value is 'true'.
+     */
+    protected boolean _cfgCheckTransient;
+
+    /*
+    /**********************************************************************
+    /* Construction, configuration
+    /**********************************************************************
+     */
+    
+    public HibernateAnnotationIntrospector() { }
+
+    /**
+     * Method to call to specify whether @Transient annotation is to be
+     * supported; if false, will be ignored, if true, will be used to
+     * detect "ignorable" properties.
+     */
+    public HibernateAnnotationIntrospector setUseTransient(boolean state) {
+        _cfgCheckTransient = state;
+        return this;
+    }
+    
+    /*
+    /**********************************************************************
+    /* AnnotationIntrospector implementation/overrides
+    /**********************************************************************
+     */
+    
     @Override
     public boolean isHandled(Annotation a)
     {
@@ -24,16 +54,16 @@ public class HibernateAnnotationIntrospector extends NopAnnotationIntrospector
 
     public boolean isIgnorableConstructor(AnnotatedConstructor c)
     {
-        return c.hasAnnotation(Transient.class);
+        return _cfgCheckTransient && c.hasAnnotation(Transient.class);
     }
 
     public boolean isIgnorableField(AnnotatedField f)
     {
-        return f.hasAnnotation(Transient.class);
+        return _cfgCheckTransient && f.hasAnnotation(Transient.class);
     }
 
     public boolean isIgnorableMethod(AnnotatedMethod m) 
     {
-        return m.hasAnnotation(Transient.class);
+        return _cfgCheckTransient && m.hasAnnotation(Transient.class);
     }
 }

@@ -33,7 +33,11 @@ Hibernate (http://hibernate.org) data types.
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Hibernate with JPA 2.0 -->
+    <!-- stupid maven 2.x, won't work with ranges (tries to get SNAPSHOT) -->
+<!--
     <hibernate.version>[3.5.0, 3.6.6]</hibernate.version>
+-->
+    <hibernate.version>3.6.6.Final</hibernate.version>
   </properties>
 
   <!-- Licensing -->
