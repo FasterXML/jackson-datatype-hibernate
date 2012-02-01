@@ -1,15 +1,11 @@
-package com.fasterxml.jackson.module.hibernate;
+package com.fasterxml.jackson.datatype.hibernate;
 
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.*;
+import com.fasterxml.jackson.core.Version;
+
+import com.fasterxml.jackson.databind.*;
 
 public class HibernateModule extends Module
 {
-    private final String NAME = "HibernateModule";
-    
-    // Should externalize this somehow
-    private final static Version VERSION = new Version(0, 1, 0, null); // 0.1.0
-    
     /**
      * Enumeration that defines all togglable features this module
      */
@@ -78,8 +74,8 @@ public class HibernateModule extends Module
     
     public HibernateModule() { }
 
-    @Override public String getModuleName() { return NAME; }
-    @Override public Version version() { return VERSION; }
+    @Override public String getModuleName() { return "jackson-datatype-hibernate"; }
+    @Override public Version version() { return ModuleVersion.instance.version(); }
     
     @Override
     public void setupModule(SetupContext context)

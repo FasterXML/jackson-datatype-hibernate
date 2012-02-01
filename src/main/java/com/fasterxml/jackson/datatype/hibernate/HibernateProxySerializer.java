@@ -1,17 +1,15 @@
-package com.fasterxml.jackson.module.hibernate;
+package com.fasterxml.jackson.datatype.hibernate;
 
 import java.io.IOException;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.BeanProperty;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.SerializerProvider;
-import org.codehaus.jackson.map.TypeSerializer;
-import org.codehaus.jackson.map.ser.impl.PropertySerializerMap;
+import com.fasterxml.jackson.core.*;
+
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
 
 /**
  * Serializer to use for values proxied using {@link HibernateProxy}.
@@ -44,11 +42,11 @@ public class HibernateProxySerializer
     /**********************************************************************
      */
 
-    public HibernateProxySerializer(BeanProperty property, boolean forceLazyLoading)
+    public HibernateProxySerializer(boolean forceLazyLoading)
     {
-        _property = property;
         _forceLazyLoading = forceLazyLoading;
         _dynamicSerializers = PropertySerializerMap.emptyMap();
+        _property = null;
     }
 
     /*

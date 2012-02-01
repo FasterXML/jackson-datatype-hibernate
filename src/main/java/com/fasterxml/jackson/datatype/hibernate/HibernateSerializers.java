@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.module.hibernate;
+package com.fasterxml.jackson.datatype.hibernate;
 
 import java.util.*;
 
@@ -6,15 +6,14 @@ import org.hibernate.collection.PersistentCollection;
 import org.hibernate.collection.PersistentMap;
 import org.hibernate.proxy.HibernateProxy;
 
-import org.codehaus.jackson.map.*;
-import org.codehaus.jackson.map.type.CollectionType;
-import org.codehaus.jackson.map.type.MapType;
-import org.codehaus.jackson.map.type.TypeFactory;
-import org.codehaus.jackson.type.JavaType;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.*;
+import com.fasterxml.jackson.databind.type.*;
+import com.fasterxml.jackson.datatype.hibernate.HibernateModule.Feature;
 
-import com.fasterxml.jackson.module.hibernate.HibernateModule.Feature;
 
-public class HibernateSerializers extends Serializers.None
+public class HibernateSerializers extends Serializers.Base
 {
     protected final int _moduleFeatures;
     
@@ -24,9 +23,8 @@ public class HibernateSerializers extends Serializers.None
     }
 
     @Override
-    public JsonSerializer<?> findSerializer(
-            SerializationConfig config, JavaType type,
-            BeanDescription beanDesc, BeanProperty beanProperty )
+    public JsonSerializer<?> findSerializer(SerializationConfig config,
+            JavaType type, BeanDescription beanDesc)
     {
         Class<?> raw = type.getRawClass();
 
@@ -38,14 +36,14 @@ public class HibernateSerializers extends Serializers.None
         }
         
         if (HibernateProxy.class.isAssignableFrom(raw)) {
-            return new HibernateProxySerializer(beanProperty, isEnabled(Feature.FORCE_LAZY_LOADING));
+            return new HibernateProxySerializer(isEnabled(Feature.FORCE_LAZY_LOADING));
         }
         return null;
     }
 
     @Override
     public JsonSerializer<?> findCollectionSerializer(SerializationConfig config,
-            CollectionType type, BeanDescription beanDesc, BeanProperty property,
+            CollectionType type, BeanDescription beanDesc,
             TypeSerializer elementTypeSerializer, JsonSerializer<Object> elementValueSerializer)
     {
         Class<?> raw = type.getRawClass();
@@ -54,7 +52,7 @@ public class HibernateSerializers extends Serializers.None
             /* And for those, figure out "fallback type"; we MUST have some idea of
              * type to deserialize, aside from nominal PersistentXxx type.
              */
-            return new PersistentCollectionSerializer(property, _figureFallbackType(config, type),
+            return new PersistentCollectionSerializer(_figureFallbackType(config, type),
                     isEnabled(Feature.FORCE_LAZY_LOADING));
         }
         return null;
@@ -62,13 +60,13 @@ public class HibernateSerializers extends Serializers.None
 
     @Override
     public JsonSerializer<?> findMapSerializer(SerializationConfig config,
-            MapType type, BeanDescription beanDesc, BeanProperty property,
+            MapType type, BeanDescription beanDesc,
             JsonSerializer<Object> keySerializer,
             TypeSerializer elementTypeSerializer, JsonSerializer<Object> elementValueSerializer)
     {
         Class<?> raw = type.getRawClass();
         if (PersistentMap.class.isAssignableFrom(raw)) {
-            return new PersistentCollectionSerializer(property, _figureFallbackType(config, type),
+            return new PersistentCollectionSerializer(_figureFallbackType(config, type),
                     isEnabled(Feature.FORCE_LAZY_LOADING));
         }
         return null;

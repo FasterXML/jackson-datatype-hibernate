@@ -1,8 +1,9 @@
-package com.fasterxml.jackson.module.hibernate;
+package com.fasterxml.jackson.datatype.hibernate;
 
 import java.util.Arrays;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate.HibernateModule;
 
 public abstract class BaseTest extends junit.framework.TestCase
 {

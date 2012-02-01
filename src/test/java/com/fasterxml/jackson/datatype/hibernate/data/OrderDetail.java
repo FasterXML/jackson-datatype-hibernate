@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.module.hibernate.data;
+package com.fasterxml.jackson.datatype.hibernate.data;
 
 
 import javax.persistence.AttributeOverride;

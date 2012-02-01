@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.module.hibernate;
+package com.fasterxml.jackson.datatype.hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -8,10 +8,10 @@ import javax.persistence.Query;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.codehaus.jackson.map.ObjectMapper;
 
-import com.fasterxml.jackson.module.hibernate.data.Customer;
-import com.fasterxml.jackson.module.hibernate.data.Employee;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate.data.Customer;
+import com.fasterxml.jackson.datatype.hibernate.data.Employee;
 
 public class HibernateTest extends BaseTest {
 	
@@ -44,9 +44,11 @@ public class HibernateTest extends BaseTest {
         
         // TODO: verify
         assertNotNull(json);
+        /*
         System.out.println("--- JSON ---");
         System.out.println(json);
         System.out.println("--- /JSON ---");
+        */
     }
     
     @Test
@@ -60,9 +62,11 @@ public class HibernateTest extends BaseTest {
 
         // TODO: verify
         assertNotNull(json);
+        /*
     	System.out.println("--- JSON ---");
         System.out.println(json);
         System.out.println("--- /JSON ---");
+        */
     }
     
     /**

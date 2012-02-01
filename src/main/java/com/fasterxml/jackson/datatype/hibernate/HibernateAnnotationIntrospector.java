@@ -1,19 +1,20 @@
-package com.fasterxml.jackson.module.hibernate;
+package com.fasterxml.jackson.datatype.hibernate;
 
 import java.lang.annotation.Annotation;
+
 import javax.persistence.Transient;
 
-import org.codehaus.jackson.map.introspect.AnnotatedConstructor;
-import org.codehaus.jackson.map.introspect.AnnotatedField;
-import org.codehaus.jackson.map.introspect.AnnotatedMethod;
-import org.codehaus.jackson.map.introspect.NopAnnotationIntrospector;
+import com.fasterxml.jackson.core.Version;
+
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.introspect.*;
 
 /**
  * Simple {@link org.codehaus.jackson.map.AnnotationIntrospector} that adds support for using
  * {@link Transient} to denote ignorable fields (alongside with Jackson
  * and/or JAXB annotations).
  */
-public class HibernateAnnotationIntrospector extends NopAnnotationIntrospector
+public class HibernateAnnotationIntrospector extends AnnotationIntrospector
 {
     /**
      * Whether we should check for existence of @Transient or not.
@@ -37,6 +38,11 @@ public class HibernateAnnotationIntrospector extends NopAnnotationIntrospector
     public HibernateAnnotationIntrospector setUseTransient(boolean state) {
         _cfgCheckTransient = state;
         return this;
+    }
+
+    @Override
+    public Version version() {
+        return ModuleVersion.instance.version();
     }
     
     /*

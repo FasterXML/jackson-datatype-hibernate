@@ -1,11 +1,11 @@
-package com.fasterxml.jackson.module.hibernate.data;
+package com.fasterxml.jackson.datatype.hibernate.data;
 
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 import static javax.persistence.GenerationType.IDENTITY;
 
-import org.codehaus.jackson.annotate.*;
+import com.fasterxml.jackson.annotation.*;
 
 @SuppressWarnings("serial")
 @Entity

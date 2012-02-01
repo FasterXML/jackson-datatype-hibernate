@@ -1,13 +1,14 @@
-package com.fasterxml.jackson.module.hibernate;
+package com.fasterxml.jackson.datatype.hibernate;
 
 import java.io.IOException;
 
 import org.hibernate.collection.PersistentCollection;
 
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.*;
-import org.codehaus.jackson.type.JavaType;
+import com.fasterxml.jackson.core.*;
+
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.*;
 
 /**
  * Wrapper serializer used to handle aspects of lazy loading that can be used
@@ -15,14 +16,8 @@ import org.codehaus.jackson.type.JavaType;
  */
 public class PersistentCollectionSerializer
     extends JsonSerializer<PersistentCollection>
-    implements ContextualSerializer<PersistentCollection>,
-        ResolvableSerializer
+    implements ContextualSerializer
 {
-    /**
-     * Property that has collection value to handle
-     */
-    protected final BeanProperty _property;
-
     protected final boolean _forceLazyLoading;
     
     /**
@@ -34,7 +29,7 @@ public class PersistentCollectionSerializer
     /**
      * Serializer to which we delegate if serialization is not blocked.
      */
-    protected JsonSerializer<Object> _serializer;
+    protected final JsonSerializer<Object> _serializer;
 
     /*
     /**********************************************************************
@@ -42,12 +37,17 @@ public class PersistentCollectionSerializer
     /**********************************************************************
      */
     
-    public PersistentCollectionSerializer(BeanProperty property, JavaType type,
-            boolean forceLazyLoading)
+    public PersistentCollectionSerializer(JavaType type, boolean forceLazyLoading) {
+        this(type, forceLazyLoading, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public PersistentCollectionSerializer(JavaType type, boolean forceLazyLoading,
+            JsonSerializer<?> serializer)
     {
-        _property = property;
         _serializationType = type;
         _forceLazyLoading = forceLazyLoading;
+        _serializer = (JsonSerializer<Object>) serializer;
     }
 
     /**
@@ -55,7 +55,7 @@ public class PersistentCollectionSerializer
      * must know type of property being serialized.
      * If not known
      */
-    public JsonSerializer<PersistentCollection> createContextual(SerializationConfig config,
+    public JsonSerializer<PersistentCollection> createContextual(SerializerProvider provider,
             BeanProperty property)
         throws JsonMappingException
     {
@@ -65,16 +65,9 @@ public class PersistentCollectionSerializer
          * 'property' refers to field/method and main type, but contents of
          * that type may also be resolved... in which case this would fail.
          */
-        if (property != null) {
-            return new PersistentCollectionSerializer(property, property.getType(),
-                    _forceLazyLoading);
-        }
-        return this;
-    }
-
-    public void resolve(SerializerProvider provider) throws JsonMappingException
-    {
-        _serializer = provider.findValueSerializer(_serializationType, _property);
+        JsonSerializer<?> ser = provider.findValueSerializer(_serializationType, property);
+        return new PersistentCollectionSerializer(property.getType(),
+                _forceLazyLoading, ser);
     }
     
     /*
