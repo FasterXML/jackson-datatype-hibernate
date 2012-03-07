@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.introspect.*;
 
 /**
- * Simple {@link org.codehaus.jackson.map.AnnotationIntrospector} that adds support for using
+ * Simple {@link AnnotationIntrospector} that adds support for using
  * {@link Transient} to denote ignorable fields (alongside with Jackson
  * and/or JAXB annotations).
  */

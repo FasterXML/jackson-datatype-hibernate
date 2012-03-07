@@ -19,7 +19,7 @@ public class HibernateModule extends Module
         FORCE_LAZY_LOADING(false),
 
         /**
-         * Whether @Transient annotation should be checked or not; if true, will consider
+         * Whether {@link javax.persistence.Transient} annotation should be checked or not; if true, will consider
          * @Transient to mean that property is to be ignored; if false annotation will
          * have no effect.
          *<p>

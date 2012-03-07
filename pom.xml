@@ -58,12 +58,12 @@ Hibernate (http://hibernate.org) data types.
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.0.0-RC1</version>
+      <version>2.0.0-RC2</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.0.0-RC1</version>
+      <version>2.0.0-RC2</version>
     </dependency>
 
     <!-- what would be the best scope to use here? -->    
@@ -90,7 +90,7 @@ Hibernate (http://hibernate.org) data types.
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.0.0-RC1</version>
+      <version>2.0.0-RC2</version>
       <scope>test</scope>
     </dependency>
 	<dependency>
@@ -102,7 +102,7 @@ Hibernate (http://hibernate.org) data types.
 	<dependency>
 	  <groupId>log4j</groupId>
 	  <artifactId>log4j</artifactId>
-	  <version>1.2.14</version>
+	  <version>1.2.16</version>
 	  <scope>test</scope>
 	</dependency>
 	<dependency>
