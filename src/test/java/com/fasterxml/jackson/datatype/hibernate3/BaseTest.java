@@ -3,7 +3,7 @@ package com.fasterxml.jackson.datatype.hibernate3;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate3.HibernateModule;
+import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module;
 
 public abstract class BaseTest extends junit.framework.TestCase
 {
@@ -12,7 +12,7 @@ public abstract class BaseTest extends junit.framework.TestCase
     protected ObjectMapper mapperWithModule()
     {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new HibernateModule());
+        mapper.registerModule(new Hibernate3Module());
         return mapper;
     }
 

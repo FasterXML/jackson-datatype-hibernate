@@ -2,7 +2,7 @@ package com.fasterxml.jackson.datatype.hibernate3;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.Versioned;
-import com.fasterxml.jackson.datatype.hibernate3.HibernateModule;
+import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module;
 
 public class TestVersions extends BaseTest
 {
@@ -18,7 +18,7 @@ public class TestVersions extends BaseTest
     
     public void testMapperVersions()
     {
-        assertVersion(new HibernateModule());
+        assertVersion(new Hibernate3Module());
     }
 
     /*
