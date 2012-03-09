@@ -14,7 +14,7 @@ public class TestVersions extends BaseTest
 
     // could inject using Maven filters as well...
     private final static String GROUP_ID = "com.fasterxml.jackson.datatype";
-    private final static String ARTIFACT_ID = "jackson-datatype-hibernate";
+    private final static String ARTIFACT_ID = "jackson-datatype-hibernate3";
     
     public void testMapperVersions()
     {
