@@ -1,10 +1,10 @@
-package com.fasterxml.jackson.datatype.hibernate;
+package com.fasterxml.jackson.datatype.hibernate4;
 
 import com.fasterxml.jackson.core.Version;
 
 import com.fasterxml.jackson.databind.*;
 
-public class HibernateModule extends Module
+public class Hibernate4Module extends Module
 {
     /**
      * Enumeration that defines all togglable features this module
@@ -72,7 +72,7 @@ public class HibernateModule extends Module
     /**********************************************************************
      */
     
-    public HibernateModule() { }
+    public Hibernate4Module() { }
 
     @Override public String getModuleName() { return "jackson-datatype-hibernate"; }
     @Override public Version version() { return ModuleVersion.instance.version(); }
@@ -107,12 +107,12 @@ public class HibernateModule extends Module
     /**********************************************************************
      */
 
-    public HibernateModule enable(Feature f) {
+    public Hibernate4Module enable(Feature f) {
         _moduleFeatures |= f.getMask();
         return this;
     }
 
-    public HibernateModule disable(Feature f) {
+    public Hibernate4Module disable(Feature f) {
         _moduleFeatures &= ~f.getMask();
         return this;
     }
@@ -121,7 +121,7 @@ public class HibernateModule extends Module
         return (_moduleFeatures & f.getMask()) != 0;
     }
 
-    public HibernateModule configure(Feature f, boolean state) {
+    public Hibernate4Module configure(Feature f, boolean state) {
         if (state) {
             enable(f);
         } else {

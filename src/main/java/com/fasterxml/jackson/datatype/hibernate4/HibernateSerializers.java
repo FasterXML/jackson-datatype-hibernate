@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.hibernate;
+package com.fasterxml.jackson.datatype.hibernate4;
 
 import java.util.*;
 
@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.*;
 import com.fasterxml.jackson.databind.type.*;
-import com.fasterxml.jackson.datatype.hibernate.HibernateModule.Feature;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 
 
 public class HibernateSerializers extends Serializers.Base
@@ -72,7 +72,7 @@ public class HibernateSerializers extends Serializers.Base
         return null;
     }
     
-    public final boolean isEnabled(HibernateModule.Feature f) {
+    public final boolean isEnabled(Hibernate4Module.Feature f) {
         return (_moduleFeatures & f.getMask()) != 0;
     }
 

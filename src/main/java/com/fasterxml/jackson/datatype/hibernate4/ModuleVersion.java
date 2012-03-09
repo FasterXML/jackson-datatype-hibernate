@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.hibernate;
+package com.fasterxml.jackson.datatype.hibernate4;
 
 import com.fasterxml.jackson.core.util.VersionUtil;
 

@@ -1,9 +1,9 @@
-package com.fasterxml.jackson.datatype.hibernate;
+package com.fasterxml.jackson.datatype.hibernate4;
 
 import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate.HibernateModule;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 public abstract class BaseTest extends junit.framework.TestCase
 {
@@ -12,7 +12,7 @@ public abstract class BaseTest extends junit.framework.TestCase
     protected ObjectMapper mapperWithModule()
     {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new HibernateModule());
+        mapper.registerModule(new Hibernate4Module());
         return mapper;
     }
 

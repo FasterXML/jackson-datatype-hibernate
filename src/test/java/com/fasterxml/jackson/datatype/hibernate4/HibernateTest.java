@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.hibernate;
+package com.fasterxml.jackson.datatype.hibernate4;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -10,8 +10,8 @@ import org.junit.Test;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate.data.Customer;
-import com.fasterxml.jackson.datatype.hibernate.data.Employee;
+import com.fasterxml.jackson.datatype.hibernate4.data.Customer;
+import com.fasterxml.jackson.datatype.hibernate4.data.Employee;
 
 public class HibernateTest extends BaseTest {
 	

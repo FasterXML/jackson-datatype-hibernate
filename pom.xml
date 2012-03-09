@@ -184,7 +184,7 @@ Hibernate (http://hibernate.org) version 4.x data types.
               <Private-Package>
 </Private-Package>
               <Export-Package>
-com.fasterxml.jackson.module.hibernate
+com.fasterxml.jackson.module.hibernate4
 </Export-Package>
             </instructions>
           </configuration>
