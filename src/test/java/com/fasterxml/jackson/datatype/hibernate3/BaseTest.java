@@ -1,9 +1,9 @@
-package com.fasterxml.jackson.datatype.hibernate;
+package com.fasterxml.jackson.datatype.hibernate3;
 
 import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate.HibernateModule;
+import com.fasterxml.jackson.datatype.hibernate3.HibernateModule;
 
 public abstract class BaseTest extends junit.framework.TestCase
 {

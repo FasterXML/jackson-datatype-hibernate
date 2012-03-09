@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.hibernate;
+package com.fasterxml.jackson.datatype.hibernate3;
 
 import java.util.*;
 
@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.*;
 import com.fasterxml.jackson.databind.type.*;
-import com.fasterxml.jackson.datatype.hibernate.HibernateModule.Feature;
+import com.fasterxml.jackson.datatype.hibernate3.HibernateModule.Feature;
 
 
 public class HibernateSerializers extends Serializers.Base

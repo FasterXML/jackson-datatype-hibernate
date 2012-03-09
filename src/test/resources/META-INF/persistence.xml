@@ -6,15 +6,15 @@
 
     <persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <class>com.fasterxml.jackson.datatype.hibernate.data.Customer</class>
-		<class>com.fasterxml.jackson.datatype.hibernate.data.Employee</class>
-		<class>com.fasterxml.jackson.datatype.hibernate.data.Office</class>
-		<class>com.fasterxml.jackson.datatype.hibernate.data.Order</class>
-		<class>com.fasterxml.jackson.datatype.hibernate.data.OrderDetail</class>
-		<class>com.fasterxml.jackson.datatype.hibernate.data.OrderDetailId</class>
-		<class>com.fasterxml.jackson.datatype.hibernate.data.Payment</class>
-		<class>com.fasterxml.jackson.datatype.hibernate.data.PaymentId</class>
-		<class>com.fasterxml.jackson.datatype.hibernate.data.Product</class>
+        <class>com.fasterxml.jackson.datatype.hibernate3.data.Customer</class>
+		<class>com.fasterxml.jackson.datatype.hibernate3.data.Employee</class>
+		<class>com.fasterxml.jackson.datatype.hibernate3.data.Office</class>
+		<class>com.fasterxml.jackson.datatype.hibernate3.data.Order</class>
+		<class>com.fasterxml.jackson.datatype.hibernate3.data.OrderDetail</class>
+		<class>com.fasterxml.jackson.datatype.hibernate3.data.OrderDetailId</class>
+		<class>com.fasterxml.jackson.datatype.hibernate3.data.Payment</class>
+		<class>com.fasterxml.jackson.datatype.hibernate3.data.PaymentId</class>
+		<class>com.fasterxml.jackson.datatype.hibernate3.data.Product</class>
         <properties>
 			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
 			<property name="javax.persistence.jdbc.user" value=""/>

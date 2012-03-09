@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.hibernate;
+package com.fasterxml.jackson.datatype.hibernate3;
 
 import java.lang.annotation.Annotation;
 

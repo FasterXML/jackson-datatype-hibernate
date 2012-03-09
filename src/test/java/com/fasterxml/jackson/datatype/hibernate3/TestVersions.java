@@ -1,8 +1,8 @@
-package com.fasterxml.jackson.datatype.hibernate;
+package com.fasterxml.jackson.datatype.hibernate3;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.Versioned;
-import com.fasterxml.jackson.datatype.hibernate.HibernateModule;
+import com.fasterxml.jackson.datatype.hibernate3.HibernateModule;
 
 public class TestVersions extends BaseTest
 {

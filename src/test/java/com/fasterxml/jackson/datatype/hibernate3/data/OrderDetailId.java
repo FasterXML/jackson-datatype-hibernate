@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.hibernate.data;
+package com.fasterxml.jackson.datatype.hibernate3.data;
 
 
 import javax.persistence.Column;
