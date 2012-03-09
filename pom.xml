@@ -6,12 +6,12 @@
     <version>5</version>
   </parent>
   <groupId>com.fasterxml.jackson.datatype</groupId>
-  <artifactId>jackson-datatype-hibernate3</artifactId>
-  <name>Jackson-datatype-Hibernate3</name>
-  <version>2.0.0-RC3-SNAPSHOT</version>
+  <artifactId>jackson-datatype-hibernate4</artifactId>
+  <name>Jackson-datatype-Hibernate4</name>
+  <version>2.0.0-RC2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>Add-on module for Jackson (http://jackson.codehaus.org) to support
-Hibernate (http://hibernate.org) version 3.x data types.
+Hibernate (http://hibernate.org) version 4.x data types.
   </description>
   <url>https://github.com/FasterXML/jackson-module-hibernate</url>
   <scm>
@@ -33,10 +33,6 @@ Hibernate (http://hibernate.org) version 3.x data types.
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Hibernate with JPA 2.0 -->
-    <!-- stupid maven 2.x, won't work with ranges (tries to get SNAPSHOT) -->
-<!--
-    <hibernate.version>[3.5.0, 3.6.6]</hibernate.version>
--->
     <hibernate.version>4.1.0.Final</hibernate.version>
   </properties>
 
