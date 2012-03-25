@@ -8,7 +8,7 @@
   <groupId>com.fasterxml</groupId>
   <artifactId>jackson-module-hibernate</artifactId>
   <name>Jackson-module-Hibernate</name>
-  <version>1.9.1</version>
+  <version>1.9.2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>Add-on module for Jackson (http://jackson.codehaus.org) to support
 Hibernate (http://hibernate.org) data types.
