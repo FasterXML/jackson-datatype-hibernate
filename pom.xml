@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
-    <version>5</version>
+    <version>7</version>
   </parent>
   <groupId>com.fasterxml</groupId>
   <artifactId>jackson-module-hibernate</artifactId>
@@ -58,12 +58,12 @@ Hibernate (http://hibernate.org) data types.
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
-      <version>1.9.4</version>
+      <version>1.9.5</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-core-asl</artifactId>
-      <version>1.9.4</version>
+      <version>1.9.5</version>
     </dependency>
 
     <!-- what would be the best scope to use here? -->    
@@ -140,14 +140,14 @@ Hibernate (http://hibernate.org) data types.
         <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.6.1</version>
+                <version>2.8.1</version>
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
                     <encoding>UTF-8</encoding>
                     <maxmemory>512m</maxmemory>
                     <links>
-                        <link>http://java.sun.com/javase/6/docs/api/</link>
+                      <link>http://docs.oracle.com/javase/6/docs/api/</link>
                     </links>
                 </configuration>
                 <executions>
