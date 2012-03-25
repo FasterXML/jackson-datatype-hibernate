@@ -1,10 +1,10 @@
 Project:      jackson-datatype-hibernate3
 Description:
   Jackson module to support datatypes of Hibernate 3.6
-Version:      2.0.0
+Version:      1.9.1
 Release date: 25-Mar-2012
 Release info:
-  Major upgrade for Hibernate 3.6 datatypes.
+  Upgrade for Hibernate 3.6 datatypes.
   Requires Jackson 1.9
 
 ------------------------------------------------------------------------
