@@ -2,9 +2,11 @@ Project to build Jackson (http://jackson.codehaus.org) module (jar) to support J
 
 ## Status
 
-As of version 0.7.0, Hibernate module is usable, although rough edges still exist.
+As of version 2.0.2 module is usable and used by non-trivial number of developers and projects.
+Rough edges may still exist; please report any bugs you find.
 
-Main focus is to add more complete unit testing (base test exist).
+Note: both Hibernate 3 and 4 are supported, but they require different jar, and Maven artifact names (and jar names differ).
+This document refers to "Hibernate 4" version, but changes with 3 should be little more than replacing "4" in names with "3".
 
 ## Usage
 
@@ -13,9 +15,9 @@ Main focus is to add more complete unit testing (base test exist).
 To use module on Maven-based projects, use following dependency:
 
     <dependency>
-      <groupId>com.fasterxml</groupId>
-      <artifactId>jackson-module-hibernate</artifactId>
-      <version>0.7.0</version>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-hibernate4</artifactId>
+      <version>2.0.0</version>
     </dependency>    
 
 (or whatever version is most up-to-date at the moment)
