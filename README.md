@@ -13,9 +13,9 @@ Main focus is to add more complete unit testing (base test exist).
 To use module on Maven-based projects, use following dependency:
 
     <dependency>
-      <groupId>com.fasterxml</groupId>
-      <artifactId>jackson-module-hibernate</artifactId>
-      <version>0.7.0</version>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-hibernate3</artifactId>
+      <version>2.0.0</version>
     </dependency>    
 
 (or whatever version is most up-to-date at the moment)
