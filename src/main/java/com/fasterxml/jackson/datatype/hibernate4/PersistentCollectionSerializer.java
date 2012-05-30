@@ -67,7 +67,11 @@ public class PersistentCollectionSerializer
          * that type may also be resolved... in which case this would fail.
          */
         JsonSerializer<?> ser = provider.findValueSerializer(_serializationType, property);
-        return new PersistentCollectionSerializer(property.getType(),
+        JavaType type = null;
+        if (property != null) {
+            type = property.getType();
+        }
+        return new PersistentCollectionSerializer(type,
                 _forceLazyLoading, ser);
     }
     
