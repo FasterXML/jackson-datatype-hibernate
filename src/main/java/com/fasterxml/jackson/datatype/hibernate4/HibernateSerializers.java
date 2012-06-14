@@ -28,13 +28,24 @@ public class HibernateSerializers extends Serializers.Base
     {
         Class<?> raw = type.getRawClass();
 
+        /* 13-Jul-2012, tatu: There's a bug in Jackson 2.0 which will call this
+         *    method in some cases for Collections (and Maps); let's skip
+         *    those cases and wait for the "real" call
+         */
+        if (Collection.class.isAssignableFrom(raw)
+                || Map.class.isAssignableFrom(raw)) {
+            return null;
+        }
+        
         /* Note: PersistentCollection does not implement Collection, so we
-         * may get some types here...
+         * may get some types here; most do implement Collection too however
          */
         if (PersistentCollection.class.isAssignableFrom(raw)) {
             // TODO: handle iterator types? Or PersistentArrayHolder?
+            JavaType elementType = _figureFallbackType(config, type);
+            return new PersistentCollectionSerializer(elementType,
+                    isEnabled(Feature.FORCE_LAZY_LOADING));
         }
-        
         if (HibernateProxy.class.isAssignableFrom(raw)) {
             return new HibernateProxySerializer(isEnabled(Feature.FORCE_LAZY_LOADING));
         }
@@ -65,6 +76,7 @@ public class HibernateSerializers extends Serializers.Base
             TypeSerializer elementTypeSerializer, JsonSerializer<Object> elementValueSerializer)
     {
         Class<?> raw = type.getRawClass();
+        // 05-Jun-2012, tatu: PersistentMap DOES implement java.util.Map...
         if (PersistentMap.class.isAssignableFrom(raw)) {
             return new PersistentCollectionSerializer(_figureFallbackType(config, type),
                     isEnabled(Feature.FORCE_LAZY_LOADING));
