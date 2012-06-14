@@ -24,8 +24,6 @@ public class Hibernate4Module extends Module
          * have no effect.
          *<p>
          * Default value is true.
-         * 
-         * @since 0.7.0
          */
         USE_TRANSIENT_ANNOTATION(true)
         ;
