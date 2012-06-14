@@ -8,62 +8,45 @@ import javax.persistence.Query;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate4.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate4.data.Employee;
 
-public class HibernateTest extends BaseTest {
-	
-	EntityManagerFactory emf;
-	
-	@Override
-	public void setUp() {
-    	emf = Persistence.createEntityManagerFactory("persistenceUnit");
+public class HibernateTest extends BaseTest
+{
+    EntityManagerFactory emf;
+
+    @Override
+    public void setUp() {
+        emf = Persistence.createEntityManagerFactory("persistenceUnit");
     }
     
-	@Override
-	public void tearDown() {
-    	if (emf!=null) {
-    		emf.close();
-    	}
+    @Override
+    public void tearDown() {
+        if (emf!=null) {
+            emf.close();
+        }
     }
 
     @Test
     public void testGetEntityManager() {
-    	EntityManager em = emf.createEntityManager();
-    	Assert.assertNotNull(em);
-    }
-    
-    @Test
-    public void testGetCustomerJson() throws Exception {
-    	EntityManager em = emf.createEntityManager();
-    	
-    	ObjectMapper mapper = mapperWithModule();
-        String json = mapper.writeValueAsString(em.find(Customer.class, 103));
-        
-        // TODO: verify
-        assertNotNull(json);
-        /*
-        System.out.println("--- JSON ---");
-        System.out.println(json);
-        System.out.println("--- /JSON ---");
-        */
+        EntityManager em = emf.createEntityManager();
+        Assert.assertNotNull(em);
     }
     
     @Test
     public void testAllCustomersJson() throws Exception {
-    	EntityManager em = emf.createEntityManager();
-    	Assert.assertNotNull(em);
-    	
-    	Query query = em.createQuery("select c from Customer c");
-    	ObjectMapper mapper = mapperWithModule();
-    	String json = mapper.writeValueAsString(query.getResultList());
+        EntityManager em = emf.createEntityManager();
+        Assert.assertNotNull(em);
+        
+        Query query = em.createQuery("select c from Customer c");
+        // false -> no forcing of lazy loading
+        ObjectMapper mapper = mapperWithModule(false);
+        String json = mapper.writeValueAsString(query.getResultList());
 
         // TODO: verify
         assertNotNull(json);
         /*
-    	System.out.println("--- JSON ---");
+        System.out.println("--- JSON ---");
         System.out.println(json);
         System.out.println("--- /JSON ---");
         */
@@ -77,13 +60,14 @@ public class HibernateTest extends BaseTest {
      */
     @Test
     public void testCyclesJson() throws Exception {
-    	EntityManager em = emf.createEntityManager();
-    	
-    	Employee salesEmployee = em.find(Employee.class, 1370);
-    	Assert.assertNotNull(salesEmployee);
-    	Assert.assertTrue(salesEmployee.getCustomers().size()>0);
-    	
-    	ObjectMapper mapper = mapperWithModule();
+        EntityManager em = emf.createEntityManager();
+        
+        Employee salesEmployee = em.find(Employee.class, 1370);
+        Assert.assertNotNull(salesEmployee);
+        Assert.assertTrue(salesEmployee.getCustomers().size()>0);
+        
+        // false -> no forcing of lazy loading
+        ObjectMapper mapper = mapperWithModule(false);
         String json = mapper.writeValueAsString(salesEmployee);
 
         // Ok; let's try reading back

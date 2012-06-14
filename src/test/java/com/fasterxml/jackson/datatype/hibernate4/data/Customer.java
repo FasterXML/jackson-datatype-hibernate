@@ -179,15 +179,6 @@ public class Customer  implements java.io.Serializable
     }
 
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="customer")
-    public Set<Payment> getPayments() {
-        return this.payments;
-    }
-    
-    public void setPayments(Set<Payment> payments) {
-        this.payments = payments;
-    }
-
-    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="customer")
     public Set<Order> getOrders() {
         return this.orders;
     }
@@ -195,6 +186,13 @@ public class Customer  implements java.io.Serializable
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
     }
+    
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="customer")
+    public Set<Payment> getPayments() {
+        return this.payments;
+    }
+    
+    public void setPayments(Set<Payment> payments) {
+        this.payments = payments;
+    }
 }
-
-
