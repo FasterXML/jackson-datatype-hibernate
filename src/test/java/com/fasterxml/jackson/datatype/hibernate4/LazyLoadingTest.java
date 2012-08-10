@@ -39,7 +39,7 @@ public class LazyLoadingTest extends BaseTest
             System.out.println("--- /JSON ---");
             */
             
-//            assertFalse(Hibernate.isInitialized(payments));
+            assertFalse(Hibernate.isInitialized(payments));
             // TODO: verify
             assertNotNull(json);
         } finally {
