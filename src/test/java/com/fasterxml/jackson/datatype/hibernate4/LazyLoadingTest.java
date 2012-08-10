@@ -15,6 +15,7 @@ import org.junit.Test;
 
 public class LazyLoadingTest extends BaseTest
 {
+    // [Issue#15]
     @Test
     public void testGetCustomerJson() throws Exception
     {
@@ -32,19 +33,15 @@ public class LazyLoadingTest extends BaseTest
             // should not force loading...
             Set<Payment> payments = customer.getPayments();
             
-            System.out.println("--- JSON ---");
-            System.out.println(json);
-            System.out.println("--- /JSON ---");
-            
-            assertFalse(Hibernate.isInitialized(payments));
-            
-            // TODO: verify
-            assertNotNull(json);
             /*
             System.out.println("--- JSON ---");
             System.out.println(json);
             System.out.println("--- /JSON ---");
             */
+            
+            assertFalse(Hibernate.isInitialized(payments));
+            // TODO: verify
+            assertNotNull(json);
         } finally {
             emf.close();
         }

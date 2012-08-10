@@ -54,12 +54,12 @@ Hibernate (http://hibernate.org) version 4.x data types.
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.0.2</version>
+      <version>2.0.5</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.0.2</version>
+      <version>2.0.5</version>
     </dependency>
 
     <!-- what would be the best scope to use here? -->    
@@ -86,7 +86,7 @@ Hibernate (http://hibernate.org) version 4.x data types.
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.0.2</version>
+      <version>2.0.5</version>
       <scope>test</scope>
     </dependency>
 	<dependency>

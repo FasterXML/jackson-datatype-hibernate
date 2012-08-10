@@ -1,8 +1,8 @@
 Project:      jackson-datatype-hibernate4
 Description:
   Jackson module to support datatypes of Hibernate 4.x, based on Jackson 2.x.
-Version:      2.0.3
-Release date: xx-xxx-2012
+Version:      2.0.5
+Release date: 10-Aug-2012
 Release info:
 
 - [Issue-13]: NPE with PersistentCollectionSerialize
