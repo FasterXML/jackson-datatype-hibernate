@@ -1,8 +1,8 @@
 Project:      jackson-datatype-hibernate3
 Description:
   Jackson module to support datatypes of Hibernate 3.6, based on Jackson 2.x
-Version:      2.0.3
-Release date: xx-xxx-2012
+Version:      2.0.5
+Release date: 10-Aug-2012
 Release info:
 
 - Fixed [Issue-13]: NPE with PersistentCollectionSerializer

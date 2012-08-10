@@ -70,8 +70,7 @@ public class PersistentCollectionSerializer
         if (property != null) {
             type = property.getType();
         }
-        return new PersistentCollectionSerializer(type,
-                _forceLazyLoading, ser);
+        return new PersistentCollectionSerializer(type, _forceLazyLoading, ser);
     }
     
     /*
@@ -86,7 +85,7 @@ public class PersistentCollectionSerializer
     {
         // If lazy-loaded, not yet loaded, may serialize as null?
         if (!_forceLazyLoading && !coll.wasInitialized()) {
-            jgen.writeNull();
+            provider.defaultSerializeNull(jgen);
             return;
         }
         Object value = coll.getValue();
@@ -94,7 +93,7 @@ public class PersistentCollectionSerializer
             provider.defaultSerializeNull(jgen);
         } else {
             if (_serializer == null) { // sanity check...
-                throw new JsonMappingException("PersitentCollection does not have serializer set");
+                throw new JsonMappingException("PersistentCollection does not have serializer set");
             }
             _serializer.serialize(value, jgen, provider);
         }
@@ -105,7 +104,7 @@ public class PersistentCollectionSerializer
         throws IOException, JsonProcessingException
     {
         if (!_forceLazyLoading && !coll.wasInitialized()) {
-            jgen.writeNull();
+            provider.defaultSerializeNull(jgen);
             return;
         }
         Object value = coll.getValue();
@@ -113,7 +112,7 @@ public class PersistentCollectionSerializer
             provider.defaultSerializeNull(jgen);
         } else {
             if (_serializer == null) { // sanity check...
-                throw new JsonMappingException("PersitentCollection does not have serializer set");
+                throw new JsonMappingException("PersistentCollection does not have serializer set");
             }
             _serializer.serializeWithType(value, jgen, provider, typeSer);
         }
