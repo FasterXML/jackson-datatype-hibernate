@@ -1,6 +1,8 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
@@ -29,6 +31,8 @@ public class HibernateProxySerializer
     protected final BeanProperty _property;
 
     protected final boolean _forceLazyLoading;
+    
+    protected final boolean _serializeIdentifierForLazyNotLoadedObjects;
 
     /**
      * For efficient serializer lookup, let's use this; most
@@ -47,8 +51,17 @@ public class HibernateProxySerializer
         _forceLazyLoading = forceLazyLoading;
         _dynamicSerializers = PropertySerializerMap.emptyMap();
         _property = null;
+        _serializeIdentifierForLazyNotLoadedObjects = false;
     }
 
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifierForLazyNotLoadedObjects)
+    {
+        _forceLazyLoading = forceLazyLoading;
+        _dynamicSerializers = PropertySerializerMap.emptyMap();
+        _property = null;
+        _serializeIdentifierForLazyNotLoadedObjects = serializeIdentifierForLazyNotLoadedObjects;
+    }
+	
     /*
     /**********************************************************************
     /* JsonSerializer impl
@@ -62,8 +75,18 @@ public class HibernateProxySerializer
         Object proxiedValue = findProxied(value);
         // TODO: figure out how to suppress nulls, if necessary? (too late for that here)
         if (proxiedValue == null) {
-            provider.defaultSerializeNull(jgen);
-            return;
+            if(_serializeIdentifierForLazyNotLoadedObjects && value!=null) {
+                /* Instead of serialize hibernate proxy as null we serialize
+                 * it as map IdentifierName=>IdentifierValue
+                 */
+                final String idName = value.getHibernateLazyInitializer().getSession().getFactory().getIdentifierPropertyName(value.getHibernateLazyInitializer().getEntityName());
+                final Object idValue = value.getHibernateLazyInitializer().getIdentifier();
+                if(idName!=null && idValue!=null)
+                    proxiedValue = new HashMap<String, Object>() {{ put(idName, idValue); }};
+            } else {
+                provider.defaultSerializeNull(jgen);
+                return;
+            }
         }
         findSerializer(provider, proxiedValue).serialize(proxiedValue, jgen, provider);
     }
@@ -74,8 +97,15 @@ public class HibernateProxySerializer
     {
         Object proxiedValue = findProxied(value);
         if (proxiedValue == null) {
-            provider.defaultSerializeNull(jgen);
-            return;
+            if(_serializeIdentifierForLazyNotLoadedObjects && value!=null) {
+                final String idName = value.getHibernateLazyInitializer().getSession().getFactory().getIdentifierPropertyName(value.getHibernateLazyInitializer().getEntityName());
+                final Object idValue = value.getHibernateLazyInitializer().getIdentifier();
+                if(idName!=null && idValue!=null)
+                    proxiedValue = new HashMap<String, Object>() {{ put(idName, idValue); }};
+            } else {
+                provider.defaultSerializeNull(jgen);
+                return;
+            }
         }
         /* This isn't exactly right, since type serializer really refers to proxy
          * object, not value. And we really don't either know static type (necessary
