@@ -5,7 +5,8 @@ Version:      2.0.3
 Release date: xx-xxx-2012
 Release info:
 
-- Fixed	[Issue-13]: NPE	with PersistentCollectionSerialize
+- [Issue-13]: NPE with PersistentCollectionSerialize
+- [Issue-14]: Incorrect handling of PersistentCollection
 
 ------------------------------------------------------------------------
 === History: ===
