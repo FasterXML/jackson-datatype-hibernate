@@ -47,7 +47,7 @@ public class HibernateSerializers extends Serializers.Base
                     isEnabled(Feature.FORCE_LAZY_LOADING));
         }
         if (HibernateProxy.class.isAssignableFrom(raw)) {
-            return new HibernateProxySerializer(isEnabled(Feature.FORCE_LAZY_LOADING));
+            return new HibernateProxySerializer(isEnabled(Feature.FORCE_LAZY_LOADING), isEnabled(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS));
         }
         return null;
     }
