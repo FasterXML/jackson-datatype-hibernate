@@ -22,6 +22,7 @@ Hibernate (http://hibernate.org) version 4.x data types.
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Hibernate with JPA 2.0 -->
     <hibernate.version>4.1.0.Final</hibernate.version>
+    <surefire.version>2.12</surefire.version>
   </properties>
 
   <dependencies>
@@ -143,6 +144,17 @@ Hibernate (http://hibernate.org) version 4.x data types.
                     </execution>
                 </executions>
         </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.version}</version>
+        <configuration>
+          <excludes>
+            <exclude>com/fasterxml/jackson/datatype/hibernate4/failing/*.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
 
         <!-- Plus, let's make jars OSGi bundles as well  -->
         <plugin>
