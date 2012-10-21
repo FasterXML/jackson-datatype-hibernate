@@ -1,5 +1,7 @@
 Project to build Jackson (http://jackson.codehaus.org) module (jar) to support JSON serialization and deserialization of Hibernate (http://hibernate.org) specific datatypes and properties; especially lazy-loading aspects.
 
+[![Build Status](https://fasterxml.ci.cloudbees.com/job/jackson-module-hibernate-master/badge/icon)](https://fasterxml.ci.cloudbees.com/job/jackson-module-hibernate-master/)
+
 ## Status
 
 As of version 2.0.2 module is usable and used by non-trivial number of developers and projects.
