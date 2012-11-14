@@ -4,7 +4,7 @@ Project to build Jackson (http://jackson.codehaus.org) module (jar) to support J
 
 ## Status
 
-As of version 2.0.2 module is usable and used by non-trivial number of developers and projects.
+As of version 2.0 module is usable and used by non-trivial number of developers and projects.
 Rough edges may still exist; please report any bugs you find.
 
 Note: both Hibernate 3 and 4 are supported, but they require different jar, and Maven artifact names (and jar names differ).
@@ -19,19 +19,24 @@ To use module on Maven-based projects, use following dependency:
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-hibernate4</artifactId>
-      <version>2.0.0</version>
+      <version>2.1.1</version>
     </dependency>    
 
-(or whatever version is most up-to-date at the moment)
+(or whatever version is most up-to-date at the moment; note that you need to use "jackson-datatype-hibernate3" for Hibernate 3.x)
 
 ### Registering module
 
 Like all standard Jackson modules (libraries that implement Module interface), registration is done as follows:
 
     ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(new HibernateModule());
+    // for Hibernate 4.x:
+    mapper.registerModule(new HibernateModule4());
+    // or, for Hibernate 3.6
+    mapper.registerModule(new HibernateModule3());
 
 after which functionality is available for all normal Jackson operations.
+
+Note that there are actuall 
 
 ### Using with Spring MVC
 
