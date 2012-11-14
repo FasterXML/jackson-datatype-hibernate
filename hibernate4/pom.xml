@@ -3,12 +3,12 @@
   <parent>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate-parent</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
   </parent>
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate4</artifactId>
   <name>Jackson-datatype-Hibernate4</name>
-  <version>2.1.1-SNAPSHOT</version>
+  <version>2.1.1</version>
   <packaging>jar</packaging>
   <description>Add-on module for Jackson (http://jackson.codehaus.org) to support
 Hibernate (http://hibernate.org) version 4.x data types.
