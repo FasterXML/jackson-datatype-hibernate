@@ -6,11 +6,9 @@ import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 public class TestVersions extends BaseTest
 {
-    /**
-     * Not a good to do this, but has to do, for now...
-     */
+    // Not a good way to do this, but has to do, for now...
     private final static int MAJOR_VERSION = 2;
-    private final static int MINOR_VERSION = 1;
+    private final static int MINOR_VERSION = 2;
 
     // could inject using Maven filters as well...
     private final static String GROUP_ID = "com.fasterxml.jackson.datatype";
