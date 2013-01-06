@@ -1,7 +1,5 @@
 package com.fasterxml.jackson.datatype.hibernate3;
 
-import java.lang.annotation.Annotation;
-
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.core.Version;
@@ -50,26 +48,16 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
     /* AnnotationIntrospector implementation/overrides
     /**********************************************************************
      */
-    
-    @Override
-    public boolean isHandled(Annotation a)
-    {
-        // We only care for one single type, for now:
-        return (a.annotationType() == Transient.class);
-    }
 
-    public boolean isIgnorableConstructor(AnnotatedConstructor c)
-    {
+    public boolean isIgnorableConstructor(AnnotatedConstructor c) {
         return _cfgCheckTransient && c.hasAnnotation(Transient.class);
     }
 
-    public boolean isIgnorableField(AnnotatedField f)
-    {
+    public boolean isIgnorableField(AnnotatedField f) {
         return _cfgCheckTransient && f.hasAnnotation(Transient.class);
     }
 
-    public boolean isIgnorableMethod(AnnotatedMethod m) 
-    {
+    public boolean isIgnorableMethod(AnnotatedMethod m) {
         return _cfgCheckTransient && m.hasAnnotation(Transient.class);
     }
 }
