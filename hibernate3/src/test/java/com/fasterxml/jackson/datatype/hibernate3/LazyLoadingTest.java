@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.hibernate4.failing;
+package com.fasterxml.jackson.datatype.hibernate3;
 
 import java.util.Set;
 
@@ -7,9 +7,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate4.BaseTest;
-import com.fasterxml.jackson.datatype.hibernate4.data.Customer;
-import com.fasterxml.jackson.datatype.hibernate4.data.Payment;
+import com.fasterxml.jackson.datatype.hibernate3.data.Customer;
+import com.fasterxml.jackson.datatype.hibernate3.data.Payment;
 
 import org.hibernate.Hibernate;
 import org.junit.Test;
