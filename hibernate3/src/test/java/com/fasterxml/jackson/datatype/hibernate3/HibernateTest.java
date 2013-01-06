@@ -34,7 +34,7 @@ public class HibernateTest extends BaseTest {
     	EntityManager em = emf.createEntityManager();
     	Assert.assertNotNull(em);
     }
-    
+
     @Test
     public void testGetCustomerJson() throws Exception {
     	EntityManager em = emf.createEntityManager();
@@ -50,20 +50,19 @@ public class HibernateTest extends BaseTest {
         System.out.println("--- /JSON ---");
         */
     }
-    
+
     @Test
     public void testAllCustomersJson() throws Exception {
-    	EntityManager em = emf.createEntityManager();
-    	Assert.assertNotNull(em);
-    	
-    	Query query = em.createQuery("select c from Customer c");
-    	ObjectMapper mapper = mapperWithModule();
-    	String json = mapper.writeValueAsString(query.getResultList());
+        EntityManager em = emf.createEntityManager();
+        Assert.assertNotNull(em);
+        Query query = em.createQuery("select c from Customer c");
+        ObjectMapper mapper = mapperWithModule();
+        String json = mapper.writeValueAsString(query.getResultList());
 
         // TODO: verify
         assertNotNull(json);
         /*
-    	System.out.println("--- JSON ---");
+    	    System.out.println("--- JSON ---");
         System.out.println(json);
         System.out.println("--- /JSON ---");
         */

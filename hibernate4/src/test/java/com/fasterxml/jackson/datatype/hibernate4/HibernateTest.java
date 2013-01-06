@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate4.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate4.data.Employee;
 
 public class HibernateTest extends BaseTest
@@ -32,7 +33,22 @@ public class HibernateTest extends BaseTest
         EntityManager em = emf.createEntityManager();
         Assert.assertNotNull(em);
     }
-    
+
+    @Test
+    public void testGetCustomerJson() throws Exception {
+        EntityManager em = emf.createEntityManager();
+        ObjectMapper mapper = mapperWithModule(false);
+        String json = mapper.writeValueAsString(em.find(Customer.class, 103));
+        
+        // TODO: verify
+        assertNotNull(json);
+        /*
+        System.out.println("--- JSON ---");
+        System.out.println(json);
+        System.out.println("--- /JSON ---");
+        */
+    }
+
     @Test
     public void testAllCustomersJson() throws Exception {
         EntityManager em = emf.createEntityManager();

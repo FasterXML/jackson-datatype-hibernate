@@ -86,7 +86,9 @@ public class Hibernate4Module extends Module
         if (ai != null) {
             context.appendAnnotationIntrospector(ai);
         }
-        context.addSerializers(new HibernateSerializers(_moduleFeatures));
+        boolean forceLoading = isEnabled(Feature.FORCE_LAZY_LOADING);
+        context.addSerializers(new HibernateSerializers(forceLoading));
+        context.addBeanSerializerModifier(new HibernateSerializerModifier(forceLoading));
     }
 
     /**

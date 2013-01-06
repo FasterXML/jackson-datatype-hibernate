@@ -2,6 +2,12 @@ package com.fasterxml.jackson.datatype.hibernate4;
 
 import java.io.IOException;
 
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
 import org.hibernate.collection.spi.PersistentCollection;
 
 
@@ -13,22 +19,21 @@ import com.fasterxml.jackson.databind.ser.*;
 
 /**
  * Wrapper serializer used to handle aspects of lazy loading that can be used
- * for Hibernate collection datatypes.
+ * for Hibernate collection datatypes; which includes both <code>Collection</code>
+ * and <code>Map</code> types (unlike in JDK).
  */
 public class PersistentCollectionSerializer
-    extends JsonSerializer<PersistentCollection>
+    extends JsonSerializer<Object>
     implements ContextualSerializer
 {
-    protected final boolean _forceLazyLoading;
-    
     /**
-     * This is the nominal type used to locate actual serializer to use
-     * for contents, if this collection is to be serialized.
+     * Whether loading of values is forced for lazy references.
      */
-    protected final JavaType _serializationType;
+    protected final boolean _forceLazyLoading;
 
     /**
-     * Serializer to which we delegate if serialization is not blocked.
+     * Serializer that does actual value serialization when value
+     * is available (either already or with forced access).
      */
     protected final JsonSerializer<Object> _serializer;
 
@@ -37,16 +42,11 @@ public class PersistentCollectionSerializer
     /* Life cycle
     /**********************************************************************
      */
-    
-    public PersistentCollectionSerializer(JavaType type, boolean forceLazyLoading) {
-        this(type, forceLazyLoading, null);
-    }
 
     @SuppressWarnings("unchecked")
-    public PersistentCollectionSerializer(JavaType type, boolean forceLazyLoading,
+    public PersistentCollectionSerializer(boolean forceLazyLoading,
             JsonSerializer<?> serializer)
     {
-        _serializationType = type;
         _forceLazyLoading = forceLazyLoading;
         _serializer = (JsonSerializer<Object>) serializer;
     }
@@ -56,22 +56,16 @@ public class PersistentCollectionSerializer
      * must know type of property being serialized.
      * If not known
      */
-    public JsonSerializer<PersistentCollection> createContextual(SerializerProvider provider,
+    public JsonSerializer<Object> createContextual(SerializerProvider provider,
             BeanProperty property)
         throws JsonMappingException
     {
-        /* If we have property, should be able to get actual polymorphic type
-         * information.
-         * May need to refine in future, in case nested types are used, since
-         * 'property' refers to field/method and main type, but contents of
-         * that type may also be resolved... in which case this would fail.
-         */
-        JsonSerializer<?> ser = provider.findValueSerializer(_serializationType, property);
-        JavaType type = null;
-        if (property != null) {
-            type = property.getType();
+        // If we use eager loading, or force it, can just return underlying serializer as is
+        if (_forceLazyLoading || !usesLazyLoading(property)) {
+            return _serializer;
         }
-        return new PersistentCollectionSerializer(type, _forceLazyLoading, ser);
+        // Otherwise this instance is to be used
+        return this;
     }
     
     /*
@@ -81,41 +75,80 @@ public class PersistentCollectionSerializer
      */
     
     @Override
-    public void serialize(PersistentCollection coll, JsonGenerator jgen, SerializerProvider provider)
+    public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider)
         throws IOException, JsonProcessingException
     {
-        // If lazy-loaded, not yet loaded, may serialize as null?
-        if (!_forceLazyLoading && !coll.wasInitialized()) {
-            provider.defaultSerializeNull(jgen);
-            return;
-        }
-        Object value = coll.getValue();
-        if (value == null) {
-            provider.defaultSerializeNull(jgen);
-        } else {
-            if (_serializer == null) { // sanity check...
-                throw new JsonMappingException("PersistentCollection does not have serializer set");
+        if (value instanceof PersistentCollection) {
+            PersistentCollection coll = (PersistentCollection) value;
+            // If lazy-loaded, not yet loaded, may serialize as null?
+            if (!_forceLazyLoading && !coll.wasInitialized()) {
+                provider.defaultSerializeNull(jgen);
+                return;
             }
-            _serializer.serialize(value, jgen, provider);
+            value = coll.getValue();
+            if (value == null) {
+                provider.defaultSerializeNull(jgen);
+                return;
+            }
         }
+        if (_serializer == null) { // sanity check...
+            throw new JsonMappingException("PersistentCollection does not have serializer set");
+        }
+        _serializer.serialize(value, jgen, provider);
     }
     
-    public void serializeWithType(PersistentCollection coll, JsonGenerator jgen, SerializerProvider provider,
+    public void serializeWithType(Object value, JsonGenerator jgen, SerializerProvider provider,
             TypeSerializer typeSer)
         throws IOException, JsonProcessingException
     {
-        if (!_forceLazyLoading && !coll.wasInitialized()) {
-            provider.defaultSerializeNull(jgen);
-            return;
-        }
-        Object value = coll.getValue();
-        if (value == null) {
-            provider.defaultSerializeNull(jgen);
-        } else {
-            if (_serializer == null) { // sanity check...
-                throw new JsonMappingException("PersistentCollection does not have serializer set");
+        if (value instanceof PersistentCollection) {
+            PersistentCollection coll = (PersistentCollection) value;
+            if (!_forceLazyLoading && !coll.wasInitialized()) {
+                provider.defaultSerializeNull(jgen);
+                return;
             }
-            _serializer.serializeWithType(value, jgen, provider, typeSer);
+            value = coll.getValue();
+            if (value == null) {
+                provider.defaultSerializeNull(jgen);
+                return;
+            }
         }
+        if (_serializer == null) { // sanity check...
+            throw new JsonMappingException("PersistentCollection does not have serializer set");
+        }
+        _serializer.serializeWithType(value, jgen, provider, typeSer);
+    }
+
+    /*
+    /**********************************************************************
+    /* Helper methods
+    /**********************************************************************
+     */
+    
+    /**
+     * Method called to see whether given property indicates it uses lazy
+     * resolution of reference contained.
+     */
+    protected boolean usesLazyLoading(BeanProperty property)
+    {
+        if (property != null) {
+            OneToMany ann1 = property.getAnnotation(OneToMany.class);
+            if (ann1 != null) {
+                return (ann1.fetch() == FetchType.LAZY);
+            }
+            OneToOne ann2 = property.getAnnotation(OneToOne.class);
+            if (ann2 != null) {
+                return (ann2.fetch() == FetchType.LAZY);
+            }
+            ManyToOne ann3 = property.getAnnotation(ManyToOne.class);
+            if (ann3 != null) {
+                return (ann3.fetch() == FetchType.LAZY);
+            }
+            ManyToMany ann4 = property.getAnnotation(ManyToMany.class);
+            if (ann4 != null) {
+                return (ann4.fetch() == FetchType.LAZY);
+            }
+        }
+        return false;
     }
 }
