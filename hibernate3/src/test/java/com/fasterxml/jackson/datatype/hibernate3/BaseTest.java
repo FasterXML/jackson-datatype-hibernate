@@ -9,6 +9,15 @@ public abstract class BaseTest extends junit.framework.TestCase
 {
     protected BaseTest() { }
     
+    protected ObjectMapper mapperWithModule(boolean forceLazyLoading)
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        Hibernate3Module mod = new Hibernate3Module();
+        mod.configure(Hibernate3Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
+        mapper.registerModule(mod);
+        return mapper;
+    }
+    
     protected ObjectMapper mapperWithModule()
     {
         ObjectMapper mapper = new ObjectMapper();
