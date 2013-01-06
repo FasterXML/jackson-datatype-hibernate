@@ -32,7 +32,7 @@ Like all standard Jackson modules (libraries that implement Module interface), r
     // for Hibernate 4.x:
     mapper.registerModule(new HibernateModule4());
     // or, for Hibernate 3.6
-    mapper.registerModule(new HibernateModule3());
+    mapper.registerModule(new Hibernate3Module());
 
 after which functionality is available for all normal Jackson operations.
 
