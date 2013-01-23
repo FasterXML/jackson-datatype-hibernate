@@ -25,7 +25,15 @@ public class Hibernate4Module extends Module
          *<p>
          * Default value is true.
          */
-        USE_TRANSIENT_ANNOTATION(true)
+        USE_TRANSIENT_ANNOTATION(true),
+        
+	    /**
+	     * If FORCE_LAZY_LOADING is false lazy-loaded object should be serialized as map IdentifierName=>IdentifierValue
+	     * istead of null (true); or serialized as nulls (false)
+	     * <p>
+	     * Defaul value is false
+	     */
+        SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS(false)        
         ;
 
         final boolean _defaultState;
@@ -87,7 +95,7 @@ public class Hibernate4Module extends Module
             context.appendAnnotationIntrospector(ai);
         }
         boolean forceLoading = isEnabled(Feature.FORCE_LAZY_LOADING);
-        context.addSerializers(new HibernateSerializers(forceLoading));
+        context.addSerializers(new HibernateSerializers(forceLoading, isEnabled(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS)));
         context.addBeanSerializerModifier(new HibernateSerializerModifier(forceLoading));
     }
 
