@@ -30,7 +30,7 @@ Like all standard Jackson modules (libraries that implement Module interface), r
 
     ObjectMapper mapper = new ObjectMapper();
     // for Hibernate 4.x:
-    mapper.registerModule(new HibernateModule4());
+    mapper.registerModule(new Hibernate4Module());
     // or, for Hibernate 3.6
     mapper.registerModule(new Hibernate3Module());
 
