@@ -44,39 +44,30 @@ Note that there are actuall
 
 ### Using with Spring MVC
 
-(as contributed by Frank Hess)
-
-First step: sub-class ObjectMapper and register the module
+Sub-class ObjectMapper and register the module (Hibernate 3 or 4)
 
 ```java
 public class HibernateAwareObjectMapper extends ObjectMapper {
-  public HibernateAwareObjectMapper() {
-    HibernateModule hm = new HibernateModule();
-    registerModule(hm);
-    configure(Feature.FAIL_ON_EMPTY_BEANS, false);
-  }
 
-  public void setPrettyPrint(boolean prettyPrint) {
-    configure(Feature.INDENT_OUTPUT, prettyPrint);
-  }
+    public HibernateAwareObjectMapper() {
+        registerModule(new Hibernate4Module());
+    }
 }
 ```    
 
-Second step register the new ObjectMapper:
+Then add it as the objectmapper to be used
 
 ```xml
-<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
- <property name="messageConverters">
-  <array>
-    <bean id="jsonConverter"
-  	   class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
-      <property name="objectMapper">
-        <bean class="campus.authorweb.util.HibernateAwareObjectMapper"/>
-      </property>
-    </bean>
-  </array>
- </property>
-</bean>
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <!-- Use the HibernateAware mapper instead of the default -->
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper">
+                    <bean class="path.to.your.HibernateAwareObjectMapper" />
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 ```
 
-This seems to do the trick.
+If mvc:annotation-driven is not being used, it can be added as a jsonconverter to the messageconverters of RequestMappingHandlerAdapter.
