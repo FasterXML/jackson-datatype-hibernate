@@ -13,12 +13,13 @@ Hibernate (http://hibernate.org) version 4.x data types.
   </description>
   <url>https://github.com/FasterXML/jackson-module-hibernate</url>
   <properties>
-    <javac.src.version>1.5</javac.src.version>
-    <javac.target.version>1.5</javac.target.version>
+    <!-- Generate PackageVersion.java into this directory. -->
+    <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate4</packageVersion.dir>
+    <packageVersion.package>${project.groupId}.hibernate4</packageVersion.package>
     <!-- Hibernate with JPA 2.0 -->
     <hibernate.version>4.1.0.Final</hibernate.version>
     <surefire.version>2.12</surefire.version>
-    <osgi.export>com.fasterxml.jackson.module.hibernate4;version=${project.version}</osgi.export>
+    <osgi.export>${project.groupId}.hibernate4;version=${project.version}</osgi.export>
   </properties>
 
   <dependencies>
@@ -82,13 +83,18 @@ Hibernate (http://hibernate.org) version 4.x data types.
   </dependencies>
 
   <build>
-    <resources>
-      <resource> <!--  Needed to add version info -->
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>  
-    </resources>
     <plugins>
+      <plugin>
+        <!-- Inherited from oss-base. Generate PackageVersion.java.-->
+        <groupId>com.google.code.maven-replacer-plugin</groupId>
+        <artifactId>replacer</artifactId>
+        <executions>
+          <execution>
+            <id>process-packageVersion</id>
+            <phase>process-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

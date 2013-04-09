@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.fasterxml</groupId>
     <artifactId>oss-parent</artifactId>
-    <version>4</version>
+    <version>8</version>
   </parent>
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate-parent</artifactId>
