@@ -1,6 +1,7 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
@@ -29,6 +30,7 @@ public class HibernateProxySerializer
     protected final BeanProperty _property;
 
     protected final boolean _forceLazyLoading;
+    protected final boolean _serializeIdentifier;
 
     /**
      * For efficient serializer lookup, let's use this; most
@@ -44,18 +46,23 @@ public class HibernateProxySerializer
 
     public HibernateProxySerializer(boolean forceLazyLoading)
     {
-        _forceLazyLoading = forceLazyLoading;
-        _dynamicSerializers = PropertySerializerMap.emptyMap();
-        _property = null;
+        this(forceLazyLoading, false);
     }
 
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
+    	_forceLazyLoading = forceLazyLoading;
+    	_serializeIdentifier = serializeIdentifier;
+    	_dynamicSerializers = PropertySerializerMap.emptyMap();
+    	_property = null;
+    }
+    
     /*
     /**********************************************************************
     /* JsonSerializer impl
     /**********************************************************************
      */
-    
-    @Override
+
+	@Override
     public void serialize(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider)
         throws IOException, JsonProcessingException
     {
@@ -115,11 +122,18 @@ public class HibernateProxySerializer
      * Helper method for finding value being proxied, if it is available
      * or if it is to be forced to be loaded.
      */
-    protected Object findProxied(HibernateProxy proxy)
+    @SuppressWarnings("serial")
+	protected Object findProxied(HibernateProxy proxy)
     {
         LazyInitializer init = proxy.getHibernateLazyInitializer();
         if (!_forceLazyLoading && init.isUninitialized()) {
-            return null;
+        	if(_serializeIdentifier){
+        		final String idName = init.getSession().getFactory().getIdentifierPropertyName(init.getEntityName());
+        		final Object idValue = init.getIdentifier();
+        		return new HashMap<String, Object>(){{ put(idName, idValue); }};
+        	} else {
+        		return null;
+        	}
         }
         return init.getImplementation();
     }
