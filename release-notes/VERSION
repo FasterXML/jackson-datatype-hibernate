@@ -5,10 +5,12 @@ Version: 2.2.0 (xx-xxx-2013)
 
 New minor version.
 
-Fixes:
+Changes:
 
-* [Issue-15]: @JsonTypeInfo results in differing type information used for locating serializer
+#15: @JsonTypeInfo results in differing type information used for locating serializer
  (reported by justinhrobbins@github)
+#27: Add `Hibernate4Module.Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS`
+ (contributed by 'radu-c@github')
 
 ------------------------------------------------------------------------
 === History: ===
