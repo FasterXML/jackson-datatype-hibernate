@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.introspect.*;
  */
 public class HibernateAnnotationIntrospector extends AnnotationIntrospector
 {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Whether we should check for existence of @Transient or not.
      * Default value is 'true'.

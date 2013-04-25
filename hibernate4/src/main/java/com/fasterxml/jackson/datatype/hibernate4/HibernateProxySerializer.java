@@ -50,10 +50,10 @@ public class HibernateProxySerializer
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
-    	_forceLazyLoading = forceLazyLoading;
-    	_serializeIdentifier = serializeIdentifier;
-    	_dynamicSerializers = PropertySerializerMap.emptyMap();
-    	_property = null;
+        _forceLazyLoading = forceLazyLoading;
+        _serializeIdentifier = serializeIdentifier;
+        _dynamicSerializers = PropertySerializerMap.emptyMap();
+        _property = null;
     }
     
     /*
@@ -62,7 +62,7 @@ public class HibernateProxySerializer
     /**********************************************************************
      */
 
-	@Override
+    @Override
     public void serialize(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider)
         throws IOException, JsonProcessingException
     {
@@ -75,6 +75,7 @@ public class HibernateProxySerializer
         findSerializer(provider, proxiedValue).serialize(proxiedValue, jgen, provider);
     }
 
+    @Override
     public void serializeWithType(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider,
             TypeSerializer typeSer)
         throws IOException, JsonProcessingException

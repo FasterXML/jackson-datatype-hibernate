@@ -68,6 +68,7 @@ public class HibernateProxySerializer
         findSerializer(provider, proxiedValue).serialize(proxiedValue, jgen, provider);
     }
 
+    @Override
     public void serializeWithType(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider,
             TypeSerializer typeSer)
         throws IOException, JsonProcessingException

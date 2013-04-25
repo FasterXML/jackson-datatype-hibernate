@@ -56,12 +56,16 @@ public class PersistentCollectionSerializer
      * must know type of property being serialized.
      * If not known
      */
-    public JsonSerializer<Object> createContextual(SerializerProvider provider,
+    @Override
+    public JsonSerializer<?> createContextual(SerializerProvider provider,
             BeanProperty property)
         throws JsonMappingException
     {
         // If we use eager loading, or force it, can just return underlying serializer as is
         if (_forceLazyLoading || !usesLazyLoading(property)) {
+            if (_serializer instanceof ContextualSerializer) {
+                return ((ContextualSerializer) _serializer).createContextual(provider, property);
+            }
             return _serializer;
         }
         // Otherwise this instance is to be used
@@ -96,7 +100,8 @@ public class PersistentCollectionSerializer
         }
         _serializer.serialize(value, jgen, provider);
     }
-    
+
+    @Override
     public void serializeWithType(Object value, JsonGenerator jgen, SerializerProvider provider,
             TypeSerializer typeSer)
         throws IOException, JsonProcessingException
