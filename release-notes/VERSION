@@ -1,21 +1,21 @@
 Project: jackson-datatype-hibernate
 Jackson module to support datatypes of Hibernate 3.6 / 4.x, based on Jackson 2.x
 
-Version: 2.2.0 (23-Apr-2013)
+Version: 2.2.1 (04-May-2013)
 
-New minor version.
+No functional changes.
 
-Changes:
+------------------------------------------------------------------------
+=== History: ===
+------------------------------------------------------------------------
+
+2.2.0 (23-Apr-2013)
 
 #15: @JsonTypeInfo results in differing type information used for locating serializer
  (reported by justinhrobbins@github)
 #17/#27: Add `Hibernate4Module.Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS`,
   ditto for Hibernate3
  (contributed by 'radu-c@github' and 'goldenalfer@github')
-
-------------------------------------------------------------------------
-=== History: ===
-------------------------------------------------------------------------
 
 2.1.2 (08-Dec-2012)
 2.1.1 (13-Nov-2012)
