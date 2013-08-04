@@ -3,11 +3,12 @@ package com.fasterxml.jackson.datatype.hibernate4;
 import com.fasterxml.jackson.core.Version;
 
 import com.fasterxml.jackson.databind.*;
+import org.hibernate.engine.spi.Mapping;
 
 public class Hibernate4Module extends Module
 {
     /**
-     * Enumeration that defines all togglable features this module
+     * Enumeration that defines all toggleable features this module
      */
     public enum Feature {
         /**
@@ -29,9 +30,9 @@ public class Hibernate4Module extends Module
         
 	    /**
 	     * If FORCE_LAZY_LOADING is false lazy-loaded object should be serialized as map IdentifierName=>IdentifierValue
-	     * istead of null (true); or serialized as nulls (false)
+	     * instead of null (true); or serialized as nulls (false)
 	     * <p>
-	     * Defaul value is false
+	     * Default value is false
 	     */
         SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS(false)        
         ;
@@ -71,14 +72,25 @@ public class Hibernate4Module extends Module
      * are enabled.
      */
     protected int _moduleFeatures = DEFAULT_FEATURES;
-    
+
+    /**
+     * Hibernate mapping.
+     */
+    protected final Mapping _mapping;
+
     /*
     /**********************************************************************
     /* Life-cycle
     /**********************************************************************
      */
-    
-    public Hibernate4Module() { }
+
+    public Hibernate4Module() {
+        this(null);
+    }
+
+    public Hibernate4Module(Mapping mapping) {
+        _mapping = mapping;
+    }
 
     @Override public String getModuleName() { return "jackson-datatype-hibernate"; }
     @Override public Version version() { return ModuleVersion.instance.version(); }
@@ -95,7 +107,7 @@ public class Hibernate4Module extends Module
             context.appendAnnotationIntrospector(ai);
         }
         boolean forceLoading = isEnabled(Feature.FORCE_LAZY_LOADING);
-        context.addSerializers(new HibernateSerializers(forceLoading, isEnabled(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS)));
+        context.addSerializers(new HibernateSerializers(forceLoading, isEnabled(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS), _mapping));
         context.addBeanSerializerModifier(new HibernateSerializerModifier(forceLoading));
     }
 
