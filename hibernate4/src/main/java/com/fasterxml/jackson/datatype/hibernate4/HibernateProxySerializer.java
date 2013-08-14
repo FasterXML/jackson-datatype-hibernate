@@ -3,6 +3,8 @@ package com.fasterxml.jackson.datatype.hibernate4;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.hibernate.engine.spi.Mapping;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 
@@ -31,6 +33,7 @@ public class HibernateProxySerializer
 
     protected final boolean _forceLazyLoading;
     protected final boolean _serializeIdentifier;
+    protected final Mapping _mapping;
 
     /**
      * For efficient serializer lookup, let's use this; most
@@ -46,12 +49,17 @@ public class HibernateProxySerializer
 
     public HibernateProxySerializer(boolean forceLazyLoading)
     {
-        this(forceLazyLoading, false);
+        this(forceLazyLoading, false, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
+        this(forceLazyLoading, serializeIdentifier, null);
+    }
+
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping) {
         _forceLazyLoading = forceLazyLoading;
         _serializeIdentifier = serializeIdentifier;
+        _mapping = mapping;
         _dynamicSerializers = PropertySerializerMap.emptyMap();
         _property = null;
     }
@@ -117,8 +125,8 @@ public class HibernateProxySerializer
         }
         return result.serializer;
     }
-   
-    
+
+
     /**
      * Helper method for finding value being proxied, if it is available
      * or if it is to be forced to be loaded.
@@ -129,7 +137,17 @@ public class HibernateProxySerializer
         LazyInitializer init = proxy.getHibernateLazyInitializer();
         if (!_forceLazyLoading && init.isUninitialized()) {
         	if(_serializeIdentifier){
-        		final String idName = init.getSession().getFactory().getIdentifierPropertyName(init.getEntityName());
+                final String idName;
+                if (_mapping != null) {
+                    idName = _mapping.getIdentifierPropertyName(init.getEntityName());
+                } else {
+                    final SessionImplementor session = init.getSession();
+                    if (session != null) {
+                        idName = session.getFactory().getIdentifierPropertyName(init.getEntityName());
+                    } else {
+                        idName = init.getEntityName();
+                    }
+                }
         		final Object idValue = init.getIdentifier();
         		return new HashMap<String, Object>(){{ put(idName, idValue); }};
         	} else {
