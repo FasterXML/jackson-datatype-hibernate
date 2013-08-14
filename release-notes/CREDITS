@@ -1,0 +1,13 @@
+Here are people who have contributed to development Jackson JSON processor
+Hibernate module,  version 2.x
+(version numbers in brackets indicate release in which the problem was fixed)
+
+Tatu Saloranta, tatu.saloranta@iki.fi: author
+
+Contributors
+------------
+
+Daan van Dijk (drvdijk@github):
+
+#39: NullPointerException trying to serialize ManyToMany proxied values
+ (2.2.3)
