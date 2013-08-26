@@ -11,7 +11,7 @@
   <description>Add-on module for Jackson (http://jackson.codehaus.org) to support
 Hibernate (http://hibernate.org) version 4.x data types.
   </description>
-  <url>https://github.com/FasterXML/jackson-module-hibernate</url>
+  <url>https://github.com/FasterXML/jackson-datatype-hibernate</url>
   <properties>
     <!-- Generate PackageVersion.java into this directory. -->
     <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate4</packageVersion.dir>

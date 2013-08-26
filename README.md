@@ -20,7 +20,7 @@ To use module on Maven-based projects, use following dependency:
 <dependency>
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate4</artifactId>
-  <version>2.2.0</version>
+  <version>2.2.3</version>
 </dependency>    
 ```
 
