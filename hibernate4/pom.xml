@@ -7,7 +7,7 @@
   </parent>
   <artifactId>jackson-datatype-hibernate4</artifactId>
   <name>Jackson-datatype-Hibernate4</name>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <description>Add-on module for Jackson (http://jackson.codehaus.org) to support
 Hibernate (http://hibernate.org) version 4.x data types.
   </description>
@@ -19,7 +19,7 @@ Hibernate (http://hibernate.org) version 4.x data types.
     <!-- Hibernate with JPA 2.0 -->
     <hibernate.version>4.1.0.Final</hibernate.version>
     <surefire.version>2.12</surefire.version>
-    <osgi.export>${project.groupId}.hibernate4;version=${project.version}</osgi.export>
+    <osgi.export>${project.groupId}.hibernate4</osgi.export>
   </properties>
 
   <dependencies>

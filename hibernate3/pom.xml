@@ -7,7 +7,7 @@
   </parent>
   <artifactId>jackson-datatype-hibernate3</artifactId>
   <name>Jackson-datatype-Hibernate3</name>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <description>Add-on module for Jackson (http://jackson.codehaus.org) to support
 Hibernate (http://hibernate.org) version 3.x data types.
   </description>
@@ -20,7 +20,7 @@ Hibernate (http://hibernate.org) version 3.x data types.
     <hibernate.version>[3.5.0, 3.6.6]</hibernate.version>
 -->
     <hibernate.version>3.6.6.Final</hibernate.version>
-    <osgi.export>com.fasterxml.jackson.module.hibernate3;version=${project.version}</osgi.export>
+    <osgi.export>com.fasterxml.jackson.module.hibernate3</osgi.export>
   </properties>
 
   <dependencies>
