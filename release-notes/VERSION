@@ -1,14 +1,19 @@
 Project: jackson-datatype-hibernate
 Jackson module to support datatypes of Hibernate 3.6 / 4.x, based on Jackson 2.x
 
-Version: 2.2.3 (23-Aug-2013)
+Version: 2.3.0 (xx-xxx-2013)
 
-#39: Avoid NullPointerException when serializing ManyToOne proxies
- (contributed by drvdijk@github)
+#44: NullPointerException when @OneToMany map is encountered
+ (reported by Patrick H)
 
 ------------------------------------------------------------------------
 === History: ===
 ------------------------------------------------------------------------
+
+2.2.3 (23-Aug-2013)
+
+#39: Avoid NullPointerException when serializing ManyToOne proxies
+ (contributed by drvdijk@github)
 
 2.2.2 (28-May-2013)
 2.2.1 (04-May-2013)
