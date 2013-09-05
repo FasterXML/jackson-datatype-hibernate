@@ -10,7 +10,7 @@ public class TestVersions extends BaseTest
      * Not a good to do this, but has to do, for now...
      */
     private final static int MAJOR_VERSION = 2;
-    private final static int MINOR_VERSION = 2;
+    private final static int MINOR_VERSION = 3;
 
     // could inject using Maven filters as well...
     private final static String GROUP_ID = "com.fasterxml.jackson.datatype";

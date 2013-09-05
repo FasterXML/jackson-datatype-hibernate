@@ -7,7 +7,6 @@ import javax.persistence.*;
 import org.hibernate.collection.PersistentCollection;
 
 import com.fasterxml.jackson.core.*;
-
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.*;
@@ -56,14 +55,15 @@ public class PersistentCollectionSerializer
             BeanProperty property)
         throws JsonMappingException
     {
+        JsonSerializer<?> ser = provider.handleContextualization(_serializer, property);
+
         // If we use eager loading, or force it, can just return underlying serializer as is
         if (_forceLazyLoading || !usesLazyLoading(property)) {
-            if (_serializer instanceof ContextualSerializer) {
-                return ((ContextualSerializer) _serializer).createContextual(provider, property);
-            }
-            return _serializer;
+            return ser;
         }
-        // Otherwise this instance is to be used
+        if (ser != _serializer) {
+            return new PersistentCollectionSerializer(_forceLazyLoading, ser);
+        }
         return this;
     }
     

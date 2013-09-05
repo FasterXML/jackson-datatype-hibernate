@@ -11,11 +11,6 @@ public class TestVersions extends BaseTest
         assertVersion(new Hibernate4Module());
     }
 
-    /*
-    /**********************************************************
-    /* Helper methods
-    /**********************************************************
-     */
     private void assertVersion(Versioned vers)
     {
         Version v = vers.version();
