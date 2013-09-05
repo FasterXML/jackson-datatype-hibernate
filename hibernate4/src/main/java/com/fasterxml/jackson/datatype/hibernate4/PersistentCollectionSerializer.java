@@ -61,14 +61,18 @@ public class PersistentCollectionSerializer
             BeanProperty property)
         throws JsonMappingException
     {
+        JsonSerializer<?> ser = _serializer;
+        if (ser instanceof ContextualSerializer) {
+            ser = ((ContextualSerializer) ser).createContextual(provider, property);
+        }
         // If we use eager loading, or force it, can just return underlying serializer as is
         if (_forceLazyLoading || !usesLazyLoading(property)) {
-            if (_serializer instanceof ContextualSerializer) {
-                return ((ContextualSerializer) _serializer).createContextual(provider, property);
-            }
-            return _serializer;
+            return ser;
         }
         // Otherwise this instance is to be used
+        if (ser != _serializer) {
+            return new PersistentCollectionSerializer(_forceLazyLoading, ser);
+        }
         return this;
     }
     
