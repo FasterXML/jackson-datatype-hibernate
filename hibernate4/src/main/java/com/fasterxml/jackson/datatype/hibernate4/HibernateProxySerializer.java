@@ -118,8 +118,11 @@ public class HibernateProxySerializer
          * this avoids potentially costly lookup from global caches and/or construction
          * of new serializers
          */
-        PropertySerializerMap.SerializerAndMapResult result = _dynamicSerializers.findAndAddSerializer(type,
-                provider, _property);
+        /* 18-Oct-2013, tatu: Whether this is for the primary property or secondary is
+         *   really anyone's guess at this point; proxies can exist at any level?
+         */
+        PropertySerializerMap.SerializerAndMapResult result =
+                _dynamicSerializers.findAndAddPrimarySerializer(type, provider, _property);
         if (_dynamicSerializers != result.map) {
             _dynamicSerializers = result.map;
         }

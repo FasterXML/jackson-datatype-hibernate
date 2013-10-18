@@ -39,26 +39,25 @@ public class OrderDetailId  implements java.io.Serializable {
         this.productCode = productCode;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if ( (this == other ) ) return true;
+        if ( (other == null ) ) return false;
+        if ( !(other instanceof OrderDetailId) ) return false;
+        OrderDetailId castOther = ( OrderDetailId ) other; 
 
-   public boolean equals(Object other) {
-         if ( (this == other ) ) return true;
-		 if ( (other == null ) ) return false;
-		 if ( !(other instanceof OrderDetailId) ) return false;
-		 OrderDetailId castOther = ( OrderDetailId ) other; 
-         
-		 return ( (this.getOrderNumber()==castOther.getOrderNumber()) || ( this.getOrderNumber()!=null && castOther.getOrderNumber()!=null && this.getOrderNumber().equals(castOther.getOrderNumber()) ) )
- && ( (this.getProductCode()==castOther.getProductCode()) || ( this.getProductCode()!=null && castOther.getProductCode()!=null && this.getProductCode().equals(castOther.getProductCode()) ) );
-   }
+        return ( (this.getOrderNumber()==castOther.getOrderNumber()) || ( this.getOrderNumber()!=null && castOther.getOrderNumber()!=null && this.getOrderNumber().equals(castOther.getOrderNumber()) ) )
+                && ( (this.getProductCode()==castOther.getProductCode()) || ( this.getProductCode()!=null && castOther.getProductCode()!=null && this.getProductCode().equals(castOther.getProductCode()) ) );
+    }
    
-   public int hashCode() {
-         int result = 17;
-         
-         result = 37 * result + ( getOrderNumber() == null ? 0 : this.getOrderNumber().hashCode() );
-         result = 37 * result + ( getProductCode() == null ? 0 : this.getProductCode().hashCode() );
-         return result;
-   }   
+    @Override
+    public int hashCode() {
+        int result = 17;
 
-
+        result = 37 * result + ( getOrderNumber() == null ? 0 : this.getOrderNumber().hashCode() );
+        result = 37 * result + ( getProductCode() == null ? 0 : this.getProductCode().hashCode() );
+        return result;
+    }   
 }
 
 

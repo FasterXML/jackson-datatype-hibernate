@@ -61,7 +61,10 @@ public class PersistentCollectionSerializer
             BeanProperty property)
         throws JsonMappingException
     {
-        JsonSerializer<?> ser = provider.handleContextualization(_serializer, property);
+        /* 18-Oct-2013, tatu: Whether this is for the primary property or secondary is
+         *   not quite certain; presume primary one for now.
+         */
+        JsonSerializer<?> ser = provider.handlePrimaryContextualization(_serializer, property);
 
         // If we use eager loading, or force it, can just return underlying serializer as is
         if (_forceLazyLoading || !usesLazyLoading(property)) {
