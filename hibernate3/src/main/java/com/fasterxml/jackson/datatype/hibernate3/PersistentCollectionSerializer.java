@@ -135,6 +135,11 @@ public class PersistentCollectionSerializer
     protected boolean usesLazyLoading(BeanProperty property)
     {
         if (property != null) {
+            // As per [Issue#36]
+            ElementCollection ec = property.getAnnotation(ElementCollection.class);
+            if (ec != null) {
+                return (ec.fetch() == FetchType.LAZY);
+            }
             OneToMany ann1 = property.getAnnotation(OneToMany.class);
             if (ann1 != null) {
                 return (ann1.fetch() == FetchType.LAZY);
