@@ -2,14 +2,9 @@ package com.fasterxml.jackson.datatype.hibernate4;
 
 import java.io.IOException;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 import org.hibernate.collection.spi.PersistentCollection;
-
 
 import com.fasterxml.jackson.core.*;
 
@@ -141,6 +136,11 @@ public class PersistentCollectionSerializer
     protected boolean usesLazyLoading(BeanProperty property)
     {
         if (property != null) {
+            // As per [Issue#36]
+            ElementCollection ec = property.getAnnotation(ElementCollection.class);
+            if (ec != null) {
+                return (ec.fetch() == FetchType.LAZY);
+            }
             OneToMany ann1 = property.getAnnotation(OneToMany.class);
             if (ann1 != null) {
                 return (ann1.fetch() == FetchType.LAZY);
