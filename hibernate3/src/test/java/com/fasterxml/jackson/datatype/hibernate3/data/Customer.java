@@ -178,6 +178,7 @@ public class Customer  implements java.io.Serializable
         this.creditLimit = creditLimit;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)    
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="customer")
     public Set<Payment> getPayments() {
         return this.payments;

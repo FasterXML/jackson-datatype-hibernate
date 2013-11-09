@@ -6,7 +6,6 @@ import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 
 import com.fasterxml.jackson.core.*;
-
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
@@ -54,6 +53,13 @@ public class HibernateProxySerializer
     /* JsonSerializer impl
     /**********************************************************************
      */
+
+    // since 2.3
+    @Override
+    public boolean isEmpty(HibernateProxy value)
+    {
+        return (value == null) || (findProxied(value) == null);
+    }
     
     @Override
     public void serialize(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider)

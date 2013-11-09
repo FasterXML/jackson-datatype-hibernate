@@ -6,6 +6,8 @@ Version: 2.3.0 (xx-xxx-2013)
 #36: Support `@ElementCollection` for specifying lazy-loading
 #44: NullPointerException when @OneToMany map is encountered
  (reported by Patrick H)
+- Support handling of `JsonInclude(Include.NON_EMPTY)` for lazy-loaded Collections
+ (partially addresses #21)
 
 ------------------------------------------------------------------------
 === History: ===

@@ -1,6 +1,6 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -32,16 +32,24 @@ public class LazyLoadingTest extends BaseTest
             String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(customer);
             // should not force loading...
             Set<Payment> payments = customer.getPayments();
-            
             /*
             System.out.println("--- JSON ---");
             System.out.println(json);
             System.out.println("--- /JSON ---");
             */
-            
+
             assertFalse(Hibernate.isInitialized(payments));
             // TODO: verify
             assertNotNull(json);
+
+            Map<?,?> stuff = mapper.readValue(json, Map.class);
+
+            // "payments" is marked as lazily loaded AND "Include.NON_EMPTY"; should not be serialized
+            assertFalse(stuff.containsKey("payments"));
+            // orders, on the other hand, not:
+            assertTrue(stuff.containsKey("orders"));
+            assertNull(stuff.get("orderes"));
+            
         } finally {
             emf.close();
         }

@@ -186,7 +186,8 @@ public class Customer  implements java.io.Serializable
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
     }
-    
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="customer")
     public Set<Payment> getPayments() {
         return this.payments;

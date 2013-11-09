@@ -70,6 +70,13 @@ public class HibernateProxySerializer
     /**********************************************************************
      */
 
+    // since 2.3
+    @Override
+    public boolean isEmpty(HibernateProxy value)
+    {
+        return (value == null) || (findProxied(value) == null);
+    }
+    
     @Override
     public void serialize(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider)
         throws IOException, JsonProcessingException
@@ -129,17 +136,16 @@ public class HibernateProxySerializer
         return result.serializer;
     }
 
-
     /**
      * Helper method for finding value being proxied, if it is available
      * or if it is to be forced to be loaded.
      */
     @SuppressWarnings("serial")
-	protected Object findProxied(HibernateProxy proxy)
+    protected Object findProxied(HibernateProxy proxy)
     {
         LazyInitializer init = proxy.getHibernateLazyInitializer();
         if (!_forceLazyLoading && init.isUninitialized()) {
-        	if(_serializeIdentifier){
+            if (_serializeIdentifier){
                 final String idName;
                 if (_mapping != null) {
                     idName = _mapping.getIdentifierPropertyName(init.getEntityName());
@@ -153,9 +159,8 @@ public class HibernateProxySerializer
                 }
         		final Object idValue = init.getIdentifier();
         		return new HashMap<String, Object>(){{ put(idName, idValue); }};
-        	} else {
-        		return null;
-        	}
+            }
+            return null;
         }
         return init.getImplementation();
     }

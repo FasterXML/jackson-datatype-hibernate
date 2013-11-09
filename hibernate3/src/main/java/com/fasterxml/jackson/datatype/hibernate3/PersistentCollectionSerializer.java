@@ -75,6 +75,19 @@ public class PersistentCollectionSerializer
     /* JsonSerializer impl
     /**********************************************************************
      */
+
+    // since 2.3
+    @Override
+    public boolean isEmpty(Object value)
+    {
+        if (value == null) { // is null ever passed?
+            return true;
+        }
+        if (value instanceof PersistentCollection) {
+            return findLazyValue((PersistentCollection) value) == null;
+        }
+        return false;
+    }
     
     @Override
     public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider)
@@ -127,6 +140,15 @@ public class PersistentCollectionSerializer
     /* Helper methods
     /**********************************************************************
      */
+
+    protected Object findLazyValue(PersistentCollection coll)
+    {
+        // If lazy-loaded, not yet loaded, may serialize as null?
+        if (!_forceLazyLoading && !coll.wasInitialized()) {
+            return null;
+        }
+        return coll.getValue();
+    }
     
     /**
      * Method called to see whether given property indicates it uses lazy
