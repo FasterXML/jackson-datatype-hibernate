@@ -20,7 +20,7 @@ Hibernate (http://hibernate.org) version 3.x data types.
     <hibernate.version>[3.5.0, 3.6.6]</hibernate.version>
 -->
     <hibernate.version>3.6.6.Final</hibernate.version>
-    <osgi.export>com.fasterxml.jackson.module.hibernate3</osgi.export>
+    <osgi.export>com.fasterxml.jackson.datatype.hibernate3</osgi.export>
   </properties>
 
   <dependencies>
