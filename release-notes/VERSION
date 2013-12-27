@@ -1,13 +1,15 @@
 Project: jackson-datatype-hibernate
 Jackson module to support datatypes of Hibernate 3.6 / 4.x, based on Jackson 2.x
 
-2.3.0-1 (05-Dec-2013)
-
-#45: Hibernate3 package was empty due to incorrect OSGi include
+2.3.1 (xx-Dec-2013)
 
 ------------------------------------------------------------------------
 === History: ===
 ------------------------------------------------------------------------
+
+2.3.0-1 (05-Dec-2013)
+
+#45: Hibernate3 package was empty due to incorrect OSGi include
 
 2.3.0 (14-Nov-2013)
 
