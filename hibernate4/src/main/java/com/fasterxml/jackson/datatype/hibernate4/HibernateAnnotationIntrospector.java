@@ -1,11 +1,10 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
-import javax.persistence.Transient;
-
 import com.fasterxml.jackson.core.Version;
-
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.introspect.*;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
+
+import javax.persistence.Transient;
 
 /**
  * Simple {@link AnnotationIntrospector} that adds support for using
@@ -44,22 +43,9 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
     public Version version() {
         return ModuleVersion.instance.version();
     }
-    
-    /*
-    /**********************************************************************
-    /* AnnotationIntrospector implementation/overrides
-    /**********************************************************************
-     */
 
-    public boolean isIgnorableConstructor(AnnotatedConstructor c) {
-        return _cfgCheckTransient && c.hasAnnotation(Transient.class);
-    }
-
-    public boolean isIgnorableField(AnnotatedField f) {
-        return _cfgCheckTransient && f.hasAnnotation(Transient.class);
-    }
-
-    public boolean isIgnorableMethod(AnnotatedMethod m) {
+    @Override
+    public boolean hasIgnoreMarker(AnnotatedMember m) {
         return _cfgCheckTransient && m.hasAnnotation(Transient.class);
     }
 }
