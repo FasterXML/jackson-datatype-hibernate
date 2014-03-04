@@ -1,4 +1,4 @@
-Project to build [Jackson](../../jackson) module (jar) to
+Project to build [Jackson](../../../jackson) module (jar) to
 support JSON serialization and deserialization of Hibernate (http://hibernate.org) specific datatypes
 and properties; especially lazy-loading aspects.
 
@@ -7,7 +7,6 @@ and properties; especially lazy-loading aspects.
 ## Status
 
 As of version 2.0 module is usable and used by non-trivial number of developers and projects.
-Rough edges may still exist; please report any bugs you find.
 
 Note: both Hibernate 3 and 4 are supported, but they require different jar, and Maven artifact names (and jar names differ).
 This document refers to "Hibernate 4" version, but changes with 3 should be little more than replacing "4" in names with "3".
@@ -73,3 +72,8 @@ Then add it as the objectmapper to be used
 ```
 
 If mvc:annotation-driven is not being used, it can be added as a jsonconverter to the messageconverters of RequestMappingHandlerAdapter.
+
+## Other
+
+Project [Wiki](../../wiki) contains links to Javadocs and downloadable jars (from Central Maven repository).
+
