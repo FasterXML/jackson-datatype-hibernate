@@ -51,15 +51,8 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
     /**********************************************************************
      */
 
-    public boolean isIgnorableConstructor(AnnotatedConstructor c) {
-        return _cfgCheckTransient && c.hasAnnotation(Transient.class);
-    }
-
-    public boolean isIgnorableField(AnnotatedField f) {
-        return _cfgCheckTransient && f.hasAnnotation(Transient.class);
-    }
-
-    public boolean isIgnorableMethod(AnnotatedMethod m) {
+    @Override
+    public boolean hasIgnoreMarker(AnnotatedMember m) {
         return _cfgCheckTransient && m.hasAnnotation(Transient.class);
     }
 }
