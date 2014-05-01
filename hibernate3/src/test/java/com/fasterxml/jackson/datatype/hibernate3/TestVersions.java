@@ -6,18 +6,7 @@ import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module;
 
 public class TestVersions extends BaseTest
 {
-    /**
-     * Not a good to do this, but has to do, for now...
-     */
-    private final static int MAJOR_VERSION = 2;
-    private final static int MINOR_VERSION = 3;
-
-    // could inject using Maven filters as well...
-    private final static String GROUP_ID = "com.fasterxml.jackson.datatype";
-    private final static String ARTIFACT_ID = "jackson-datatype-hibernate3";
-    
-    public void testMapperVersions()
-    {
+    public void testMapperVersions() {
         assertVersion(new Hibernate3Module());
     }
 
@@ -31,12 +20,9 @@ public class TestVersions extends BaseTest
     {
         final Version v = vers.version();
         assertFalse("Should find version information (got "+v+")", v.isUknownVersion());
-        assertEquals(MAJOR_VERSION, v.getMajorVersion());
-        assertEquals(MINOR_VERSION, v.getMinorVersion());
-        // Check patch level initially, comment out for maint versions
-//        assertEquals(0, v.getPatchLevel());
-        assertEquals(GROUP_ID, v.getGroupId());
-        assertEquals(ARTIFACT_ID, v.getArtifactId());
+        Version exp = PackageVersion.VERSION;
+        assertEquals(exp.toFullString(), v.toFullString());
+        assertEquals(exp, v);
     }
 }
 
