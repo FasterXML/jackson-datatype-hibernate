@@ -48,7 +48,6 @@ public class PersistentCollectionSerializer
     /**
      * We need to resolve actual serializer once we know the context; specifically
      * must know type of property being serialized.
-     * If not known
      */
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider provider,

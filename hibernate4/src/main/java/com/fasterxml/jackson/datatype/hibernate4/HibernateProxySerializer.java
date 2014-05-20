@@ -145,7 +145,7 @@ public class HibernateProxySerializer
     {
         LazyInitializer init = proxy.getHibernateLazyInitializer();
         if (!_forceLazyLoading && init.isUninitialized()) {
-            if (_serializeIdentifier){
+            if (_serializeIdentifier) {
                 final String idName;
                 if (_mapping != null) {
                     idName = _mapping.getIdentifierPropertyName(init.getEntityName());
@@ -158,7 +158,9 @@ public class HibernateProxySerializer
                     }
                 }
         		final Object idValue = init.getIdentifier();
-        		return new HashMap<String, Object>(){{ put(idName, idValue); }};
+        		HashMap<String, Object> map = new HashMap<String, Object>();
+        		map.put(idName, idValue);
+        		return map;
             }
             return null;
         }
