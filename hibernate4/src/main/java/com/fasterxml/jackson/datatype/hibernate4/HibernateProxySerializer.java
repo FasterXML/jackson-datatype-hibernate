@@ -140,7 +140,6 @@ public class HibernateProxySerializer
      * Helper method for finding value being proxied, if it is available
      * or if it is to be forced to be loaded.
      */
-    @SuppressWarnings("serial")
     protected Object findProxied(HibernateProxy proxy)
     {
         LazyInitializer init = proxy.getHibernateLazyInitializer();

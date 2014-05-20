@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.type.*;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 
 public class HibernateSerializerModifier
     extends BeanSerializerModifier
