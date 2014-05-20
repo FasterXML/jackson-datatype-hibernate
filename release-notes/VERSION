@@ -1,14 +1,19 @@
 Project: jackson-datatype-hibernate
-Jackson module to support datatypes of Hibernate 3.6 / 4.x, based on Jackson 2.x
+Version: 2.4.0 (xx-May-2014)
 
-2.3.3 (xx-xxx-2014)
-
-#47: Feature.USE_TRANSIENT_ANNOTATION does not work
- (repoted by StefanSos@github)
+#53: Add `Hibernate4Module.Feature.REQUIRE_EXPLICIT_LAZY_LOADING_MARKER` to
+  define whether `PersistentCollection`s without annotations should default
+  to Eager (true) or Lazy (false) handling.
+ (suggested by dmurat@github)
 
 ------------------------------------------------------------------------
 === History: ===
 ------------------------------------------------------------------------
+
+2.3.3 (10-Apr-2014)
+
+#47: Feature.USE_TRANSIENT_ANNOTATION does not work
+ (repoted by StefanSos@github)
 
 2.3.2 (01-Mar-2014)
 2.3.1 (28-Dec-2013)

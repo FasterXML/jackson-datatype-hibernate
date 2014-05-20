@@ -20,9 +20,9 @@ public class Hibernate4Module extends Module
         FORCE_LAZY_LOADING(false),
 
         /**
-         * Whether {@link javax.persistence.Transient} annotation should be checked or not; if true, will consider
-         * @Transient to mean that property is to be ignored; if false annotation will
-         * have no effect.
+         * Whether {@link javax.persistence.Transient} annotation should be checked or not;
+         * if true, will consider @Transient to mean that property is to be ignored;
+         * if false annotation will have no effect.
          *<p>
          * Default value is true.
          */
@@ -34,7 +34,24 @@ public class Hibernate4Module extends Module
 	     * <p>
 	     * Default value is false.
 	     */
-        SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS(false)        
+        SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS(false),
+
+        /**
+         * This feature determines how {@link org.hibernate.collection.spi.PersistentCollection}s properties
+         * for which no annotation is found are handled with respect to
+         * lazy-loading: if true, lazy-loading is only assumed if annotation
+         * is used to indicate that; if false, lazy-loading is assumed to be
+         * the default.
+         * Note that {@link #FORCE_LAZY_LOADING} has priority over this Feature;
+         * meaning that if it is defined as true, setting of this Feature has no
+         * effect.
+          * <p>
+          * Default value is false, meaning that laziness is considered to be the
+          * default value.
+         * 
+         * @since 2.4
+         */
+        REQUIRE_EXPLICIT_LAZY_LOADING_MARKER(false),
         ;
 
         final boolean _defaultState;
@@ -59,7 +76,8 @@ public class Hibernate4Module extends Module
             _defaultState = defaultState;
             _mask = (1 << ordinal());
         }
-        
+
+        public boolean enabledIn(int flags) { return (flags & _mask) != 0; }
         public boolean enabledByDefault() { return _defaultState; }
         public int getMask() { return _mask; }
     }
@@ -106,9 +124,8 @@ public class Hibernate4Module extends Module
         if (ai != null) {
             context.appendAnnotationIntrospector(ai);
         }
-        boolean forceLoading = isEnabled(Feature.FORCE_LAZY_LOADING);
-        context.addSerializers(new HibernateSerializers(forceLoading, isEnabled(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS), _mapping));
-        context.addBeanSerializerModifier(new HibernateSerializerModifier(forceLoading));
+        context.addSerializers(new HibernateSerializers(_mapping, _moduleFeatures));
+        context.addBeanSerializerModifier(new HibernateSerializerModifier(_moduleFeatures));
     }
 
     /**

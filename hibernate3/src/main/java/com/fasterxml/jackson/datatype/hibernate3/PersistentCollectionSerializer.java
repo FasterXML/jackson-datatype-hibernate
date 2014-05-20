@@ -178,6 +178,8 @@ public class PersistentCollectionSerializer
             if (ann4 != null) {
                 return (ann4.fetch() == FetchType.LAZY);
             }
+            // As per [Issue#53], let's default to true for Hibernate 3:
+            return true;
         }
         return false;
     }

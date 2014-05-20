@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.*;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 
 /**
  * Wrapper serializer used to handle aspects of lazy loading that can be used
@@ -20,10 +21,7 @@ public class PersistentCollectionSerializer
     extends JsonSerializer<Object>
     implements ContextualSerializer
 {
-    /**
-     * Whether loading of values is forced for lazy references.
-     */
-    protected final boolean _forceLazyLoading;
+    protected final int _features;
 
     /**
      * Serializer that does actual value serialization when value
@@ -38,11 +36,10 @@ public class PersistentCollectionSerializer
      */
 
     @SuppressWarnings("unchecked")
-    public PersistentCollectionSerializer(boolean forceLazyLoading,
-            JsonSerializer<?> serializer)
+    public PersistentCollectionSerializer(JsonSerializer<?> serializer, int features)
     {
-        _forceLazyLoading = forceLazyLoading;
         _serializer = (JsonSerializer<Object>) serializer;
+        _features = features;
     }
 
     /**
@@ -60,11 +57,11 @@ public class PersistentCollectionSerializer
         JsonSerializer<?> ser = provider.handlePrimaryContextualization(_serializer, property);
 
         // If we use eager loading, or force it, can just return underlying serializer as is
-        if (_forceLazyLoading || !usesLazyLoading(property)) {
+        if (Feature.FORCE_LAZY_LOADING.enabledIn(_features) || !usesLazyLoading(property)) {
             return ser;
         }
         if (ser != _serializer) {
-            return new PersistentCollectionSerializer(_forceLazyLoading, ser);
+            return new PersistentCollectionSerializer(ser, _features);
         }
         return this;
     }
@@ -132,7 +129,7 @@ public class PersistentCollectionSerializer
     protected Object findLazyValue(PersistentCollection coll)
     {
         // If lazy-loaded, not yet loaded, may serialize as null?
-        if (!_forceLazyLoading && !coll.wasInitialized()) {
+        if (!Feature.FORCE_LAZY_LOADING.enabledIn(_features) && !coll.wasInitialized()) {
             return null;
         }
         return coll.getValue();
@@ -166,6 +163,8 @@ public class PersistentCollectionSerializer
             if (ann4 != null) {
                 return (ann4.fetch() == FetchType.LAZY);
             }
+            // As per [Issue#53]
+            return !Feature.REQUIRE_EXPLICIT_LAZY_LOADING_MARKER.enabledIn(_features);
         }
         return false;
     }

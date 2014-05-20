@@ -5,6 +5,7 @@ import org.hibernate.proxy.HibernateProxy;
 
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.ser.*;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 
 public class HibernateSerializers extends Serializers.Base
 {
@@ -12,20 +13,14 @@ public class HibernateSerializers extends Serializers.Base
     protected final boolean _serializeIdentifiers;
     protected final Mapping _mapping;
 
-    public HibernateSerializers(boolean forceLoading)
-    {
-        this(forceLoading, false, null);
+    public HibernateSerializers(int features) {
+        this(null, features);
     }
 
-    public HibernateSerializers(boolean forceLoading, boolean serializeIdentifiers)
+    public HibernateSerializers(Mapping mapping, int features)
     {
-        this(forceLoading, serializeIdentifiers, null);
-    }
-
-    public HibernateSerializers(boolean forceLoading, boolean serializeIdentifiers, Mapping mapping)
-    {
-        _forceLoading = forceLoading;
-        _serializeIdentifiers = serializeIdentifiers;
+        _forceLoading = Feature.FORCE_LAZY_LOADING.enabledIn(features);
+        _serializeIdentifiers = Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS.enabledIn(features);
         _mapping = mapping;
     }
 
