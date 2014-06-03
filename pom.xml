@@ -28,8 +28,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.jackson.annotations>2.4.0-rc3</version.jackson.annotations>
-    <version.jackson.core>2.4.0-rc3</version.jackson.core>
+    <version.jackson.annotations>2.4.0</version.jackson.annotations>
+    <version.jackson.core>2.4.0</version.jackson.core>
   </properties>
 
 </project>

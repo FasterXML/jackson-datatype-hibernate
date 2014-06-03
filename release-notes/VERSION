@@ -1,5 +1,5 @@
 Project: jackson-datatype-hibernate
-Version: 2.4.0 (xx-May-2014)
+Version: 2.4.0 (03-Jun-2014)
 
 #53: Add `Hibernate4Module.Feature.REQUIRE_EXPLICIT_LAZY_LOADING_MARKER` to
   define whether `PersistentCollection`s without annotations should default
