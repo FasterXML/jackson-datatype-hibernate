@@ -1,14 +1,17 @@
 Project: jackson-datatype-hibernate
 Jackson module to support datatypes of Hibernate 3.6 / 4.x, based on Jackson 2.x
+Version: 2.3.4 (17-Jul-2014)
+
+No functional changes.
+
+------------------------------------------------------------------------
+=== History: ===
+------------------------------------------------------------------------
 
 2.3.3 (10-Apr-2014)
 
 #47: Feature.USE_TRANSIENT_ANNOTATION does not work
  (repoted by StefanSos@github)
-
-------------------------------------------------------------------------
-=== History: ===
-------------------------------------------------------------------------
 
 2.3.2 (01-Mar-2014)
 2.3.1 (28-Dec-2013)
