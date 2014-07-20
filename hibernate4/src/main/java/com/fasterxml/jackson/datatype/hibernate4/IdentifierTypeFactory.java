@@ -24,6 +24,9 @@ public class IdentifierTypeFactory {
             defaultConstructor.setAccessible(true);
             Object instance = defaultConstructor.newInstance();
             Field idField = getIdField(persistentClass, idName, instance);
+            if(idField == null){
+                throw new NoSuchFieldError("Field "+idName+" not found in class "+persistentClass.getName());
+            }
             if(!idField.isAccessible()){
                 idField.setAccessible(true);
             }
