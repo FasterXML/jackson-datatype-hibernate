@@ -37,7 +37,7 @@ public class HibernateProxySerializer
     protected final boolean _serializeIdentifier;
     protected final boolean _usePersistentClassForIdentifier;
     protected final Mapping _mapping;
-    protected final IdentifierTypeFactory _identifierTyperFactory;
+    protected final IdentifierTypeFactory _identifierTypeFactory;
 
     /**
      * For efficient serializer lookup, let's use this; most
@@ -73,9 +73,9 @@ public class HibernateProxySerializer
         _dynamicSerializers = PropertySerializerMap.emptyMap();
         _property = null;
         if(_usePersistentClassForIdentifier){
-            _identifierTyperFactory = new IdentifierTypeFactory();
+            _identifierTypeFactory = new IdentifierTypeFactory();
         }else {
-            _identifierTyperFactory = null;
+            _identifierTypeFactory = null;
         }
     }
 
@@ -174,7 +174,7 @@ public class HibernateProxySerializer
                 final Object idValue = init.getIdentifier();
                 if (_usePersistentClassForIdentifier) {
                     Class<?> persistentClass = init.getPersistentClass();
-                    Object identifierClass = _identifierTyperFactory.createInstanceWithIdValue(persistentClass, idName, idValue);
+                    Object identifierClass = _identifierTypeFactory.createInstanceWithIdValue(persistentClass, idName, idValue);
                     return identifierClass;
                 } else {
                     HashMap<String, Object> map = new HashMap<String, Object>();
