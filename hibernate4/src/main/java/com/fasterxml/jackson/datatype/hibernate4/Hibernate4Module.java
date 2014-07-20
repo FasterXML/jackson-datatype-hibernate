@@ -1,8 +1,9 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.Version;
-
 import com.fasterxml.jackson.databind.*;
+
 import org.hibernate.engine.spi.Mapping;
 
 public class Hibernate4Module extends Module
@@ -30,6 +31,7 @@ public class Hibernate4Module extends Module
         
 	    /**
 	     * If FORCE_LAZY_LOADING is false lazy-loaded object should be serialized as map IdentifierName=>IdentifierValue
+	     * or as entity class with only id value set (based on SERIALIZE_IDENTIFIER_USE_PERSISTENT_CLASS setting)
 	     * instead of null (true); or serialized as nulls (false)
 	     * <p>
 	     * Default value is false.
@@ -52,6 +54,17 @@ public class Hibernate4Module extends Module
          * @since 2.4
          */
         REQUIRE_EXPLICIT_LAZY_LOADING_MARKER(false),
+        
+        /**
+         * This feature takes effect only when {@link #SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS} is enabled. 
+         * Defines if the serializer should try to create an instance of the actual persistent class 
+         * and set the idValue to the idProperty of the actual class, instead of using a Map. 
+         * This is especially useful, when dealing with inheritance and {@link JsonTypeInfo} so that type information
+         * is not lost for not initialized lazy objects. 
+         * 
+         * @since 2.4
+         */
+        SERIALIZE_IDENTIFIER_USE_PERSISTENT_CLASS(false)
         ;
 
         final boolean _defaultState;
