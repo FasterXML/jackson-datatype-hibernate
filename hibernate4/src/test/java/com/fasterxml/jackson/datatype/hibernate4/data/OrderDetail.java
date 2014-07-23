@@ -54,7 +54,7 @@ public class OrderDetail  implements java.io.Serializable {
     }
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="orderNumber", nullable=false, insertable=false, updatable=false)
-    @JsonBackReference
+    @JsonBackReference("orderdetail-order")
     public Order getOrder() {
         return this.order;
     }
@@ -64,7 +64,7 @@ public class OrderDetail  implements java.io.Serializable {
     }
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="productCode", nullable=false, insertable=false, updatable=false)
-    @JsonBackReference
+    @JsonBackReference("order-product")
     public Product getProduct() {
         return this.product;
     }

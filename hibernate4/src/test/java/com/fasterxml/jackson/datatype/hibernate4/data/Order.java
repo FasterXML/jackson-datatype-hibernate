@@ -67,7 +67,7 @@ public class Order  implements java.io.Serializable {
     }
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="customerNumber", nullable=false)
-    @JsonBackReference
+    @JsonBackReference("order-customer")
     public Customer getCustomer() {
         return this.customer;
     }

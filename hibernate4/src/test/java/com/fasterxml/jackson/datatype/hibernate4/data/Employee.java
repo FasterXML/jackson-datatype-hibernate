@@ -125,8 +125,7 @@ public class Employee  implements java.io.Serializable
     public Set<Customer> getCustomers() {
         return this.customers;
     }
-    
-    @JsonManagedReference
+
     public void setCustomers(Set<Customer> customers) {
         this.customers = customers;
     }

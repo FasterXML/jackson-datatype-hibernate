@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import javax.persistence.Transient;
 
 /**
- * Simple {@link AnnotationIntrospector} that adds support for using
- * {@link Transient} to denote ignorable fields (alongside with Jackson
+ * Simple {@link com.fasterxml.jackson.databind.AnnotationIntrospector} that adds support for using
+ * {@link javax.persistence.Transient} to denote ignorable fields (alongside with Jackson
  * and/or JAXB annotations).
  */
 public class HibernateAnnotationIntrospector extends AnnotationIntrospector

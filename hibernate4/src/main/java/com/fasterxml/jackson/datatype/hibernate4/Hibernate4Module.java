@@ -1,12 +1,14 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
 import com.fasterxml.jackson.core.Version;
-
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.Module;
+import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.Mapping;
 
 public class Hibernate4Module extends Module
 {
+
     /**
      * Enumeration that defines all toggleable features this module
      */
@@ -96,6 +98,8 @@ public class Hibernate4Module extends Module
      */
     protected final Mapping _mapping;
 
+    protected final SessionFactory _sessionFactory;
+
     /*
     /**********************************************************************
     /* Life-cycle
@@ -103,16 +107,25 @@ public class Hibernate4Module extends Module
      */
 
     public Hibernate4Module() {
-        this(null);
+        this(null, null);
     }
 
     public Hibernate4Module(Mapping mapping) {
+        this(mapping, null);
+    }
+
+    public Hibernate4Module(SessionFactory sessionFactory) {
+        this(null, sessionFactory);
+    }
+
+    public Hibernate4Module(Mapping mapping, SessionFactory sessionFactory) {
+        _sessionFactory = sessionFactory;
         _mapping = mapping;
     }
 
     @Override public String getModuleName() { return "jackson-datatype-hibernate"; }
     @Override public Version version() { return ModuleVersion.instance.version(); }
-    
+
     @Override
     public void setupModule(SetupContext context)
     {
@@ -125,11 +138,11 @@ public class Hibernate4Module extends Module
             context.appendAnnotationIntrospector(ai);
         }
         context.addSerializers(new HibernateSerializers(_mapping, _moduleFeatures));
-        context.addBeanSerializerModifier(new HibernateSerializerModifier(_moduleFeatures));
+        context.addBeanSerializerModifier(new HibernateSerializerModifier(_moduleFeatures, _sessionFactory));
     }
 
     /**
-     * Method called during {@link #setupModule}, to create {@link AnnotationIntrospector}
+     * Method called during {@link #setupModule}, to create {@link com.fasterxml.jackson.databind.AnnotationIntrospector}
      * to register along with module. If null is returned, no introspector is added.
      */
     protected AnnotationIntrospector annotationIntrospector() {
