@@ -1,16 +1,25 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.ContextualSerializer;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
+import org.hibernate.FlushMode;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.collection.spi.PersistentCollection;
+import org.hibernate.engine.spi.PersistenceContext;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
 
 import javax.persistence.*;
-
-import org.hibernate.collection.spi.PersistentCollection;
-
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import com.fasterxml.jackson.databind.ser.*;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
+import java.io.IOException;
 
 /**
  * Wrapper serializer used to handle aspects of lazy loading that can be used
@@ -18,9 +27,8 @@ import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
  * and <code>Map</code> types (unlike in JDK).
  */
 public class PersistentCollectionSerializer
-    extends JsonSerializer<Object>
-    implements ContextualSerializer
-{
+        extends JsonSerializer<Object>
+        implements ContextualSerializer {
     protected final int _features;
 
     /**
@@ -29,6 +37,8 @@ public class PersistentCollectionSerializer
      */
     protected final JsonSerializer<Object> _serializer;
 
+    protected final SessionFactory _sessionFactory;
+
     /*
     /**********************************************************************
     /* Life cycle
@@ -36,10 +46,10 @@ public class PersistentCollectionSerializer
      */
 
     @SuppressWarnings("unchecked")
-    public PersistentCollectionSerializer(JsonSerializer<?> serializer, int features)
-    {
+    public PersistentCollectionSerializer(JsonSerializer<?> serializer, int features, SessionFactory sessionFactory) {
         _serializer = (JsonSerializer<Object>) serializer;
         _features = features;
+        _sessionFactory = sessionFactory;
     }
 
     /**
@@ -48,20 +58,19 @@ public class PersistentCollectionSerializer
      */
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider provider,
-            BeanProperty property)
-        throws JsonMappingException
-    {
+                                              BeanProperty property)
+            throws JsonMappingException {
         /* 18-Oct-2013, tatu: Whether this is for the primary property or secondary is
          *   not quite certain; presume primary one for now.
          */
         JsonSerializer<?> ser = provider.handlePrimaryContextualization(_serializer, property);
 
         // If we use eager loading, or force it, can just return underlying serializer as is
-        if (Feature.FORCE_LAZY_LOADING.enabledIn(_features) || !usesLazyLoading(property)) {
+        if (/*Feature.FORCE_LAZY_LOADING.enabledIn(_features) || */!usesLazyLoading(property)) {
             return ser;
         }
         if (ser != _serializer) {
-            return new PersistentCollectionSerializer(ser, _features);
+            return new PersistentCollectionSerializer(ser, _features, _sessionFactory);
         }
         return this;
     }
@@ -74,8 +83,7 @@ public class PersistentCollectionSerializer
 
     // since 2.3
     @Override
-    public boolean isEmpty(Object value)
-    {
+    public boolean isEmpty(Object value) {
         if (value == null) { // is null ever passed?
             return true;
         }
@@ -84,11 +92,10 @@ public class PersistentCollectionSerializer
         }
         return false;
     }
-    
+
     @Override
     public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider)
-        throws IOException, JsonProcessingException
-    {
+            throws IOException, JsonProcessingException {
         if (value instanceof PersistentCollection) {
             value = findLazyValue((PersistentCollection) value);
             if (value == null) {
@@ -101,12 +108,11 @@ public class PersistentCollectionSerializer
         }
         _serializer.serialize(value, jgen, provider);
     }
-    
+
     @Override
     public void serializeWithType(Object value, JsonGenerator jgen, SerializerProvider provider,
-            TypeSerializer typeSer)
-        throws IOException, JsonProcessingException
-    {
+                                  TypeSerializer typeSer)
+            throws IOException, JsonProcessingException {
         if (value instanceof PersistentCollection) {
             value = findLazyValue((PersistentCollection) value);
             if (value == null) {
@@ -126,21 +132,63 @@ public class PersistentCollectionSerializer
     /**********************************************************************
      */
 
-    protected Object findLazyValue(PersistentCollection coll)
-    {
+    protected Object findLazyValue(PersistentCollection coll) {
         // If lazy-loaded, not yet loaded, may serialize as null?
         if (!Feature.FORCE_LAZY_LOADING.enabledIn(_features) && !coll.wasInitialized()) {
             return null;
         }
+
+        if(_sessionFactory != null) {
+            Session session = openTemporarySessionForLoading(coll);
+            initializeCollection(coll, session);
+        }
+
         return coll.getValue();
     }
-    
+
+    // Most of the code bellow is from Hibernate AbstractPersistentCollection
+    private Session openTemporarySessionForLoading(PersistentCollection coll) {
+
+        final SessionFactory sf = _sessionFactory;
+        final Session session = sf.openSession();
+
+        PersistenceContext persistenceContext = ((SessionImplementor) session).getPersistenceContext();
+        persistenceContext.setDefaultReadOnly(true);
+        session.setFlushMode(FlushMode.MANUAL);
+
+        persistenceContext.addUninitializedDetachedCollection(
+                ((SessionFactoryImplementor) _sessionFactory).getCollectionPersister(coll.getRole()),
+                coll
+        );
+
+        return session;
+    }
+
+    private void initializeCollection(PersistentCollection coll, Session session) {
+
+        boolean isJTA = ((SessionImplementor) session).getTransactionCoordinator()
+                .getTransactionContext().getTransactionEnvironment()
+                .getTransactionFactory()
+                .compatibleWithJtaSynchronization();
+
+        if (!isJTA) {
+            session.beginTransaction();
+        }
+
+        coll.setCurrentSession(((SessionImplementor) session));
+        Hibernate.initialize(coll);
+
+        if (!isJTA) {
+            session.getTransaction().commit();
+        }
+        session.close();
+    }
+
     /**
      * Method called to see whether given property indicates it uses lazy
      * resolution of reference contained.
      */
-    protected boolean usesLazyLoading(BeanProperty property)
-    {
+    protected boolean usesLazyLoading(BeanProperty property) {
         if (property != null) {
             // As per [Issue#36]
             ElementCollection ec = property.getAnnotation(ElementCollection.class);
