@@ -65,8 +65,8 @@ public class PersistentCollectionSerializer
          */
         JsonSerializer<?> ser = provider.handlePrimaryContextualization(_serializer, property);
 
-        // If we use eager loading, or force it, can just return underlying serializer as is
-        if (/*Feature.FORCE_LAZY_LOADING.enabledIn(_features) || */!usesLazyLoading(property)) {
+        // If we use eager loading, can just return underlying serializer as is
+        if (!usesLazyLoading(property)) {
             return ser;
         }
         if (ser != _serializer) {
