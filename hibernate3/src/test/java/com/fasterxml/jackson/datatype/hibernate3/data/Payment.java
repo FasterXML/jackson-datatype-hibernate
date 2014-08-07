@@ -1,6 +1,8 @@
 package com.fasterxml.jackson.datatype.hibernate3.data;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -47,8 +49,9 @@ public class Payment  implements java.io.Serializable {
     public void setId(PaymentId id) {
         this.id = id;
     }
-@ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="customerNumber", nullable=false, insertable=false, updatable=false)
+    @JsonIgnore
     public Customer getCustomer() {
         return this.customer;
     }

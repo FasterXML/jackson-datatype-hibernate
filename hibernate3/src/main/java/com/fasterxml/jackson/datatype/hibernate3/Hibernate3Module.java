@@ -3,6 +3,7 @@ package com.fasterxml.jackson.datatype.hibernate3;
 import com.fasterxml.jackson.core.Version;
 
 import com.fasterxml.jackson.databind.*;
+import org.hibernate.SessionFactory;
 
 public class Hibernate3Module extends Module
 {
@@ -81,6 +82,8 @@ public class Hibernate3Module extends Module
      * are enabled.
      */
     protected int _moduleFeatures = DEFAULT_FEATURES;
+
+    protected final SessionFactory _sessionFactory;
     
     /*
     /**********************************************************************
@@ -88,7 +91,13 @@ public class Hibernate3Module extends Module
     /**********************************************************************
      */
     
-    public Hibernate3Module() { }
+    public Hibernate3Module() {
+        this(null);
+    }
+
+    public Hibernate3Module(SessionFactory sessionFactory) {
+        _sessionFactory = sessionFactory;
+    }
 
     @Override public String getModuleName() { return "jackson-datatype-hibernate"; }
     @Override public Version version() { return ModuleVersion.instance.version(); }
@@ -105,7 +114,7 @@ public class Hibernate3Module extends Module
             context.appendAnnotationIntrospector(ai);
         }
         context.addSerializers(new HibernateSerializers(_moduleFeatures));
-        context.addBeanSerializerModifier(new HibernateSerializerModifier(_moduleFeatures));
+        context.addBeanSerializerModifier(new HibernateSerializerModifier(_moduleFeatures, _sessionFactory));
     }
 
     /**

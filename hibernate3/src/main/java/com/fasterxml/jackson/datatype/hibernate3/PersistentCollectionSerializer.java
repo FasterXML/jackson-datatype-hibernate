@@ -2,8 +2,10 @@ package com.fasterxml.jackson.datatype.hibernate3;
 
 import java.io.IOException;
 
-import javax.persistence.*;
-
+import org.hibernate.FlushMode;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.collection.PersistentCollection;
 
 import com.fasterxml.jackson.core.*;
@@ -11,6 +13,14 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.*;
 import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module.Feature;
+import org.hibernate.engine.PersistenceContext;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.SessionImplementor;
+import org.hibernate.impl.SessionFactoryImpl;
+import org.hibernate.transaction.JDBCTransactionFactory;
+import org.hibernate.transaction.TransactionFactory;
+
+import javax.persistence.*;
 
 /**
  * Wrapper serializer used to handle aspects of lazy loading that can be used
@@ -29,6 +39,8 @@ public class PersistentCollectionSerializer
      */
     protected final JsonSerializer<Object> _serializer;
 
+    protected final SessionFactory _sessionFactory;
+
     /*
     /**********************************************************************
     /* Life cycle
@@ -36,10 +48,11 @@ public class PersistentCollectionSerializer
      */
 
     @SuppressWarnings("unchecked")
-    public PersistentCollectionSerializer(JsonSerializer<?> serializer, int features)
+    public PersistentCollectionSerializer(JsonSerializer<?> serializer, int features, SessionFactory sessionFactory)
     {
         _serializer = (JsonSerializer<Object>) serializer;
         _features = features;
+        _sessionFactory = sessionFactory;
     }
 
     /**
@@ -58,11 +71,11 @@ public class PersistentCollectionSerializer
         JsonSerializer<?> ser = provider.handlePrimaryContextualization(_serializer, property);
         
         // If we use eager loading, or force it, can just return underlying serializer as is
-        if (Feature.FORCE_LAZY_LOADING.enabledIn(_features) || !usesLazyLoading(property)) {
+        if (!usesLazyLoading(property)) {
             return ser;
         }
         if (ser != _serializer) {
-            return new PersistentCollectionSerializer(ser, _features);
+            return new PersistentCollectionSerializer(ser, _features, _sessionFactory);
         }
         return this;
     }
@@ -144,7 +157,54 @@ public class PersistentCollectionSerializer
         if (!Feature.FORCE_LAZY_LOADING.enabledIn(_features) && !coll.wasInitialized()) {
             return null;
         }
+
+        if(_sessionFactory != null) {
+            Session session = openTemporarySessionForLoading(coll);
+            initializeCollection(coll, session);
+        }
+
         return coll.getValue();
+    }
+
+    // Most of the code bellow is from Hibernate AbstractPersistentCollection
+    private Session openTemporarySessionForLoading(PersistentCollection coll) {
+
+        final SessionFactory sf = _sessionFactory;
+        final Session session = sf.openSession();
+
+        PersistenceContext persistenceContext = ((SessionImplementor) session).getPersistenceContext();
+        persistenceContext.setDefaultReadOnly(true);
+        session.setFlushMode(FlushMode.MANUAL);
+
+        persistenceContext.addUninitializedDetachedCollection(
+                ((SessionFactoryImplementor) _sessionFactory).getCollectionPersister(coll.getRole()),
+                coll
+        );
+
+        return session;
+    }
+
+    private void initializeCollection(PersistentCollection coll, Session session) {
+
+        SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl)((SessionImplementor) session).getFactory();
+        TransactionFactory transactionFactory =  sessionFactoryImpl.getTransactionFactory();
+
+        boolean isJTA = true;
+        if(transactionFactory instanceof JDBCTransactionFactory) {
+            isJTA = false;
+        }
+
+        if (!isJTA) {
+            session.beginTransaction();
+        }
+
+        coll.setCurrentSession(((SessionImplementor) session));
+        Hibernate.initialize(coll);
+
+        if (!isJTA) {
+            session.getTransaction().commit();
+        }
+        session.close();
     }
     
     /**
