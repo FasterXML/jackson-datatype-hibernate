@@ -74,7 +74,6 @@ public class Customer  implements java.io.Serializable
         return this.employee;
     }
     
-    @JsonBackReference
     public void setEmployee(Employee employee) {
         this.employee = employee;
     }
