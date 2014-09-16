@@ -20,7 +20,7 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
      * Whether we should check for existence of @Transient or not.
      * Default value is 'true'.
      */
-    protected boolean _cfgCheckTransient;
+    protected boolean _cfgCheckTransient = true;
 
     /*
     /**********************************************************************

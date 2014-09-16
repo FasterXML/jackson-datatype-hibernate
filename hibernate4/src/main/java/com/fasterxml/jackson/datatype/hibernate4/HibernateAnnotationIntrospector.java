@@ -19,7 +19,7 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
      * Whether we should check for existence of @Transient or not.
      * Default value is 'true'.
      */
-    protected boolean _cfgCheckTransient;
+    protected boolean _cfgCheckTransient = true;
 
     /*
     /**********************************************************************
@@ -39,11 +39,30 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
         return this;
     }
 
+    /**
+     * @since 2.5
+     */
+    public boolean doesUseTransient() {
+         return _cfgCheckTransient;
+    }
+
+    /*
+    /**********************************************************************
+    /* Standard method impl/overrides
+    /**********************************************************************
+     */
+    
     @Override
     public Version version() {
         return ModuleVersion.instance.version();
     }
 
+    /*
+    /**********************************************************************
+    /* Annotation introspection methods
+    /**********************************************************************
+     */
+    
     @Override
     public boolean hasIgnoreMarker(AnnotatedMember m) {
         return _cfgCheckTransient && m.hasAnnotation(Transient.class);

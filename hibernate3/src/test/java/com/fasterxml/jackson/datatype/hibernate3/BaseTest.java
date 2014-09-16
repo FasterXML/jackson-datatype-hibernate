@@ -8,16 +8,19 @@ import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module;
 public abstract class BaseTest extends junit.framework.TestCase
 {
     protected BaseTest() { }
-    
+
     protected ObjectMapper mapperWithModule(boolean forceLazyLoading)
     {
-        ObjectMapper mapper = new ObjectMapper();
-        Hibernate3Module mod = new Hibernate3Module();
-        mod.configure(Hibernate3Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
-        mapper.registerModule(mod);
-        return mapper;
+        return new ObjectMapper().registerModule(hibernateModule(forceLazyLoading));
     }
-    
+
+    protected Hibernate3Module hibernateModule(boolean forceLazyLoading)
+    {
+         Hibernate3Module mod = new Hibernate3Module();
+        mod.configure(Hibernate3Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
+        return mod;
+    }
+
     protected ObjectMapper mapperWithModule()
     {
         ObjectMapper mapper = new ObjectMapper();
@@ -38,4 +41,7 @@ public abstract class BaseTest extends junit.framework.TestCase
         fail("Expected an exception with one of substrings ("+Arrays.asList(matches)+"): got one with message \""+msg+"\"");
     }
     
+    protected String aposToQuotes(String json) {
+         return json.replace("'", "\"");
+     }
 }

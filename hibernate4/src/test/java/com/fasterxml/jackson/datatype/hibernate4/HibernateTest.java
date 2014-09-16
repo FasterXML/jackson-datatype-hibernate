@@ -14,7 +14,7 @@ import com.fasterxml.jackson.datatype.hibernate4.data.Employee;
 
 public class HibernateTest extends BaseTest
 {
-    EntityManagerFactory emf;
+    protected EntityManagerFactory emf;
 
     @Override
     public void setUp() {
@@ -28,6 +28,12 @@ public class HibernateTest extends BaseTest
         }
     }
 
+    /*
+    /**********************************************************************
+    /* Test methods
+    /**********************************************************************
+     */
+    
     @Test
     public void testGetEntityManager() {
         EntityManager em = emf.createEntityManager();
