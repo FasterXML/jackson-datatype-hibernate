@@ -38,4 +38,7 @@ public abstract class BaseTest extends junit.framework.TestCase
         fail("Expected an exception with one of substrings ("+Arrays.asList(matches)+"): got one with message \""+msg+"\"");
     }
     
+    protected String aposToQuotes(String json) {
+         return json.replace("'", "\"");
+     }
 }
