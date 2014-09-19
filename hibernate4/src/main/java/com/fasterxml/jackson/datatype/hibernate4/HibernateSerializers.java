@@ -11,6 +11,7 @@ public class HibernateSerializers extends Serializers.Base
 {
     protected final boolean _forceLoading;
     protected final boolean _serializeIdentifiers;
+    protected final boolean _usePersistentClassForIdentifier;
     protected final Mapping _mapping;
 
     public HibernateSerializers(int features) {
@@ -21,6 +22,7 @@ public class HibernateSerializers extends Serializers.Base
     {
         _forceLoading = Feature.FORCE_LAZY_LOADING.enabledIn(features);
         _serializeIdentifiers = Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS.enabledIn(features);
+        _usePersistentClassForIdentifier = Feature.SERIALIZE_IDENTIFIER_USE_PERSISTENT_CLASS.enabledIn(features);
         _mapping = mapping;
     }
 
@@ -30,7 +32,7 @@ public class HibernateSerializers extends Serializers.Base
     {
         Class<?> raw = type.getRawClass();
         if (HibernateProxy.class.isAssignableFrom(raw)) {
-            return new HibernateProxySerializer(_forceLoading, _serializeIdentifiers, _mapping);
+            return new HibernateProxySerializer(_forceLoading, _serializeIdentifiers, _usePersistentClassForIdentifier, _mapping);
         }
         return null;
     }

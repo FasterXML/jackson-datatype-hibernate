@@ -8,9 +8,11 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 
-import com.fasterxml.jackson.core.*;
-
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
 
@@ -24,7 +26,7 @@ import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
  * this one) have.
  */
 public class HibernateProxySerializer
-    extends JsonSerializer<HibernateProxy>
+        extends JsonSerializer<HibernateProxy>
 {
     /**
      * Property that has proxy value to handle
@@ -33,14 +35,16 @@ public class HibernateProxySerializer
 
     protected final boolean _forceLazyLoading;
     protected final boolean _serializeIdentifier;
+    protected final boolean _usePersistentClassForIdentifier;
     protected final Mapping _mapping;
+    protected final IdentifierTypeFactory _identifierTypeFactory;
 
     /**
      * For efficient serializer lookup, let's use this; most
      * of the time, there's just one type and one serializer.
      */
     protected PropertySerializerMap _dynamicSerializers;
-    
+
     /*
     /**********************************************************************
     /* Life cycle
@@ -57,13 +61,24 @@ public class HibernateProxySerializer
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping) {
+        this(forceLazyLoading, serializeIdentifier, false, mapping);
+    }
+
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier,
+            boolean usePersistentClassForIdentifier, Mapping mapping) {
         _forceLazyLoading = forceLazyLoading;
         _serializeIdentifier = serializeIdentifier;
+        _usePersistentClassForIdentifier = usePersistentClassForIdentifier;
         _mapping = mapping;
         _dynamicSerializers = PropertySerializerMap.emptyMap();
         _property = null;
+        if(_usePersistentClassForIdentifier){
+            _identifierTypeFactory = new IdentifierTypeFactory();
+        }else {
+            _identifierTypeFactory = null;
+        }
     }
-    
+
     /*
     /**********************************************************************
     /* JsonSerializer impl
@@ -76,10 +91,10 @@ public class HibernateProxySerializer
     {
         return (value == null) || (findProxied(value) == null);
     }
-    
+
     @Override
     public void serialize(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider)
-        throws IOException, JsonProcessingException
+            throws IOException, JsonProcessingException
     {
         Object proxiedValue = findProxied(value);
         // TODO: figure out how to suppress nulls, if necessary? (too late for that here)
@@ -93,7 +108,7 @@ public class HibernateProxySerializer
     @Override
     public void serializeWithType(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider,
             TypeSerializer typeSer)
-        throws IOException, JsonProcessingException
+            throws IOException, JsonProcessingException
     {
         Object proxiedValue = findProxied(value);
         if (proxiedValue == null) {
@@ -115,7 +130,7 @@ public class HibernateProxySerializer
      */
 
     protected JsonSerializer<Object> findSerializer(SerializerProvider provider, Object value)
-        throws IOException, JsonProcessingException
+            throws IOException, JsonProcessingException
     {
         /* TODO: if Hibernate did use generics, or we wanted to allow use of Jackson
          *  annotations to indicate type, should take that into account.
@@ -156,13 +171,26 @@ public class HibernateProxySerializer
                         idName = init.getEntityName();
                     }
                 }
-        		final Object idValue = init.getIdentifier();
-        		HashMap<String, Object> map = new HashMap<String, Object>();
-        		map.put(idName, idValue);
-        		return map;
+                final Object idValue = init.getIdentifier();
+                if (_usePersistentClassForIdentifier) {
+                    Class<?> persistentClass = init.getPersistentClass();
+                    Object identifierClass = _identifierTypeFactory.createInstanceWithIdValue(persistentClass, idName, idValue);
+                    return identifierClass;
+                } else {
+                    HashMap<String, Object> map = new HashMap<String, Object>();
+                    map.put(idName, idValue);
+                    return map;
+                }
             }
             return null;
         }
         return init.getImplementation();
     }
+
+
+        
+    public static void clearIdFieldCache(){
+        IdentifierTypeFactory._idFieldCache.clear();
+    }
+
 }
