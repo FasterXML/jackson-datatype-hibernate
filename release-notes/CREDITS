@@ -11,3 +11,8 @@ Daan van Dijk (drvdijk@github):
 
 #39: NullPointerException trying to serialize ManyToMany proxied values
  (2.2.3)
+
+Edouard Oger (eoger@github)
+
+#25/#59: Allow passing of `SessionFactory` to help with	forced lazy-loading
+ (2.5.0)
