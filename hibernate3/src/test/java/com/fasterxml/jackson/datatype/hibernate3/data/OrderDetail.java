@@ -1,6 +1,8 @@
 package com.fasterxml.jackson.datatype.hibernate3.data;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -50,8 +52,9 @@ public class OrderDetail  implements java.io.Serializable {
     public void setId(OrderDetailId id) {
         this.id = id;
     }
-@ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="orderNumber", nullable=false, insertable=false, updatable=false)
+    @JsonBackReference("orderdetail-order")
     public Order getOrder() {
         return this.order;
     }
@@ -59,8 +62,9 @@ public class OrderDetail  implements java.io.Serializable {
     public void setOrder(Order order) {
         this.order = order;
     }
-@ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="productCode", nullable=false, insertable=false, updatable=false)
+    @JsonBackReference("order-product")
     public Product getProduct() {
         return this.product;
     }

@@ -1,21 +1,22 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
-import java.io.IOException;
-import java.util.HashMap;
-
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 
-import com.fasterxml.jackson.core.*;
-
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
- * Serializer to use for values proxied using {@link HibernateProxy}.
+ * Serializer to use for values proxied using {@link org.hibernate.proxy.HibernateProxy}.
  *<p>
  * TODO: should try to make this work more like Jackson
  * <code>BeanPropertyWriter</code>, possibly sub-classing

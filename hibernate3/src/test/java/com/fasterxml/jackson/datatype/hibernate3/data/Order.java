@@ -1,6 +1,8 @@
 package com.fasterxml.jackson.datatype.hibernate3.data;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +20,7 @@ import javax.persistence.Table;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name="Order"
+@Table(name="\"ORDER\""
     ,catalog="classicmodels"
 )
 public class Order  implements java.io.Serializable {
@@ -63,8 +65,9 @@ public class Order  implements java.io.Serializable {
     public void setOrderNumber(Integer orderNumber) {
         this.orderNumber = orderNumber;
     }
-@ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="customerNumber", nullable=false)
+    @JsonBackReference("order-customer")
     public Customer getCustomer() {
         return this.customer;
     }

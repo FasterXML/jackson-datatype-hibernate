@@ -67,14 +67,13 @@ public class Customer  implements java.io.Serializable
         this.customerNumber = customerNumber;
     }
 
-    @JsonBackReference
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="salesRepEmployeeNumber")
+    @JsonBackReference
     public Employee getEmployee() {
         return this.employee;
     }
-    
-    @JsonBackReference
+
     public void setEmployee(Employee employee) {
         this.employee = employee;
     }
