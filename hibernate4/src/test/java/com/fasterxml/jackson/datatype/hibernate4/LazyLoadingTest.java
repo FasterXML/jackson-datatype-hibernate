@@ -25,7 +25,7 @@ public class LazyLoadingTest extends BaseTest
             EntityManager em = emf.createEntityManager();
             
             // false -> no forcing of lazy loading
-            ObjectMapper mapper = mapperWithModule(false);
+            ObjectMapper mapper = mapperWithModule();
             
             Customer customer = em.find(Customer.class, 103);
             assertFalse(Hibernate.isInitialized(customer.getPayments()));

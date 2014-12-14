@@ -1,14 +1,17 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 import com.fasterxml.jackson.datatype.hibernate4.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate4.data.Payment;
+
 import org.hibernate.Hibernate;
 import org.junit.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -22,10 +25,9 @@ public class ForceLazyLoadingTest extends BaseTest
 
         try {
             EntityManager em = emf.createEntityManager();
-            
-            // false -> no forcing of lazy loading
-            ObjectMapper mapper = mapperWithModule(true);
-            
+
+            ObjectMapper mapper = mapperWithModule(Feature.FORCE_LAZY_LOADING, true);
+
             Customer customer = em.find(Customer.class, 103);
             assertFalse(Hibernate.isInitialized(customer.getPayments()));
             String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(customer);

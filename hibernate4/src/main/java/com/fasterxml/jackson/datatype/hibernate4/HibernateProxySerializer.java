@@ -33,7 +33,8 @@ public class HibernateProxySerializer
     protected final BeanProperty _property;
 
     protected final boolean _forceLazyLoading;
-    protected final boolean _serializeIdentifier;
+    protected final boolean _serializeIdentifierIfNotInitialized;
+    protected final boolean _alwaysSerializeIdentifier;
     protected final Mapping _mapping;
 
     /**
@@ -50,16 +51,23 @@ public class HibernateProxySerializer
 
     public HibernateProxySerializer(boolean forceLazyLoading)
     {
-        this(forceLazyLoading, false, null);
+        this(forceLazyLoading, false, false, null);
     }
 
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
-        this(forceLazyLoading, serializeIdentifier, null);
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifierIfNotInitialized) {
+        this(forceLazyLoading, serializeIdentifierIfNotInitialized, false, null);
     }
 
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping) {
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifierIfNotInitialized,
+            boolean serializeIdentifierOnly) {
+        this(forceLazyLoading, serializeIdentifierIfNotInitialized, serializeIdentifierOnly, null);
+    }
+
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifierIfNotInitialized,
+            boolean alwaysSerializeIdentifier, Mapping mapping) {
         _forceLazyLoading = forceLazyLoading;
-        _serializeIdentifier = serializeIdentifier;
+        _serializeIdentifierIfNotInitialized = serializeIdentifierIfNotInitialized;
+        _alwaysSerializeIdentifier = alwaysSerializeIdentifier;
         _mapping = mapping;
         _dynamicSerializers = PropertySerializerMap.emptyMap();
         _property = null;
@@ -144,8 +152,8 @@ public class HibernateProxySerializer
     protected Object findProxied(HibernateProxy proxy)
     {
         LazyInitializer init = proxy.getHibernateLazyInitializer();
-        if (!_forceLazyLoading && init.isUninitialized()) {
-            if (_serializeIdentifier) {
+        if (_alwaysSerializeIdentifier || (!_forceLazyLoading && init.isUninitialized())) {
+            if (_alwaysSerializeIdentifier || _serializeIdentifierIfNotInitialized) {
                 final String idName;
                 if (_mapping != null) {
                     idName = _mapping.getIdentifierPropertyName(init.getEntityName());

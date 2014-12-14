@@ -43,7 +43,7 @@ public class HibernateTest extends BaseTest
     @Test
     public void testGetCustomerJson() throws Exception {
         EntityManager em = emf.createEntityManager();
-        ObjectMapper mapper = mapperWithModule(false);
+        ObjectMapper mapper = mapperWithModule();
         String json = mapper.writeValueAsString(em.find(Customer.class, 103));
         
         // TODO: verify
@@ -62,7 +62,7 @@ public class HibernateTest extends BaseTest
         
         Query query = em.createQuery("select c from Customer c");
         // false -> no forcing of lazy loading
-        ObjectMapper mapper = mapperWithModule(false);
+        ObjectMapper mapper = mapperWithModule();
         String json = mapper.writeValueAsString(query.getResultList());
 
         // TODO: verify
@@ -89,7 +89,7 @@ public class HibernateTest extends BaseTest
         Assert.assertTrue(salesEmployee.getCustomers().size()>0);
         
         // false -> no forcing of lazy loading
-        ObjectMapper mapper = mapperWithModule(false);
+        ObjectMapper mapper = mapperWithModule();
         String json = mapper.writeValueAsString(salesEmployee);
 
         // Ok; let's try reading back
