@@ -39,6 +39,14 @@ public class Hibernate4Module extends Module
         SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS(false),
 
         /**
+         * Serialize all Hibernate lazy loaded object properties as map IdentifierName=>IdentifierValue,
+         * even if the object has already been loaded.
+         * <p>
+         * Default value is false.
+         */
+        ALWAYS_SERIALIZE_LAZY_LOADED_OBJECTS_AS_IDENTIFIER(false),
+
+        /**
          * This feature determines how {@link org.hibernate.collection.spi.PersistentCollection}s properties
          * for which no annotation is found are handled with respect to
          * lazy-loading: if true, lazy-loading is only assumed if annotation

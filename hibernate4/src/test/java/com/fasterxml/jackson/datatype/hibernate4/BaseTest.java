@@ -4,20 +4,33 @@ import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 
 public abstract class BaseTest extends junit.framework.TestCase
 {
     protected BaseTest() { }
 
-    protected ObjectMapper mapperWithModule(boolean forceLazyLoading)
+    protected ObjectMapper mapperWithModule()
     {
-        return new ObjectMapper().registerModule(hibernateModule(forceLazyLoading));
+        return new ObjectMapper().registerModule(hibernateModule());
     }
 
-    protected Hibernate4Module hibernateModule(boolean forceLazyLoading)
+    protected ObjectMapper mapperWithModule(Feature f, boolean state)
+    {
+        return new ObjectMapper().registerModule(hibernateModule(f, state));
+    }
+
+    protected Hibernate4Module hibernateModule()
+    {
+        return hibernateModule(null, false);
+    }
+
+    protected Hibernate4Module hibernateModule(Feature f, boolean state)
     {
         Hibernate4Module mod = new Hibernate4Module();
-        mod.configure(Hibernate4Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
+        if (f != null) {
+            mod.configure(f, state);
+        }
         return mod;
     }
     

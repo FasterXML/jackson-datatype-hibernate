@@ -27,13 +27,11 @@ public class TransientTest extends BaseTest
      public void testSimpleTransient() throws Exception
      {
           // First, with defaults, which allow use of Transient
-          ObjectMapper mapper = mapperWithModule(false);
+          ObjectMapper mapper = mapperWithModule();
           assertEquals(aposToQuotes("{'a':1}"), mapper.writeValueAsString(new WithTransient()));
 
           // and then with Transient disabled
-          Hibernate4Module mod = hibernateModule(false);
-          mod.disable(Hibernate4Module.Feature.USE_TRANSIENT_ANNOTATION);
-          mapper = new ObjectMapper().registerModule(mod);
+          mapper = mapperWithModule(Hibernate4Module.Feature.USE_TRANSIENT_ANNOTATION, false);
           
           assertEquals(aposToQuotes("{'a':1,'b':2}"), mapper.writeValueAsString(new WithTransient()));
      }
