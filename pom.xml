@@ -8,7 +8,7 @@
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate-parent</artifactId>
   <name>Hibernate module parent</name>
-  <version>2.3.5-SNAPSHOT</version>
+  <version>2.3.5</version>
   <packaging>pom</packaging>
   <description>Parent pom for shared settings for project sub-modules
   </description>
@@ -23,7 +23,7 @@
     <connection>scm:git:git@github.com:FasterXML/jackson-datatype-hibernate.git</connection>
     <developerConnection>scm:git:git@github.com:FasterXML/jackson-datatype-hibernate.git</developerConnection>
     <url>http://github.com/FasterXML/jackson-datatype-hibernate</url>    
-    <tag>HEAD</tag>
+    <tag>jackson-datatype-hibernate-parent-2.3.5</tag>
   </scm>
 
   <properties>
