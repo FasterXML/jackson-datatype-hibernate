@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
+
 import org.hibernate.FlushMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -19,6 +20,7 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
 
 import javax.persistence.*;
+
 import java.io.IOException;
 
 /**
@@ -82,6 +84,7 @@ public class PersistentCollectionSerializer
      */
 
     // since 2.3
+    @Deprecated // since 2.5
     @Override
     public boolean isEmpty(Object value) {
         if (value == null) { // is null ever passed?
@@ -90,12 +93,25 @@ public class PersistentCollectionSerializer
         if (value instanceof PersistentCollection) {
             return findLazyValue((PersistentCollection) value) == null;
         }
-        return false;
+        return _serializer.isEmpty(value);
     }
 
     @Override
+    public boolean isEmpty(SerializerProvider provider, Object value)
+    {
+        if (value == null) { // is null ever passed?
+            return true;
+        }
+        if (value instanceof PersistentCollection) {
+            return findLazyValue((PersistentCollection) value) == null;
+        }
+        return _serializer.isEmpty(provider, value);
+    }
+    
+    @Override
     public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException, JsonProcessingException {
+        throws IOException
+    {
         if (value instanceof PersistentCollection) {
             value = findLazyValue((PersistentCollection) value);
             if (value == null) {
@@ -111,8 +127,9 @@ public class PersistentCollectionSerializer
 
     @Override
     public void serializeWithType(Object value, JsonGenerator jgen, SerializerProvider provider,
-                                  TypeSerializer typeSer)
-            throws IOException, JsonProcessingException {
+            TypeSerializer typeSer)
+        throws IOException
+    {
         if (value instanceof PersistentCollection) {
             value = findLazyValue((PersistentCollection) value);
             if (value == null) {
