@@ -82,12 +82,12 @@ public class PersistentCollectionSerializer
         if (value instanceof PersistentCollection) {
             return findLazyValue((PersistentCollection) value) == null;
         }
-        return false;
+        return _serializer.isEmpty(value);
     }
     
     @Override
     public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider)
-        throws IOException, JsonProcessingException
+        throws IOException
     {
         if (value instanceof PersistentCollection) {
             value = findLazyValue((PersistentCollection) value);
@@ -105,7 +105,7 @@ public class PersistentCollectionSerializer
     @Override
     public void serializeWithType(Object value, JsonGenerator jgen, SerializerProvider provider,
             TypeSerializer typeSer)
-        throws IOException, JsonProcessingException
+        throws IOException
     {
         if (value instanceof PersistentCollection) {
             value = findLazyValue((PersistentCollection) value);
