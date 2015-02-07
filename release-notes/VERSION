@@ -6,7 +6,8 @@ Project: jackson-datatype-hibernate
 
 2.5.1 (06-Feb-2015)
 
-No changes since 2.5.0
+#65: Registered hibernateModule lead to 'NON_EMPTY' failure
+ (reported by lcyan@github)
 
 2.5.0 (01-Jan-2015)
 
@@ -14,9 +15,6 @@ No changes since 2.5.0
  (contributed by eoger@github)
 
 2.4.6 (not released yet)
-
-#65: Registered hibernateModule lead to 'NON_EMPTY' failure
- (reported by lcyan@github)
 
 2.4.5 (13-Jan-2015)
 2.4.4 (24-Nov-2014)
