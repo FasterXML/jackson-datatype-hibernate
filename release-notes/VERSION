@@ -4,6 +4,10 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
+2.5.1 (06-Feb-2015)
+
+No changes since 2.5.0
+
 2.5.0 (01-Jan-2015)
 
 #25/#59: Allow passing of `SessionFactory` to help with forced lazy-loading
