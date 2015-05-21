@@ -8,6 +8,7 @@ import javax.persistence.Query;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate4.data.Employee;
@@ -90,6 +91,7 @@ public class HibernateTest extends BaseTest
         
         // false -> no forcing of lazy loading
         ObjectMapper mapper = mapperWithModule(false);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         String json = mapper.writeValueAsString(salesEmployee);
 
         // Ok; let's try reading back
