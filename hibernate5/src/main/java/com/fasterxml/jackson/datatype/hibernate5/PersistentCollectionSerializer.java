@@ -182,10 +182,14 @@ public class PersistentCollectionSerializer
 
     private void initializeCollection(PersistentCollection coll, Session session) {
 
+//        boolean isJTA = ((SessionImplementor) session).getTransactionCoordinator()
+//                .getTransactionContext().getTransactionEnvironment()
+//                .getTransactionFactory()
+//                .compatibleWithJtaSynchronization();
+        //Above is removed after Hibernate 5
         boolean isJTA = ((SessionImplementor) session).getTransactionCoordinator()
-                .getTransactionContext().getTransactionEnvironment()
-                .getTransactionFactory()
-                .compatibleWithJtaSynchronization();
+                .getTransactionCoordinatorBuilder()
+                .isJta();
 
         if (!isJTA) {
             session.beginTransaction();
