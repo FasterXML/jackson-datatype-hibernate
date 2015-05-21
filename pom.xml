@@ -16,6 +16,7 @@
   <modules>
     <module>hibernate3</module>
     <module>hibernate4</module>
+    <module>hibernate5</module>
   </modules>
 
   <url>https://github.com/FasterXML/jackson-datatype-hibernate</url>
