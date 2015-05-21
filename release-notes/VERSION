@@ -4,6 +4,12 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
+2.6.0 (not yet released)
+
+#67: Provide support for Hibernate 5.x (hibernate5 maven sub-module;
+  Hibernate5Module Jackson module)
+ (contributed by mtyurt@github)
+
 2.5.3 (24-Apr-2015)
 2.5.2 (29-Mar-2015)
 
