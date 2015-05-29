@@ -3,6 +3,7 @@ package com.fasterxml.jackson.datatype.hibernate4;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 public abstract class BaseTest extends junit.framework.TestCase
@@ -11,7 +12,8 @@ public abstract class BaseTest extends junit.framework.TestCase
 
     protected ObjectMapper mapperWithModule(boolean forceLazyLoading)
     {
-        return new ObjectMapper().registerModule(hibernateModule(forceLazyLoading));
+        return new ObjectMapper().registerModule(hibernateModule(forceLazyLoading))
+        		.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
     }
 
     protected Hibernate4Module hibernateModule(boolean forceLazyLoading)
