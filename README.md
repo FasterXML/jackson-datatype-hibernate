@@ -8,8 +8,10 @@ and properties; especially lazy-loading aspects.
 
 As of version 2.0 module is usable and used by non-trivial number of developers and projects.
 
-Note: both Hibernate 3 and 4 are supported, but they require different jar, and Maven artifact names (and jar names differ).
-This document refers to "Hibernate 4" version, but changes with 3 should be little more than replacing "4" in names with "3".
+Note: Hibernate 3.x, 4.x and 5.x are supported (5.x starting with Jackson 2.6),
+but they require different jar, and Maven artifact names (and jar names differ).
+This document refers to "Hibernate 4" version, but changes with 3.x or 5.x should require
+little more than replacing "4" in names with "3" or "5".
 
 ## Usage
 
@@ -21,11 +23,13 @@ To use module on Maven-based projects, use following dependency:
 <dependency>
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate4</artifactId>
-  <version>2.4.0</version>
+  <version>2.5.3</version>
 </dependency>    
 ```
 
-(or whatever version is most up-to-date at the moment; note that you need to use "jackson-datatype-hibernate3" for Hibernate 3.x)
+(or whatever version is most up-to-date at the moment;
+note that you need to use "jackson-datatype-hibernate3" for Hibernate 3.x,
+or "jackson-datatype-hibernate5" for Hibernate 5.x)
 
 ### Registering module
 
@@ -35,6 +39,8 @@ Like all standard Jackson modules (libraries that implement Module interface), r
 ObjectMapper mapper = new ObjectMapper();
 // for Hibernate 4.x:
 mapper.registerModule(new Hibernate4Module());
+// or, for Hibernate 5.x
+mapper.registerModule(new Hibernate5Module());
 // or, for Hibernate 3.6
 mapper.registerModule(new Hibernate3Module());
 ```
@@ -45,7 +51,7 @@ Note that there are actuall
 
 ### Using with Spring MVC
 
-Sub-class ObjectMapper and register the module (Hibernate 3 or 4)
+Sub-class ObjectMapper and register the module (Hibernate 3, 4 or 5)
 
 ```java
 public class HibernateAwareObjectMapper extends ObjectMapper {
@@ -76,4 +82,3 @@ If mvc:annotation-driven is not being used, it can be added as a jsonconverter t
 ## Other
 
 Project [Wiki](../../wiki) contains links to Javadocs and downloadable jars (from Central Maven repository).
-
