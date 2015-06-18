@@ -1,7 +1,7 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
-
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.engine.spi.Mapping;
@@ -24,8 +24,6 @@ import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.BeanSerializerBuilder;
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
-import com.fasterxml.jackson.databind.ser.BuilderUtil;
-import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import com.fasterxml.jackson.databind.ser.std.MapSerializer;
 import com.fasterxml.jackson.databind.type.ArrayType;
@@ -86,6 +84,17 @@ public class HibernateSerializers extends BeanSerializerFactory implements
 
 				// Any properties to suppress?
 				props = filterBeanProperties(config, beanDesc, props);
+
+				// remove hibernate internal properties
+				Iterator<BeanPropertyWriter> iterator = props.iterator();
+				while (iterator.hasNext()) {
+					BeanPropertyWriter beanPropertyWriter = iterator.next();
+					if (beanPropertyWriter.getName().equals("handler")
+							|| beanPropertyWriter.getName().equals(
+									"hibernateLazyInitializer")) {
+						iterator.remove();
+					}
+				}
 
 				// [JACKSON-440] Need to allow reordering of properties to
 				// serialize
@@ -148,8 +157,9 @@ public class HibernateSerializers extends BeanSerializerFactory implements
 					}
 				}
 				return new HibernateProxySerializer(type, builder,
-						props.toArray(new BeanPropertyWriter[] {}), builder.getFilteredProperties(),
-						_forceLoading, _serializeIdentifiers, _mapping);
+						props.toArray(new BeanPropertyWriter[] {}),
+						builder.getFilteredProperties(), _forceLoading,
+						_serializeIdentifiers, _mapping);
 			} catch (JsonMappingException e) {
 				e.printStackTrace();
 			}

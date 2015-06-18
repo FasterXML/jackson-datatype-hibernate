@@ -21,7 +21,7 @@ public class CyclicTest {
 	public void testCyclicMarshallingHibernateProxy() throws JsonGenerationException,
 			JsonMappingException, IOException {
 		String s = getJSONStringForEntity(true, false);
-		assertEquals("{\"id\":\"3cf7a573-f528-440c-83b9-873d7594b373\",\"owner\":\"26190a70-f2ef-440e-b092-0b904c062c08\",\"hibernateLazyInitializer\":{}}",s);
+		assertEquals("{\"id\":\"3cf7a573-f528-440c-83b9-873d7594b373\",\"owner\":\"26190a70-f2ef-440e-b092-0b904c062c08\"}",s);
 	}	
 	
 	@Test
@@ -30,8 +30,7 @@ public class CyclicTest {
 		String s = getJSONStringForEntity(false, true);
 		assertEquals("{\n" + 
 				"  \"id\" : \"3cf7a573-f528-440c-83b9-873d7594b373\",\n" + 
-				"  \"owner\" : \"26190a70-f2ef-440e-b092-0b904c062c08\",\n" + 
-				"  \"hibernateLazyInitializer\" : { }\n" + 
+				"  \"owner\" : \"26190a70-f2ef-440e-b092-0b904c062c08\"\n" + 
 				"}",s);
 	}
 
