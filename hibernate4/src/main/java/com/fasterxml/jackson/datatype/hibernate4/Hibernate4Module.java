@@ -3,6 +3,8 @@ package com.fasterxml.jackson.datatype.hibernate4;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.Mapping;
 
@@ -137,7 +139,14 @@ public class Hibernate4Module extends Module
         if (ai != null) {
             context.appendAnnotationIntrospector(ai);
         }
-        context.addSerializers(new HibernateSerializers(_mapping, _moduleFeatures));
+        ObjectMapper objectMapper = context.getOwner();
+        DefaultSerializerProvider defaultSerializerProvider = ((DefaultSerializerProvider) objectMapper
+                .getSerializerProvider());
+        context.addSerializers(new HibernateSerializers(
+                defaultSerializerProvider.createInstance(
+                        objectMapper.getSerializationConfig(),
+                        objectMapper.getSerializerFactory()), _mapping,
+                _moduleFeatures));
         context.addBeanSerializerModifier(new HibernateSerializerModifier(_moduleFeatures, _sessionFactory));
     }
 

@@ -1,12 +1,16 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
+import com.fasterxml.jackson.databind.ser.BeanSerializerBuilder;
+import com.fasterxml.jackson.databind.ser.impl.ObjectIdWriter;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
+import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.proxy.HibernateProxy;
@@ -14,6 +18,7 @@ import org.hibernate.proxy.LazyInitializer;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Serializer to use for values proxied using {@link org.hibernate.proxy.HibernateProxy}.
@@ -25,7 +30,7 @@ import java.util.HashMap;
  * this one) have.
  */
 public class HibernateProxySerializer
-    extends JsonSerializer<HibernateProxy>
+    extends ClonedBeanSerializer
 {
     /**
      * Property that has proxy value to handle
@@ -48,21 +53,50 @@ public class HibernateProxySerializer
     /**********************************************************************
      */
 
-    public HibernateProxySerializer(boolean forceLazyLoading)
-    {
-        this(forceLazyLoading, false, null);
-    }
-
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
-        this(forceLazyLoading, serializeIdentifier, null);
-    }
-
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping) {
+    public HibernateProxySerializer(JavaType type, BeanSerializerBuilder builder,
+                                    BeanPropertyWriter[] properties,
+                                    BeanPropertyWriter[] filteredProperties,
+                                    boolean forceLazyLoading,
+                                    boolean serializeIdentifier, Mapping mapping) {
+        super(type, builder, properties, filteredProperties);
         _forceLazyLoading = forceLazyLoading;
         _serializeIdentifier = serializeIdentifier;
         _mapping = mapping;
         _dynamicSerializers = PropertySerializerMap.emptyMap();
         _property = null;
+    }
+
+    protected HibernateProxySerializer(HibernateProxySerializer hibernateProxySerializer, String[] toIgnore) {
+        super(hibernateProxySerializer, toIgnore);
+        _forceLazyLoading = hibernateProxySerializer._forceLazyLoading;
+        _serializeIdentifier = hibernateProxySerializer._serializeIdentifier;
+        _mapping = hibernateProxySerializer._mapping;
+        _dynamicSerializers = PropertySerializerMap.emptyMap();
+        _property = null;
+    }
+
+    protected HibernateProxySerializer(HibernateProxySerializer hibernateProxySerializer, ObjectIdWriter objectIdWriter, Object filterId) {
+        super(hibernateProxySerializer, objectIdWriter, filterId);
+        _forceLazyLoading = hibernateProxySerializer._forceLazyLoading;
+        _serializeIdentifier = hibernateProxySerializer._serializeIdentifier;
+        _mapping = hibernateProxySerializer._mapping;
+        _dynamicSerializers = PropertySerializerMap.emptyMap();
+        _property = null;
+    }
+
+    @Override
+    public BeanSerializerBase withObjectIdWriter(ObjectIdWriter objectIdWriter) {
+        return new HibernateProxySerializer(this, objectIdWriter, _propertyFilterId);
+    }
+
+    @Override
+    protected BeanSerializerBase withFilterId(Object filterId) {
+        return new HibernateProxySerializer(this, _objectIdWriter, filterId);
+    }
+
+    @Override
+    protected BeanSerializerBase withIgnorals(String[] toIgnore) {
+        return new HibernateProxySerializer(this, toIgnore);
     }
     
     /*
@@ -73,30 +107,34 @@ public class HibernateProxySerializer
 
     // since 2.3
     @Override
-    public boolean isEmpty(HibernateProxy value)
+    public boolean isEmpty(Object value)
     {
-        return (value == null) || (findProxied(value) == null);
+        return (value == null) || (findProxied((HibernateProxy) value) == null);
     }
-    
+
     @Override
-    public void serialize(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider)
-        throws IOException, JsonProcessingException
+    public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider)
+        throws IOException
     {
-        Object proxiedValue = findProxied(value);
+        Object proxiedValue = findProxied((HibernateProxy) value);
         // TODO: figure out how to suppress nulls, if necessary? (too late for that here)
         if (proxiedValue == null) {
             provider.defaultSerializeNull(jgen);
             return;
         }
-        findSerializer(provider, proxiedValue).serialize(proxiedValue, jgen, provider);
+        if(proxiedValue instanceof Map){
+            findSerializer(provider, proxiedValue).serialize(proxiedValue, jgen, provider);
+        } else{
+            super.serialize(value, jgen, provider);
+        }
     }
 
     @Override
-    public void serializeWithType(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider,
+    public void serializeWithType(Object value, JsonGenerator jgen, SerializerProvider provider,
             TypeSerializer typeSer)
-        throws IOException, JsonProcessingException
+        throws IOException
     {
-        Object proxiedValue = findProxied(value);
+        Object proxiedValue = findProxied((HibernateProxy) value);
         if (proxiedValue == null) {
             provider.defaultSerializeNull(jgen);
             return;
@@ -106,7 +144,11 @@ public class HibernateProxySerializer
          * to know how to apply additional type info) or other things;
          * so it's not going to work well. But... we'll do out best.
          */
-        findSerializer(provider, proxiedValue).serializeWithType(proxiedValue, jgen, provider, typeSer);
+        if(proxiedValue instanceof Map) {
+            findSerializer(provider, proxiedValue).serializeWithType(proxiedValue, jgen, provider, typeSer);
+        } else{
+            super.serializeWithType(value, jgen, provider, typeSer);
+        }
     }
 
     /*
@@ -116,7 +158,7 @@ public class HibernateProxySerializer
      */
 
     protected JsonSerializer<Object> findSerializer(SerializerProvider provider, Object value)
-        throws IOException, JsonProcessingException
+        throws IOException
     {
         /* TODO: if Hibernate did use generics, or we wanted to allow use of Jackson
          *  annotations to indicate type, should take that into account.
