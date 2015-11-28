@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class LazyLoadingTest extends BaseTest
 {
-    // [Issue#15]
+    // For [#15]
     @Test
     public void testGetCustomerJson() throws Exception
     {
@@ -41,11 +41,14 @@ public class LazyLoadingTest extends BaseTest
             assertFalse(Hibernate.isInitialized(payments));
             // TODO: verify
             assertNotNull(json);
-
+            
             Map<?,?> stuff = mapper.readValue(json, Map.class);
 
             // "payments" is marked as lazily loaded AND "Include.NON_EMPTY"; should not be serialized
-            assertFalse(stuff.containsKey("payments"));
+            if (stuff.containsKey("payments")) {
+                fail("Should not find serialized property 'payments'; got: "+stuff.get("payments")
+                        +" from JSON: "+json);
+            }
             // orders, on the other hand, not:
             assertTrue(stuff.containsKey("orders"));
             assertNull(stuff.get("orderes"));

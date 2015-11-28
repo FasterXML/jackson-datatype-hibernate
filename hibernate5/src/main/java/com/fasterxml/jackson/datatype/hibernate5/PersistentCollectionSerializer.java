@@ -85,7 +85,8 @@ public class PersistentCollectionSerializer
     // since 2.3
     @Deprecated // since 2.5
     @Override
-    public boolean isEmpty(Object value) {
+    public boolean isEmpty(Object value)
+    {
         if (value == null) { // is null ever passed?
             return true;
         }
@@ -95,7 +96,7 @@ public class PersistentCollectionSerializer
         return _serializer.isEmpty(value);
     }
 
-    @Override
+    @Override // since 2.6
     public boolean isEmpty(SerializerProvider provider, Object value)
     {
         if (value == null) { // is null ever passed?
@@ -119,7 +120,7 @@ public class PersistentCollectionSerializer
             }
         }
         if (_serializer == null) { // sanity check...
-            throw new JsonMappingException("PersistentCollection does not have serializer set");
+            throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
         }
         _serializer.serialize(value, jgen, provider);
     }
@@ -137,7 +138,7 @@ public class PersistentCollectionSerializer
             }
         }
         if (_serializer == null) { // sanity check...
-            throw new JsonMappingException("PersistentCollection does not have serializer set");
+            throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
         }
         _serializer.serializeWithType(value, jgen, provider, typeSer);
     }

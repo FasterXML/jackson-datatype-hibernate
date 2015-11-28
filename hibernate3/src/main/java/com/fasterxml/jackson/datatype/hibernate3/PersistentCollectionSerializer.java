@@ -130,7 +130,7 @@ public class PersistentCollectionSerializer
             }
         }
         if (_serializer == null) { // sanity check...
-            throw new JsonMappingException("PersistentCollection does not have serializer set");
+            throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
         }
         _serializer.serialize(value, jgen, provider);
     }
@@ -153,7 +153,7 @@ public class PersistentCollectionSerializer
             }
         }
         if (_serializer == null) { // sanity check...
-            throw new JsonMappingException("PersistentCollection does not have serializer set");
+            throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
         }
         _serializer.serializeWithType(value, jgen, provider, typeSer);
     }

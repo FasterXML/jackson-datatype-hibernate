@@ -1,11 +1,8 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
@@ -120,7 +117,7 @@ public class PersistentCollectionSerializer
             }
         }
         if (_serializer == null) { // sanity check...
-            throw new JsonMappingException("PersistentCollection does not have serializer set");
+            throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
         }
         _serializer.serialize(value, jgen, provider);
     }
@@ -138,7 +135,7 @@ public class PersistentCollectionSerializer
             }
         }
         if (_serializer == null) { // sanity check...
-            throw new JsonMappingException("PersistentCollection does not have serializer set");
+            throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
         }
         _serializer.serializeWithType(value, jgen, provider, typeSer);
     }

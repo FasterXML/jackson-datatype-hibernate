@@ -44,7 +44,7 @@ public class HibernateProxySerializer
     public HibernateProxySerializer(boolean forceLazyLoading)
     {
         _forceLazyLoading = forceLazyLoading;
-        _dynamicSerializers = PropertySerializerMap.emptyMap();
+        _dynamicSerializers = PropertySerializerMap.emptyForProperties();
         _property = null;
     }
 
@@ -56,14 +56,13 @@ public class HibernateProxySerializer
 
     // since 2.3
     @Override
-    public boolean isEmpty(HibernateProxy value)
-    {
+    public boolean isEmpty(SerializerProvider provider, HibernateProxy value) {
         return (value == null) || (findProxied(value) == null);
     }
     
     @Override
     public void serialize(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider)
-        throws IOException, JsonProcessingException
+        throws IOException
     {
         Object proxiedValue = findProxied(value);
         // TODO: figure out how to suppress nulls, if necessary? (too late for that here)
@@ -77,7 +76,7 @@ public class HibernateProxySerializer
     @Override
     public void serializeWithType(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider,
             TypeSerializer typeSer)
-        throws IOException, JsonProcessingException
+        throws IOException
     {
         Object proxiedValue = findProxied(value);
         if (proxiedValue == null) {
@@ -99,7 +98,7 @@ public class HibernateProxySerializer
      */
 
     protected JsonSerializer<Object> findSerializer(SerializerProvider provider, Object value)
-        throws IOException, JsonProcessingException
+        throws IOException
     {
         /* TODO: if Hibernate did use generics, or we wanted to allow use of Jackson
          *  annotations to indicate type, should take that into account.

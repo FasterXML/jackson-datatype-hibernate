@@ -1,19 +1,20 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
+import java.util.HashMap;
+
+import com.fasterxml.jackson.core.*;
+
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
+
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
-
-import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Serializer to use for values proxied using {@link org.hibernate.proxy.HibernateProxy}.
@@ -61,7 +62,7 @@ public class HibernateProxySerializer
         _forceLazyLoading = forceLazyLoading;
         _serializeIdentifier = serializeIdentifier;
         _mapping = mapping;
-        _dynamicSerializers = PropertySerializerMap.emptyMap();
+        _dynamicSerializers = PropertySerializerMap.emptyForProperties();
         _property = null;
     }
     
@@ -71,16 +72,14 @@ public class HibernateProxySerializer
     /**********************************************************************
      */
 
-    // since 2.3
     @Override
-    public boolean isEmpty(HibernateProxy value)
-    {
+    public boolean isEmpty(SerializerProvider provider, HibernateProxy value) {
         return (value == null) || (findProxied(value) == null);
     }
     
     @Override
     public void serialize(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider)
-        throws IOException, JsonProcessingException
+        throws IOException
     {
         Object proxiedValue = findProxied(value);
         // TODO: figure out how to suppress nulls, if necessary? (too late for that here)
@@ -94,7 +93,7 @@ public class HibernateProxySerializer
     @Override
     public void serializeWithType(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider,
             TypeSerializer typeSer)
-        throws IOException, JsonProcessingException
+        throws IOException
     {
         Object proxiedValue = findProxied(value);
         if (proxiedValue == null) {
@@ -116,7 +115,7 @@ public class HibernateProxySerializer
      */
 
     protected JsonSerializer<Object> findSerializer(SerializerProvider provider, Object value)
-        throws IOException, JsonProcessingException
+        throws IOException
     {
         /* TODO: if Hibernate did use generics, or we wanted to allow use of Jackson
          *  annotations to indicate type, should take that into account.
