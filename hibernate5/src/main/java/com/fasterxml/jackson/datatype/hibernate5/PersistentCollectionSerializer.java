@@ -1,12 +1,11 @@
 package com.fasterxml.jackson.datatype.hibernate5;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 
 import org.hibernate.FlushMode;
@@ -28,8 +27,12 @@ import java.io.IOException;
  * and <code>Map</code> types (unlike in JDK).
  */
 public class PersistentCollectionSerializer
-        extends JsonSerializer<Object>
-        implements ContextualSerializer {
+    // really should extend ContainerSerializer or even CollectionSerializer, but..
+    extends StdSerializer<Object>
+    implements ContextualSerializer
+{
+    private static final long serialVersionUID = 1L;
+
     protected final int _features;
 
     /**
@@ -48,6 +51,7 @@ public class PersistentCollectionSerializer
 
     @SuppressWarnings("unchecked")
     public PersistentCollectionSerializer(JsonSerializer<?> serializer, int features, SessionFactory sessionFactory) {
+        super(serializer.handledType(), false);
         _serializer = (JsonSerializer<Object>) serializer;
         _features = features;
         _sessionFactory = sessionFactory;
@@ -59,11 +63,11 @@ public class PersistentCollectionSerializer
      */
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider provider,
-                                              BeanProperty property)
-            throws JsonMappingException {
-        /* 18-Oct-2013, tatu: Whether this is for the primary property or secondary is
-         *   not quite certain; presume primary one for now.
-         */
+            BeanProperty property)
+        throws JsonMappingException
+    {
+        // 18-Oct-2013, tatu: Whether this is for the primary property or secondary is
+        //   not quite certain; presume primary one for now.
         JsonSerializer<?> ser = provider.handlePrimaryContextualization(_serializer, property);
 
         // If we use eager loading, can just return underlying serializer as is
@@ -91,7 +95,8 @@ public class PersistentCollectionSerializer
             return true;
         }
         if (value instanceof PersistentCollection) {
-            return findLazyValue((PersistentCollection) value) == null;
+            Object lazy = findLazyValue((PersistentCollection) value);
+            return (lazy == null) || _serializer.isEmpty(lazy);
         }
         return _serializer.isEmpty(value);
     }
@@ -103,11 +108,12 @@ public class PersistentCollectionSerializer
             return true;
         }
         if (value instanceof PersistentCollection) {
-            return findLazyValue((PersistentCollection) value) == null;
+            Object lazy = findLazyValue((PersistentCollection) value);
+            return (lazy == null) || _serializer.isEmpty(provider, lazy);
         }
         return _serializer.isEmpty(provider, value);
     }
-    
+
     @Override
     public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider)
         throws IOException

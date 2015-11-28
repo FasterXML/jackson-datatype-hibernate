@@ -1,7 +1,6 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
@@ -57,11 +56,11 @@ public class PersistentCollectionSerializer
      */
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider provider,
-                                              BeanProperty property)
-            throws JsonMappingException {
-        /* 18-Oct-2013, tatu: Whether this is for the primary property or secondary is
-         *   not quite certain; presume primary one for now.
-         */
+            BeanProperty property)
+        throws JsonMappingException
+    {
+        // 18-Oct-2013, tatu: Whether this is for the primary property or secondary is
+        //   not quite certain; presume primary one for now.
         JsonSerializer<?> ser = provider.handlePrimaryContextualization(_serializer, property);
 
         // If we use eager loading, can just return underlying serializer as is
@@ -73,7 +72,7 @@ public class PersistentCollectionSerializer
         }
         return this;
     }
-    
+
     /*
     /**********************************************************************
     /* JsonSerializer impl
@@ -88,7 +87,8 @@ public class PersistentCollectionSerializer
             return true;
         }
         if (value instanceof PersistentCollection) {
-            return findLazyValue((PersistentCollection) value) == null;
+            Object lazy = findLazyValue((PersistentCollection) value);
+            return (lazy == null) || _serializer.isEmpty(lazy);
         }
         return _serializer.isEmpty(value);
     }
@@ -100,7 +100,8 @@ public class PersistentCollectionSerializer
             return true;
         }
         if (value instanceof PersistentCollection) {
-            return findLazyValue((PersistentCollection) value) == null;
+            Object lazy = findLazyValue((PersistentCollection) value);
+            return (lazy == null) || _serializer.isEmpty(provider, lazy);
         }
         return _serializer.isEmpty(provider, value);
     }
