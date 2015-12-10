@@ -17,9 +17,9 @@ Hibernate (http://hibernate.org) version 3.x data types.
     <!-- Hibernate with JPA 2.0 -->
     <!-- stupid maven 2.x, won't work with ranges (tries to get SNAPSHOT) -->
 <!--
-    <hibernate.version>[3.5.0, 3.6.6]</hibernate.version>
+    <hibernate.version>[3.5.0, 3.6.9]</hibernate.version>
 -->
-    <hibernate.version>3.6.6.Final</hibernate.version>
+    <hibernate.version>3.6.9.Final</hibernate.version>
     <osgi.export>${project.groupId}.hibernate3</osgi.export>
   </properties>
 
