@@ -17,7 +17,7 @@ Hibernate (http://hibernate.org) version 5.x data types.
     <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate5</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate5</packageVersion.package>
     <!-- Hibernate with JPA 2.0 -->
-    <hibernate.version>5.0.0.Final</hibernate.version>
+    <hibernate.version>5.0.6.Final</hibernate.version>
     <surefire.version>2.12</surefire.version>
     <osgi.export>${project.groupId}.hibernate5</osgi.export>
   </properties>
@@ -33,6 +33,14 @@ Hibernate (http://hibernate.org) version 5.x data types.
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
       <version>${version.jackson.core}</version>
+    </dependency>
+    <!-- 18-Dec-2015, tatu: Since 5.0.1, we get exception for
+        missing class "javax.transaction.SystemException", without this:
+      -->
+    <dependency>
+      <groupId>javax.transaction</groupId>
+      <artifactId>jta</artifactId>
+      <version>1.1</version>
     </dependency>
 
     <!-- what would be the best scope to use here? -->    
