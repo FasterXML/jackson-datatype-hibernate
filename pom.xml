@@ -30,7 +30,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.jackson.annotations>2.7.0-rc2</version.jackson.annotations>
-    <version.jackson.core>2.7.0-rc2</version.jackson.core>
+    <version.jackson.core>2.7.0-rc3-SNAPSHOT</version.jackson.core>
   </properties>
 
 </project>
