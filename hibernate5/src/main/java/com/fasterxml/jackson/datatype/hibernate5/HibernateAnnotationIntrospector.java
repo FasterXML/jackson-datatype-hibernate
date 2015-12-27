@@ -1,10 +1,13 @@
 package com.fasterxml.jackson.datatype.hibernate5;
 
+import javax.persistence.Transient;
+
+import org.hibernate.bytecode.internal.javassist.FieldHandler;
+
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-
-import javax.persistence.Transient;
 
 /**
  * Simple {@link com.fasterxml.jackson.databind.AnnotationIntrospector} that adds support for using
@@ -66,5 +69,19 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
     @Override
     public boolean hasIgnoreMarker(AnnotatedMember m) {
         return _cfgCheckTransient && m.hasAnnotation(Transient.class);
+    }
+
+    @Override
+    public Boolean isIgnorableType(AnnotatedClass ac)
+    {
+        /* 26-Dec-2015, tatu: To fix [datatype-hibernate#72], need to suppress handling
+         *  of `FieldHandled`. Not sure if it works without test (alas, none provided),
+         *  but will try our best -- problem is, if it'
+         */
+        // ... could we avoid direct class reference?
+        if (FieldHandler.class.isAssignableFrom(ac.getAnnotated())) {
+            return Boolean.TRUE;
+        }
+        return null;
     }
 }
