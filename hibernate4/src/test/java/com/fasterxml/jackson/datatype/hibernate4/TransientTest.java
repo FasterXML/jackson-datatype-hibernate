@@ -21,17 +21,20 @@ public class TransientTest extends BaseTest
      }
 
      public static interface PublicView {}
-     public static interface OtherView {}
+     public static interface PrivateView {}
 
-     @JsonPropertyOrder({"a", "b"})
+     @JsonPropertyOrder({"aaa", "bbb", "ccc", "ddd"})
      static class WithTransientAndView {
-          public int a = 3;
-
-          @JsonView(PublicView.class)
-          @Transient
-          public int b = 4;
+         public String aaa = "xxx";
+         @Transient
+         public String bbb = "xxx";
+         @Transient
+         @JsonView(PublicView.class)
+         public String ccc = "xxx";
+         @JsonView(PrivateView.class)
+         public String ddd = "xxx";
      }
-     
+
      /*
      /**********************************************************************
      /* Test methods
@@ -55,21 +58,11 @@ public class TransientTest extends BaseTest
      public void testTransientWithView() throws Exception
      {
           ObjectMapper mapper = mapperWithModule(false);
-          assertEquals(aposToQuotes("{'a':3}"),
+          assertEquals(aposToQuotes("{'aaa':'xxx'}"),
                   mapper.writerWithView(PublicView.class)
                   .writeValueAsString(new WithTransientAndView()));
-
-          Hibernate4Module mod = hibernateModule(false);
-          mod.disable(Hibernate4Module.Feature.USE_TRANSIENT_ANNOTATION);
-          mapper = new ObjectMapper().registerModule(mod);
-          
-          assertEquals(aposToQuotes("{'a':3,'b':4}"),
-                  mapper.writerWithView(PublicView.class)
-                  .writeValueAsString(new WithTransientAndView()));
-
-          // although not if not within view
-          assertEquals(aposToQuotes("{'a':3}"),
-                  mapper.writerWithView(OtherView.class)
+          assertEquals(aposToQuotes("{'aaa':'xxx','ddd':'xxx'}"),
+                  mapper.writerWithView(PrivateView.class)
                   .writeValueAsString(new WithTransientAndView()));
      }
 }
