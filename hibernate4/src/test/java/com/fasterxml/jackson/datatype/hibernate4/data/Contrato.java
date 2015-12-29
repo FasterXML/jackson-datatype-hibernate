@@ -12,12 +12,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity @Table(name="Contrato", catalog="classicmodels")
 public class Contrato {
-
     @Id
-    private Long id;
+    public Long id;
 
     @Column(name="numero_contrato")
-    private String numeroContrato;
+    public String numeroContrato;
 
     @OneToMany(mappedBy="contrato") @JsonIgnoreProperties("contrato")
     private List<Parcela> parcelas;
@@ -25,38 +24,19 @@ public class Contrato {
     @OneToMany(mappedBy="contrato") @JsonIgnoreProperties("contrato")
     private List<Liquidacao> liquidacoes;
 
-	public Long getId() {
-		return id;
-	}
+    public List<Parcela> getParcelas() {
+        return parcelas;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setParcelas(List<Parcela> parcelas) {
+        this.parcelas = parcelas;
+    }
 
-	public String getNumeroContrato() {
-		return numeroContrato;
-	}
+    public List<Liquidacao> getLiquidacoes() {
+        return liquidacoes;
+    }
 
-	public void setNumeroContrato(String numeroContrato) {
-		this.numeroContrato = numeroContrato;
-	}
-
-	public List<Parcela> getParcelas() {
-		return parcelas;
-	}
-
-	public void setParcelas(List<Parcela> parcelas) {
-		this.parcelas = parcelas;
-	}
-
-	public List<Liquidacao> getLiquidacoes() {
-		return liquidacoes;
-	}
-
-	public void setLiquidacoes(List<Liquidacao> liquidacoes) {
-		this.liquidacoes = liquidacoes;
-	}
-    
-    
-    
+    public void setLiquidacoes(List<Liquidacao> liquidacoes) {
+        this.liquidacoes = liquidacoes;
+    }
 }
