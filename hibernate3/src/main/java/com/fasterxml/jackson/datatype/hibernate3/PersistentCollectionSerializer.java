@@ -1,18 +1,21 @@
 package com.fasterxml.jackson.datatype.hibernate3;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
 
-import org.hibernate.FlushMode;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import javax.persistence.*;
+
+import org.hibernate.*;
 import org.hibernate.collection.PersistentCollection;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.*;
 import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module.Feature;
+
 import org.hibernate.engine.PersistenceContext;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.engine.SessionImplementor;
@@ -20,17 +23,27 @@ import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.transaction.JDBCTransactionFactory;
 import org.hibernate.transaction.TransactionFactory;
 
-import javax.persistence.*;
-
 /**
  * Wrapper serializer used to handle aspects of lazy loading that can be used
  * for Hibernate collection datatypes; which includes both <code>Collection</code>
  * and <code>Map</code> types (unlike in JDK).
  */
 public class PersistentCollectionSerializer
-    extends JsonSerializer<Object>
-    implements ContextualSerializer
+    extends ContainerSerializer<Object>
+    implements ContextualSerializer, ResolvableSerializer
 {
+    private static final long serialVersionUID = 1L; // since 2.7
+
+    /**
+     * Type for which underlying serializer was created.
+     *
+     * @since 2.7
+     */
+    protected final JavaType _originalType;
+
+    /**
+     * Hibernate-module features set, if any.
+     */
     protected final int _features;
 
     /**
@@ -48,11 +61,61 @@ public class PersistentCollectionSerializer
      */
 
     @SuppressWarnings("unchecked")
-    public PersistentCollectionSerializer(JsonSerializer<?> serializer, int features, SessionFactory sessionFactory)
-    {
+    public PersistentCollectionSerializer(JavaType containerType,
+            JsonSerializer<?> serializer, int features, SessionFactory sessionFactory) {
+        super(containerType);
+        _originalType = containerType;
         _serializer = (JsonSerializer<Object>) serializer;
         _features = features;
         _sessionFactory = sessionFactory;
+    }
+
+    /**
+     * @since 2.7
+     */
+    @SuppressWarnings("unchecked")
+    protected PersistentCollectionSerializer(PersistentCollectionSerializer base, JsonSerializer<?> serializer)
+    {
+        super(base);
+        _originalType = base._originalType;
+        _serializer = (JsonSerializer<Object>) serializer;
+        _features = base._features;
+        _sessionFactory = base._sessionFactory;
+    }
+
+    protected PersistentCollectionSerializer _withSerializer(JsonSerializer<?> ser) {
+        if (ser == _serializer) {
+            return this;
+        }
+        return new PersistentCollectionSerializer(this, ser);
+    }
+
+    // from `ContainerSerializer`
+    @Override
+    protected ContainerSerializer<?> _withValueTypeSerializer(TypeSerializer vts)
+    {
+        ContainerSerializer<?> ser0 = _containerSerializer();
+        if (ser0 != null) {
+            return _withSerializer(ser0.withValueTypeSerializer(vts));
+        }
+        // 03-Jan-2016, tatu: Not sure what to do here; most likely can not make it work without
+        //    knowing how to pass various calls... so in a way, should limit to only accepting
+        //    ContainerSerializers as delegates.
+        return this;
+    }
+
+    /*
+    /**********************************************************************
+    /* Contextualization
+    /**********************************************************************
+     */
+
+    @Override
+    public void resolve(SerializerProvider provider) throws JsonMappingException
+    {
+        if (_serializer instanceof ResolvableSerializer) {
+            ((ResolvableSerializer) _serializer).resolve(provider);
+        }
     }
 
     /**
@@ -74,19 +137,15 @@ public class PersistentCollectionSerializer
         if (!usesLazyLoading(property)) {
             return ser;
         }
-        if (ser != _serializer) {
-            return new PersistentCollectionSerializer(ser, _features, _sessionFactory);
-        }
-        return this;
+        return _withSerializer(ser);
     }
-    
+
     /*
     /**********************************************************************
-    /* JsonSerializer impl
+    /* JsonSerializer simple accessors, metadata
     /**********************************************************************
      */
 
-    // since 2.3
     @Deprecated // since 2.5
     @Override
     public boolean isEmpty(Object value)
@@ -111,7 +170,56 @@ public class PersistentCollectionSerializer
         }
         return _serializer.isEmpty(provider, value);
     }
-    
+
+    @Override
+    public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
+        throws JsonMappingException
+    {
+        _serializer.acceptJsonFormatVisitor(visitor, typeHint);
+    }
+
+    /*
+    /**********************************************************************
+    /* ContainerSerializer methods
+    /**********************************************************************
+     */
+
+    @Override
+    public JavaType getContentType() {
+        ContainerSerializer<?> ser = _containerSerializer();
+        if (ser != null) {
+            return ser.getContentType();
+        }
+        return _originalType.getContentType();
+    }
+
+    @Override
+    public JsonSerializer<?> getContentSerializer() {
+        ContainerSerializer<?> ser = _containerSerializer();
+        if (ser != null) {
+            return ser.getContentSerializer();
+        }
+        // no idea, alas
+        return null;
+    }
+
+    @Override
+    public boolean hasSingleElement(Object value) {
+        if (value instanceof Collection<?>) {
+            return ((Collection<?>) value).size() == 1;
+        }
+        if (value instanceof Map<?,?>) {
+            return ((Map<?,?>) value).size() == 1;
+        }
+        return false;
+    }
+
+    /*
+    /**********************************************************************
+    /* JsonSerializer, actual serialization
+    /**********************************************************************
+     */
+
     @Override
     public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider)
         throws IOException
@@ -163,6 +271,13 @@ public class PersistentCollectionSerializer
     /* Helper methods
     /**********************************************************************
      */
+
+    protected ContainerSerializer<?> _containerSerializer() {
+        if (_serializer instanceof ContainerSerializer) {
+            return (ContainerSerializer<?>) _serializer;
+        }
+        return null;
+    }
 
     protected Object findLazyValue(PersistentCollection coll)
     {

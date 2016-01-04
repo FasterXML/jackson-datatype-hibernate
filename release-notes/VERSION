@@ -8,6 +8,8 @@ Project: jackson-datatype-hibernate
 
 #72: Should ignore org.hibernate.bytecode.internal.javassist.FieldHandled.getFieldHandler()
 #79: Upgrade hibernate5 dep to latest Hibernate version, 5.0.6
+#81: Hibernate4Module causes Type Erasure
+ (reported by agorina@github)
 
 2.6.3 (12-Oct-2015)
 2.6.2 (15-Sep-2015)

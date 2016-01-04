@@ -29,12 +29,12 @@ public class HibernateSerializerModifier
     @Override
     public JsonSerializer<?> modifyCollectionSerializer(SerializationConfig config,
             CollectionType valueType, BeanDescription beanDesc, JsonSerializer<?> serializer) {
-        return new PersistentCollectionSerializer(serializer, _features, _sessionFactory);
+        return new PersistentCollectionSerializer(valueType, serializer, _features, _sessionFactory);
     }
 
     @Override
     public JsonSerializer<?> modifyMapSerializer(SerializationConfig config,
             MapType valueType, BeanDescription beanDesc, JsonSerializer<?> serializer) {
-        return new PersistentCollectionSerializer(serializer, _features, _sessionFactory);
+        return new PersistentCollectionSerializer(valueType, serializer, _features, _sessionFactory);
     }
 }
