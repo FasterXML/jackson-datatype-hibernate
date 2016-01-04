@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContainerSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
+import com.fasterxml.jackson.databind.util.NameTransformer;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 
 import org.hibernate.FlushMode;
@@ -84,8 +85,13 @@ public class PersistentCollectionSerializer
         _sessionFactory = base._sessionFactory;
     }
 
+    @Override
+    public PersistentCollectionSerializer unwrappingSerializer(NameTransformer unwrapper) {
+        return _withSerializer(_serializer.unwrappingSerializer(unwrapper));
+    }
+    
     protected PersistentCollectionSerializer _withSerializer(JsonSerializer<?> ser) {
-        if (ser == _serializer) {
+        if ((ser == _serializer) || (ser == null)) {
             return this;
         }
         return new PersistentCollectionSerializer(this, ser);
@@ -169,6 +175,16 @@ public class PersistentCollectionSerializer
             return (lazy == null) || _serializer.isEmpty(provider, lazy);
         }
         return _serializer.isEmpty(provider, value);
+    }
+
+    @Override
+    public boolean isUnwrappingSerializer() {
+        return _serializer.isUnwrappingSerializer();
+    }
+
+    @Override
+    public boolean usesObjectId() {
+        return _serializer.usesObjectId();
     }
 
     @Override

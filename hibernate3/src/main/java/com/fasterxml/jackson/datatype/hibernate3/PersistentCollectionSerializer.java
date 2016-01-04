@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.*;
+import com.fasterxml.jackson.databind.util.NameTransformer;
 import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module.Feature;
 
 import org.hibernate.engine.PersistenceContext;
@@ -83,8 +84,13 @@ public class PersistentCollectionSerializer
         _sessionFactory = base._sessionFactory;
     }
 
+    @Override
+    public PersistentCollectionSerializer unwrappingSerializer(NameTransformer unwrapper) {
+        return _withSerializer(_serializer.unwrappingSerializer(unwrapper));
+    }
+    
     protected PersistentCollectionSerializer _withSerializer(JsonSerializer<?> ser) {
-        if (ser == _serializer) {
+        if ((ser == _serializer) || (ser == null)) {
             return this;
         }
         return new PersistentCollectionSerializer(this, ser);
@@ -169,6 +175,16 @@ public class PersistentCollectionSerializer
             return findLazyValue((PersistentCollection) value) == null;
         }
         return _serializer.isEmpty(provider, value);
+    }
+
+    @Override
+    public boolean isUnwrappingSerializer() {
+        return _serializer.isUnwrappingSerializer();
+    }
+
+    @Override
+    public boolean usesObjectId() {
+        return _serializer.usesObjectId();
     }
 
     @Override
