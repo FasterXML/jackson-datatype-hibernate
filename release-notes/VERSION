@@ -4,7 +4,7 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
-2.7.0 (not yet released)
+2.7.0 (10-Jan-2016)
 
 #72: Should ignore org.hibernate.bytecode.internal.javassist.FieldHandled.getFieldHandler()
 #79: Upgrade hibernate5 dep to latest Hibernate version, 5.0.6
