@@ -4,6 +4,11 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
+2.6.5 (not yet released)
+
+#70: Infinite recursion due to `@JsonIgnoreProperties` not passed to property
+ (reported, fix contributed by Tiago P)
+
 2.6.4 (07-Dec-2015)
 2.6.3 (12-Oct-2015)
 2.6.2 (15-Sep-2015)

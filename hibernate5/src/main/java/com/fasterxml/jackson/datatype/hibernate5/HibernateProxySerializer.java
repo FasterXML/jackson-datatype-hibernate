@@ -1,19 +1,21 @@
 package com.fasterxml.jackson.datatype.hibernate5;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
+
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
-
-import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Serializer to use for values proxied using {@link org.hibernate.proxy.HibernateProxy}.
@@ -26,6 +28,7 @@ import java.util.HashMap;
  */
 public class HibernateProxySerializer
     extends JsonSerializer<HibernateProxy>
+    implements ContextualSerializer
 {
     /**
      * Property that has proxy value to handle
@@ -50,21 +53,32 @@ public class HibernateProxySerializer
 
     public HibernateProxySerializer(boolean forceLazyLoading)
     {
-        this(forceLazyLoading, false, null);
+        this(forceLazyLoading, false, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
-        this(forceLazyLoading, serializeIdentifier, null);
+        this(forceLazyLoading, serializeIdentifier, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping) {
+        this(forceLazyLoading, serializeIdentifier, mapping, null);
+    }
+
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping,
+            BeanProperty property) {
         _forceLazyLoading = forceLazyLoading;
         _serializeIdentifier = serializeIdentifier;
         _mapping = mapping;
-        _dynamicSerializers = PropertySerializerMap.emptyMap();
-        _property = null;
-    }
-    
+        _dynamicSerializers = PropertySerializerMap.emptyForProperties();
+        _property = property;
+    }    
+
+    @Override
+    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
+        return new HibernateProxySerializer(this._forceLazyLoading, _serializeIdentifier,
+                _mapping, property);
+    }    
+
     /*
     /**********************************************************************
     /* JsonSerializer impl

@@ -4,6 +4,7 @@ Hibernate module,  version 2.x
 
 Tatu Saloranta, tatu.saloranta@iki.fi: author
 
+------------
 Contributors
 ------------
 
@@ -21,3 +22,8 @@ Edouard Oger (eoger@github)
 
 #67: Provide support for Hibernate 5.x
  (2.6.0)
+
+Tiago Peruzzo (peruzzo@github)
+
+#70: Infinite recursion due to `@JsonIgnoreProperties` not passed to property
+ (2.6.5)
