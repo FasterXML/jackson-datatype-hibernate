@@ -7,6 +7,7 @@ import org.hibernate.proxy.LazyInitializer;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
@@ -60,7 +61,7 @@ public class HibernateProxySerializer
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
         return new HibernateProxySerializer(this._forceLazyLoading);
-    }    
+    }
 
     /*
     /**********************************************************************
@@ -105,6 +106,20 @@ public class HibernateProxySerializer
         findSerializer(provider, proxiedValue).serializeWithType(proxiedValue, jgen, provider, typeSer);
     }
 
+    @Override
+    public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
+        throws JsonMappingException
+    {
+        SerializerProvider prov = visitor.getProvider();
+        if ((prov == null) || (_property == null)) {
+            super.acceptJsonFormatVisitor(visitor, typeHint);
+        } else {
+            JavaType type = _property.getType();
+            prov.findPrimaryPropertySerializer(type, _property)
+                .acceptJsonFormatVisitor(visitor, type);
+        }
+    }
+
     /*
     /**********************************************************************
     /* Helper methods
@@ -117,7 +132,8 @@ public class HibernateProxySerializer
         /* TODO: if Hibernate did use generics, or we wanted to allow use of Jackson
          *  annotations to indicate type, should take that into account.
          */
-        Class<?> type = value.getClass();
+        Class<?> rawType = value.getClass();
+
         /* we will use a map to contain serializers found so far, keyed by type:
          * this avoids potentially costly lookup from global caches and/or construction
          * of new serializers
@@ -126,7 +142,7 @@ public class HibernateProxySerializer
          *   really anyone's guess at this point; proxies can exist at any level?
          */
         PropertySerializerMap.SerializerAndMapResult result =
-                _dynamicSerializers.findAndAddPrimarySerializer(type, provider, _property);
+                _dynamicSerializers.findAndAddPrimarySerializer(rawType, provider, _property);
         if (_dynamicSerializers != result.map) {
             _dynamicSerializers = result.map;
         }

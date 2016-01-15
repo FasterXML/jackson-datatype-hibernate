@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.core.*;
-
 import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
@@ -119,6 +121,20 @@ public class HibernateProxySerializer
          * so it's not going to work well. But... we'll do out best.
          */
         findSerializer(provider, proxiedValue).serializeWithType(proxiedValue, jgen, provider, typeSer);
+    }
+
+    @Override
+    public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint)
+        throws JsonMappingException
+    {
+        SerializerProvider prov = visitor.getProvider();
+        if ((prov == null) || (_property == null)) {
+            super.acceptJsonFormatVisitor(visitor, typeHint);
+        } else {
+            JavaType type = _property.getType();
+            prov.findPrimaryPropertySerializer(type, _property)
+                .acceptJsonFormatVisitor(visitor, type);
+        }
     }
 
     /*
