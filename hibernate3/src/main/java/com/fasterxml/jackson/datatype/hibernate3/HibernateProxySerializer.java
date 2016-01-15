@@ -8,6 +8,7 @@ import org.hibernate.proxy.LazyInitializer;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
 
 /**
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
  */
 public class HibernateProxySerializer
     extends JsonSerializer<HibernateProxy>
+    implements ContextualSerializer
 {
     /**
      * Property that has proxy value to handle
@@ -47,6 +49,18 @@ public class HibernateProxySerializer
         _dynamicSerializers = PropertySerializerMap.emptyForProperties();
         _property = null;
     }
+
+    public HibernateProxySerializer(boolean forceLazyLoading, BeanProperty property)
+    {
+        _forceLazyLoading = forceLazyLoading;
+        _dynamicSerializers = PropertySerializerMap.emptyForProperties();
+        _property = property;
+    }
+
+    @Override
+    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
+        return new HibernateProxySerializer(this._forceLazyLoading);
+    }    
 
     /*
     /**********************************************************************

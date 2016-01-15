@@ -11,6 +11,12 @@ Project: jackson-datatype-hibernate
 #81: Hibernate4Module causes Type Erasure
  (reported by agorina@github)
 
+2.6.5 (not yet released)
+
+#70: Infinite recursion due to `@JsonIgnoreProperties` not passed to property
+ (reported, fix contributed by Tiago P)
+
+2.6.4 (07-Dec-2015)
 2.6.3 (12-Oct-2015)
 2.6.2 (15-Sep-2015)
 2.6.1 (09-Aug-2015)

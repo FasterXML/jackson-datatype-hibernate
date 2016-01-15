@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
 
 import org.hibernate.engine.spi.Mapping;
@@ -27,6 +28,7 @@ import org.hibernate.proxy.LazyInitializer;
  */
 public class HibernateProxySerializer
     extends JsonSerializer<HibernateProxy>
+    implements ContextualSerializer
 {
     /**
      * Property that has proxy value to handle
@@ -51,21 +53,32 @@ public class HibernateProxySerializer
 
     public HibernateProxySerializer(boolean forceLazyLoading)
     {
-        this(forceLazyLoading, false, null);
+        this(forceLazyLoading, false, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
-        this(forceLazyLoading, serializeIdentifier, null);
+        this(forceLazyLoading, serializeIdentifier, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping) {
+        this(forceLazyLoading, serializeIdentifier, mapping, null);
+    }
+
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping,
+            BeanProperty property) {
         _forceLazyLoading = forceLazyLoading;
         _serializeIdentifier = serializeIdentifier;
         _mapping = mapping;
         _dynamicSerializers = PropertySerializerMap.emptyForProperties();
-        _property = null;
+        _property = property;
     }
-    
+
+    @Override
+    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
+        return new HibernateProxySerializer(this._forceLazyLoading, _serializeIdentifier,
+                _mapping, property);
+    }    
+
     /*
     /**********************************************************************
     /* JsonSerializer impl
