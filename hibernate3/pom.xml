@@ -60,7 +60,6 @@ Hibernate (http://hibernate.org) version 3.x data types.
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>${version.jackson.annotations}</version>
       <scope>test</scope>
     </dependency>
 	<dependency>
