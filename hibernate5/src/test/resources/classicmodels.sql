@@ -3979,6 +3979,40 @@ INSERT INTO `classicmodels`.`Product` (`productCode`,`productName`,`productLine`
  ('S72_1253','Boeing X-32A JSF','Planes','1:72','Motor City Art Classics','10\" Wingspan with retractable landing gears.Comes with pilot',4857,32.77,49.66),
  ('S72_3212','Pont Yacht','Ships','1:72','Unimax Art Galleries','Measures 38 inches Long x 33 3/4 inches High. Includes a stand.\r\nMany extras including rigging, long boats, pilot house, anchors, etc. Comes with 2 masts, all square-rigged',414,33.3,54.6);
 
+
+DROP TABLE IF EXISTS `classicmodels`.`Contrato`;
+CREATE TABLE  `classicmodels`.`Contrato` (
+  `id` numeric(10) NOT NULL,
+  `numero_contrato` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+INSERT INTO `classicmodels`.`Contrato` (`id`,`numero_contrato`) VALUES 
+ (1, '100001-9');
+ 
+DROP TABLE IF EXISTS `classicmodels`.`Parcela`;
+CREATE TABLE  `classicmodels`.`Parcela` (
+  `id` numeric(10) NOT NULL,
+  `numero_parcela` numeric(10) NOT NULL,
+  `contrato_id` numeric(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+INSERT INTO `classicmodels`.`Parcela` (`id`,`numero_parcela`,`contrato_id`) VALUES 
+ (1, 1, 1);
+ 
+DROP TABLE IF EXISTS `classicmodels`.`Liquidacao`;
+CREATE TABLE  `classicmodels`.`Liquidacao` (
+  `id` numeric(10) NOT NULL,
+  `valor_total` numeric(10) NOT NULL,
+  `contrato_id` numeric(10) NOT NULL,
+  `parcela_id` numeric(10) NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+INSERT INTO `classicmodels`.`Liquidacao` (`id`,`valor_total`,`contrato_id`, `parcela_id`) VALUES 
+ (1, 10000, 1, 1);
+ 
+
+ 
+ 
 -- Return to H2 regular mode
 SET MODE REGULAR;
 
