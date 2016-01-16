@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.datatype.hibernate4.failing;
+package com.fasterxml.jackson.datatype.hibernate4;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -7,7 +7,6 @@ import javax.persistence.Persistence;
 import org.hibernate.Hibernate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate4.BaseTest;
 import com.fasterxml.jackson.datatype.hibernate4.data.Contrato;
 
 public class InfiniteRecursion70Test extends BaseTest
