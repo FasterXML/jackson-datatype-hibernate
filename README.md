@@ -3,6 +3,8 @@ support JSON serialization and deserialization of Hibernate (http://hibernate.or
 and properties; especially lazy-loading aspects.
 
 [![Build Status](https://fasterxml.ci.cloudbees.com/job/jackson-module-hibernate-master/badge/icon)](https://fasterxml.ci.cloudbees.com/job/jackson-module-hibernate-master/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5/)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5/badge.svg)](http://www.javadoc.io/doc/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5)
 
 ## Status
 
