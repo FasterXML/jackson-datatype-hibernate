@@ -2,8 +2,6 @@ package com.fasterxml.jackson.datatype.hibernate5;
 
 import javax.persistence.Transient;
 
-import org.hibernate.bytecode.internal.javassist.FieldHandler;
-
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
@@ -17,7 +15,7 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 public class HibernateAnnotationIntrospector extends AnnotationIntrospector
 {
     private static final long serialVersionUID = 1L;
-
+    
     /**
      * Whether we should check for existence of @Transient or not.
      * Default value is 'true'.
@@ -78,10 +76,37 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
          *  of `FieldHandled`. Not sure if it works without test (alas, none provided),
          *  but will try our best -- problem is, if it'
          */
-        // ... could we avoid direct class reference?
-        if (FieldHandler.class.isAssignableFrom(ac.getAnnotated())) {
-            return Boolean.TRUE;
+        // 11-Feb-2016, tatu: As per [datatype-hibernate#86] must use indirection. Sigh.
+        Class<?> handlerClass = FieldHandlerChecker.instance.getHandlerClass();
+        if (handlerClass != null) {
+            if (handlerClass.isAssignableFrom(ac.getAnnotated())) {
+                return Boolean.TRUE;
+            }
         }
         return null;
+    }
+
+    /**
+     * Helper class used to encapsulate detection of <code>FieldHandler</code>; class
+     * that was part of Hibernate from 4.0 until 5.0, but removed from 5.1.
+     */
+    final static class FieldHandlerChecker {
+        private final static String FIELD_HANDLER_INTERFACE = "org.hibernate.bytecode.internal.javassist.FieldHandler";
+
+        private final Class<?> _handlerClass;
+
+        public final static FieldHandlerChecker instance = new FieldHandlerChecker();
+
+        public FieldHandlerChecker() {
+            Class<?> cls = null;
+            try {
+                cls = Class.forName(FIELD_HANDLER_INTERFACE);
+            } catch (Throwable t) { }
+            _handlerClass = cls;
+        }
+
+        public Class<?> getHandlerClass() {
+            return _handlerClass;
+        }
     }
 }
