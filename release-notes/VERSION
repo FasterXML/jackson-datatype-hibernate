@@ -4,7 +4,7 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
-2.7.2 (not yet released)
+2.7.2 (27-Feb-2016)
 
 #86: NoClassDefFoundError: org/hibernate/bytecode/internal/javassist/FieldHandler with hibernate 5.1
  (reported by yorl1n@github)
