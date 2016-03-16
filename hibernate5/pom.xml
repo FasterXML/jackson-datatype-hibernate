@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate-parent</artifactId>
-    <version>2.7.3</version>
+    <version>2.7.4-SNAPSHOT</version>
   </parent>
   <artifactId>jackson-datatype-hibernate5</artifactId>
   <name>Jackson-datatype-Hibernate5</name>
