@@ -24,7 +24,11 @@ No changes since 2.7.0
 #81: Hibernate4Module causes Type Erasure
  (reported by agorina@github)
 
-2.6.5 (not yet released)
+2.6.6 (05-Apr-2016)
+
+No changes since 2.6.5
+
+2.6.5 (19-Jan-2016)
 
 #70: Infinite recursion due to `@JsonIgnoreProperties` not passed to property
  (reported, fix contributed by Tiago P)
