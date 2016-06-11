@@ -3,6 +3,8 @@ package com.fasterxml.jackson.datatype.hibernate4;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -16,6 +18,21 @@ public class TransientTest extends BaseTest
 
           @Transient
           public int b = 2;
+     }
+
+     public static interface PublicView {}
+     public static interface PrivateView {}
+
+     @JsonPropertyOrder({"aaa", "bbb", "ccc", "ddd"})
+     static class WithTransientAndView {
+         public String aaa = "xxx";
+         @Transient
+         public String bbb = "xxx";
+         @Transient
+         @JsonView(PublicView.class)
+         public String ccc = "xxx";
+         @JsonView(PrivateView.class)
+         public String ddd = "xxx";
      }
 
      /*
@@ -36,5 +53,16 @@ public class TransientTest extends BaseTest
           mapper = new ObjectMapper().registerModule(mod);
           
           assertEquals(aposToQuotes("{'a':1,'b':2}"), mapper.writeValueAsString(new WithTransient()));
+     }
+
+     public void testTransientWithView() throws Exception
+     {
+          ObjectMapper mapper = mapperWithModule(false);
+          assertEquals(aposToQuotes("{'aaa':'xxx'}"),
+                  mapper.writerWithView(PublicView.class)
+                  .writeValueAsString(new WithTransientAndView()));
+          assertEquals(aposToQuotes("{'aaa':'xxx','ddd':'xxx'}"),
+                  mapper.writerWithView(PrivateView.class)
+                  .writeValueAsString(new WithTransientAndView()));
      }
 }

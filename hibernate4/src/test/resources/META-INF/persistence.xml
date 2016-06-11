@@ -6,21 +6,24 @@
 
     <persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>com.fasterxml.jackson.datatype.hibernate4.data.Contrato</class>
         <class>com.fasterxml.jackson.datatype.hibernate4.data.Customer</class>
-		<class>com.fasterxml.jackson.datatype.hibernate4.data.Employee</class>
-		<class>com.fasterxml.jackson.datatype.hibernate4.data.Office</class>
-		<class>com.fasterxml.jackson.datatype.hibernate4.data.Order</class>
-		<class>com.fasterxml.jackson.datatype.hibernate4.data.OrderDetail</class>
-		<class>com.fasterxml.jackson.datatype.hibernate4.data.OrderDetailId</class>
-		<class>com.fasterxml.jackson.datatype.hibernate4.data.Payment</class>
-		<class>com.fasterxml.jackson.datatype.hibernate4.data.PaymentId</class>
-		<class>com.fasterxml.jackson.datatype.hibernate4.data.Product</class>
+        <class>com.fasterxml.jackson.datatype.hibernate4.data.Employee</class>
+        <class>com.fasterxml.jackson.datatype.hibernate4.data.Liquidacao</class>
+        <class>com.fasterxml.jackson.datatype.hibernate4.data.Office</class>
+        <class>com.fasterxml.jackson.datatype.hibernate4.data.Order</class>
+        <class>com.fasterxml.jackson.datatype.hibernate4.data.OrderDetail</class>
+        <class>com.fasterxml.jackson.datatype.hibernate4.data.OrderDetailId</class>
+        <class>com.fasterxml.jackson.datatype.hibernate4.data.Parcela</class>
+        <class>com.fasterxml.jackson.datatype.hibernate4.data.Payment</class>
+        <class>com.fasterxml.jackson.datatype.hibernate4.data.PaymentId</class>
+        <class>com.fasterxml.jackson.datatype.hibernate4.data.Product</class>
         <properties>
-			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-			<property name="javax.persistence.jdbc.user" value=""/>
-			<property name="javax.persistence.jdbc.password" value=""/>
-			<property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'classpath:/classicmodels.sql'"/>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+     	<property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+		<property name="javax.persistence.jdbc.user" value=""/>
+		<property name="javax.persistence.jdbc.password" value=""/>
+		<property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'classpath:/classicmodels.sql'"/>
+		<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
         </properties>
     </persistence-unit>
     

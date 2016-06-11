@@ -4,6 +4,59 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
+2.8.0 (not yet released)
+
+No changes since 2.7
+
+2.7.5 (10-Jun-2016)
+2.7.4 (29-Apr-2016)
+2.7.3 (15-Mar-2016)
+
+No changes since 2.7.2
+
+2.7.2 (27-Feb-2016)
+
+#86: NoClassDefFoundError: org/hibernate/bytecode/internal/javassist/FieldHandler with hibernate 5.1
+ (reported by yorl1n@github)
+
+2.7.1 (02-Feb-2016)
+
+No changes since 2.7.0
+
+2.7.0 (10-Jan-2016)
+
+#72: Should ignore org.hibernate.bytecode.internal.javassist.FieldHandled.getFieldHandler()
+#79: Upgrade hibernate5 dep to latest Hibernate version, 5.0.6
+#81: Hibernate4Module causes Type Erasure
+ (reported by agorina@github)
+
+2.6.6 (05-Apr-2016)
+
+No changes since 2.6.5
+
+2.6.5 (19-Jan-2016)
+
+#70: Infinite recursion due to `@JsonIgnoreProperties` not passed to property
+ (reported, fix contributed by Tiago P)
+
+2.6.4 (07-Dec-2015)
+2.6.3 (12-Oct-2015)
+2.6.2 (15-Sep-2015)
+2.6.1 (09-Aug-2015)
+
+No changes since 2.6.0
+
+2.6.0 (19-Jul-2015)
+
+#67: Provide support for Hibernate 5.x (hibernate5 maven sub-module;
+  Hibernate5Module Jackson module)
+ (contributed by mtyurt@github)
+
+2.5.3 (24-Apr-2015)
+2.5.2 (29-Mar-2015)
+
+No changes since 2.5.1
+
 2.5.1 (06-Feb-2015)
 
 #65: Registered hibernateModule lead to 'NON_EMPTY' failure
