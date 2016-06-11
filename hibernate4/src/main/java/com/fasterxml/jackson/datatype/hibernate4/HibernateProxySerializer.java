@@ -196,7 +196,7 @@ public class HibernateProxySerializer
                                 }
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            idFieldName = init.getEntityName();
                         }
                         idName = idFieldName == null ? init.getEntityName() : idFieldName;
                     }
