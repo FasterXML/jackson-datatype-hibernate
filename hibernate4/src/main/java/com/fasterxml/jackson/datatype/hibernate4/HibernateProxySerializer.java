@@ -19,6 +19,11 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 
+import javax.persistence.Id;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+
 /**
  * Serializer to use for values proxied using {@link org.hibernate.proxy.HibernateProxy}.
  *<p>
@@ -79,7 +84,7 @@ public class HibernateProxySerializer
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
         return new HibernateProxySerializer(this._forceLazyLoading, _serializeIdentifier,
                 _mapping, property);
-    }    
+    }
 
     /*
     /**********************************************************************
@@ -182,7 +187,18 @@ public class HibernateProxySerializer
                     if (session != null) {
                         idName = session.getFactory().getIdentifierPropertyName(init.getEntityName());
                     } else {
-                        idName = init.getEntityName();
+                        String idFieldName = null;
+                        try {
+                            for (Field field : init.getPersistentClass().getDeclaredFields()) {
+                                if (field.isAnnotationPresent(Id.class)) {
+                                    idFieldName = field.getName();
+                                    break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            idFieldName = init.getEntityName();
+                        }
+                        idName = idFieldName == null ? init.getEntityName() : idFieldName;
                     }
                 }
         		final Object idValue = init.getIdentifier();

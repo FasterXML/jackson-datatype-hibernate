@@ -1,23 +1,20 @@
 package com.fasterxml.jackson.datatype.hibernate5;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
-
 import org.hibernate.engine.spi.Mapping;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+
+import javax.persistence.Id;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.HashMap;
 
 /**
  * Serializer to use for values proxied using {@link org.hibernate.proxy.HibernateProxy}.
@@ -73,7 +70,7 @@ public class HibernateProxySerializer
         _mapping = mapping;
         _dynamicSerializers = PropertySerializerMap.emptyForProperties();
         _property = property;
-    }    
+    }
 
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
@@ -91,7 +88,7 @@ public class HibernateProxySerializer
     public boolean isEmpty(SerializerProvider provider, HibernateProxy value) {
         return (value == null) || (findProxied(value) == null);
     }
-    
+
     @Override
     public void serialize(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider)
         throws IOException
@@ -178,17 +175,28 @@ public class HibernateProxySerializer
                 if (_mapping != null) {
                     idName = _mapping.getIdentifierPropertyName(init.getEntityName());
                 } else {
-                    final SessionImplementor session = init.getSession();
+                    final SharedSessionContractImplementor session = init.getSession();
                     if (session != null) {
                         idName = session.getFactory().getIdentifierPropertyName(init.getEntityName());
                     } else {
-                        idName = init.getEntityName();
+                        String idFieldName = null;
+                        try {
+                            for (Field field : init.getPersistentClass().getDeclaredFields()) {
+                                if (field.isAnnotationPresent(Id.class)) {
+                                    idFieldName = field.getName();
+                                    break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            idFieldName =init.getEntityName();
+                        }
+                        idName = idFieldName == null ? init.getEntityName() : idFieldName;
                     }
                 }
-        		final Object idValue = init.getIdentifier();
-        		HashMap<String, Object> map = new HashMap<String, Object>();
-        		map.put(idName, idValue);
-        		return map;
+                final Object idValue = init.getIdentifier();
+                HashMap<String, Object> map = new HashMap<String, Object>();
+                map.put(idName, idValue);
+                return map;
             }
             return null;
         }
