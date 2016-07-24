@@ -1,8 +1,13 @@
 package com.fasterxml.jackson.datatype.hibernate5;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -24,6 +29,7 @@ import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.engine.spi.PersistenceContext;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.mapping.Bag;
 
 /**
  * Wrapper serializer used to handle aspects of lazy loading that can be used
@@ -252,6 +258,11 @@ public class PersistentCollectionSerializer
         if (_serializer == null) { // sanity check...
             throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
         }
+
+        if (Feature.REPLACE_PERSISTENT_COLLECTIONS.enabledIn(_features)) {
+            value = convertToJavaCollection(value); // Strip PersistentCollection
+        }
+
         _serializer.serialize(value, jgen, provider);
     }
 
@@ -270,6 +281,11 @@ public class PersistentCollectionSerializer
         if (_serializer == null) { // sanity check...
             throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
         }
+
+        if (Feature.REPLACE_PERSISTENT_COLLECTIONS.enabledIn(_features)) {
+            value = convertToJavaCollection(value); // Strip PersistentCollection
+        }
+
         _serializer.serializeWithType(value, jgen, provider, typeSer);
     }
 
@@ -371,5 +387,39 @@ public class PersistentCollectionSerializer
             return !Feature.REQUIRE_EXPLICIT_LAZY_LOADING_MARKER.enabledIn(_features);
         }
         return false;
+    }
+
+    private Object convertToJavaCollection(Object value) {
+        if (!(value instanceof PersistentCollection)) {
+            return value;
+        }
+
+        if (value instanceof Set) {
+            return convertToSet((Set<?>) value);
+        }
+
+        if (value instanceof List
+                || value instanceof Bag
+                ) {
+            return convertToList((List<?>) value);
+        }
+
+        if (value instanceof Map) {
+            return convertToMap((Map<?, ?>) value);
+        }
+
+        throw new IllegalArgumentException("Unsupported type: " + value.getClass());
+    }
+
+    private Object convertToList(List<?> value) {
+        return new ArrayList<>(value);
+    }
+
+    private Object convertToMap(Map<?, ?> value) {
+        return new HashMap<>(value);
+    }
+
+    private Object convertToSet(Set<?> value) {
+        return new HashSet<>(value);
     }
 }
