@@ -29,27 +29,33 @@ public class Hibernate3Module extends Module
         USE_TRANSIENT_ANNOTATION(true),
 
         /**
-        * This feature determines how {@link org.hibernate.collection.PersistentCollection}s properties
-        * for which no annotation is found are handled with respect to
-        * lazy-loading: if true, lazy-loading is only assumed if annotation
-        * is used to indicate that; if false, lazy-loading is assumed to be
-        * the default.
-        * Note that {@link #FORCE_LAZY_LOADING} has priority over this Feature;
-        * meaning that if it is defined as true, setting of this Feature has no
-        * effect.
+         * This feature determines how {@link org.hibernate.collection.PersistentCollection}s properties
+         * for which no annotation is found are handled with respect to
+         * lazy-loading: if true, lazy-loading is only assumed if annotation
+         * is used to indicate that; if false, lazy-loading is assumed to be
+         * the default.
+         * Note that {@link #FORCE_LAZY_LOADING} has priority over this Feature;
+         * meaning that if it is defined as true, setting of this Feature has no
+         * effect.
          * <p>
-         * Default value is false, meaning that laziness is considered to be the
-         * default value.
-        * 
-        * @since 2.4
-        */
-       REQUIRE_EXPLICIT_LAZY_LOADING_MARKER(false),
+         * Default value is false, meaning that laziness is assumed by default,
+         * without requiring marker.
+         * 
+         * @since 2.4
+         */
+        REQUIRE_EXPLICIT_LAZY_LOADING_MARKER(false),
 
         /**
-         * Replaces org.hibernate.collection.spi.PersistentCollection List, Set, Map subclasses to java.util.ArrayList, HashSet,
-         * HashMap, during Serialization.
+         * Feature that may be enabled to force
+         * replacement <code>org.hibernate.collection.spi.PersistentCollection</code>,
+         * <code>List</code>, <code>Set</code>, <code>Map</code> subclasses
+         * during serialization as standard JDK {@lin java.util.List},
+         * {@link java.util.Set} and {@link java.util.Map}.
+         * This is usually done to prevent issues with polymorphic handling, so
+         * that type id is generated for standard containers and NOT for Hibernate
+         * variants.
          * <p>
-         * Default is false.
+         * Default setting is false, so that no replacement occurs.
          *
          * @since 2.8.2
          */
@@ -57,7 +63,7 @@ public class Hibernate3Module extends Module
         ;
 
         final boolean _defaultState;
-        final int _mask;
+            final int _mask;
         
         /**
          * Method that calculates bit set (flags) of all features that

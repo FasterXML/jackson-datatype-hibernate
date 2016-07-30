@@ -259,10 +259,8 @@ public class PersistentCollectionSerializer
             throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
         }
 
-        if (Feature.REPLACE_PERSISTENT_COLLECTIONS.enabledIn(_features)) {
-            value = convertToJavaCollection(value); // Strip PersistentCollection
-        }
-
+        // 30-Jul-2016, tatu: wrt [datatype-hibernate#93], should NOT have to do anything here;
+        //     only affects polymophic cases
         _serializer.serialize(value, jgen, provider);
     }
 
@@ -282,10 +280,13 @@ public class PersistentCollectionSerializer
             throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
         }
 
+        // 30-Jul-2016, tatu: wrt [datatype-hibernate#93], conversion IS needed here (or,
+        //    if we could figure out, type id)
+        
+        // !!! TODO: figure out how to replace type id without having to replace collection
         if (Feature.REPLACE_PERSISTENT_COLLECTIONS.enabledIn(_features)) {
             value = convertToJavaCollection(value); // Strip PersistentCollection
         }
-
         _serializer.serializeWithType(value, jgen, provider, typeSer);
     }
 
@@ -389,6 +390,7 @@ public class PersistentCollectionSerializer
         return false;
     }
 
+    // since 2.8.2
     private Object convertToJavaCollection(Object value) {
         if (!(value instanceof PersistentCollection)) {
             return value;
@@ -398,9 +400,7 @@ public class PersistentCollectionSerializer
             return convertToSet((Set<?>) value);
         }
 
-        if (value instanceof List
-                || value instanceof Bag
-                ) {
+        if (value instanceof List || value instanceof Bag) {
             return convertToList((List<?>) value);
         }
 
@@ -408,7 +408,7 @@ public class PersistentCollectionSerializer
             return convertToMap((Map<?, ?>) value);
         }
 
-        throw new IllegalArgumentException("Unsupported type: " + value.getClass());
+        throw new IllegalArgumentException("Unsupported PersistentCollection subtype: " + value.getClass());
     }
 
     private Object convertToList(List<?> value) {
