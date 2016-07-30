@@ -54,6 +54,16 @@ public class Hibernate5Module extends Module
          * @since 2.4
          */
         REQUIRE_EXPLICIT_LAZY_LOADING_MARKER(false),
+
+        /**
+         * Replaces org.hibernate.collection.spi.PersistentCollection List, Set, Map subclasses to java.util.ArrayList, HashSet,
+         * HashMap, during Serialization.
+         * <p>
+         * Default is false.
+         *
+         * @since 2.8.2
+         */
+        REPLACE_PERSISTENT_COLLECTIONS(false)
         ;
 
         final boolean _defaultState;
