@@ -1,5 +1,6 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
+import java.beans.Introspector;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -228,10 +229,10 @@ public class HibernateProxySerializer
                 }
                 String name = idGetter.getName();
                 if (name.startsWith("get")) {
-                    name = Character.toLowerCase(name.charAt(3)) + name.substring(4);
+                    name = Introspector.decapitalize(name.substring(3));
                 }
                 return name;
-            } catch (Exception e) {
+            } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
