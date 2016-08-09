@@ -6,7 +6,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 import com.fasterxml.jackson.datatype.hibernate5.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate5.data.Payment;
 
@@ -56,5 +58,26 @@ public class LazyLoadingTest extends BaseTest
         } finally {
             emf.close();
         }
+    }
+    
+    @Test
+    public void testSerializeIdentifierFeature() throws JsonProcessingException {
+		Hibernate5Module module = new Hibernate5Module();
+		module.enable(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS);
+		ObjectMapper objectMapper = new ObjectMapper().registerModule(module);
+
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");
+    	try {
+    		EntityManager em = emf.createEntityManager();
+    		Customer customerRef = em.getReference(Customer.class, 103);
+    		em.close();
+    		assertFalse(Hibernate.isInitialized(customerRef));
+    		
+			String json = objectMapper.writeValueAsString(customerRef);
+			assertFalse(Hibernate.isInitialized(customerRef));
+			assertEquals("{\"customerNumber\":103}", json);
+    	} finally {
+    		emf.close();
+    	}
     }
 }
