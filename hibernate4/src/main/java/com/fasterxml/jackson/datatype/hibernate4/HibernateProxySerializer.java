@@ -202,16 +202,21 @@ public class HibernateProxySerializer
         return init.getImplementation();
     }
     
-    // Alas, hibernate offers no public api to access this information, so we must resort to ugly hacks ...
+    /**
+     * Inspects a Hibernate proxy to try and determine the name of the identifier property
+     * (Hibernate proxies know the getter of the identifier property because it receives special 
+     * treatment in the invocation handler). Alas, the field storing the method reference is 
+     * private and has no getter, so we must resort to ugly reflection hacks to read its value ... 
+     */
     protected static class ProxyReader {
 
         // static final so the JVM can inline the lookup
-        private static final Field getIdentifierMethod;
+        private static final Field getIdentifierMethodField;
 
         static {
             try {
-                getIdentifierMethod = BasicLazyInitializer.class.getDeclaredField("getIdentifierMethod");
-                getIdentifierMethod.setAccessible(true);
+                getIdentifierMethodField = BasicLazyInitializer.class.getDeclaredField("getIdentifierMethod");
+                getIdentifierMethodField.setAccessible(true);
             } catch (Exception e) {
             	// should never happen: the field exists in all versions of hibernate 4 and 5
                 throw new RuntimeException(e); 
@@ -223,7 +228,7 @@ public class HibernateProxySerializer
          */
         static String getIdentifierPropertyName(LazyInitializer init) {
             try {
-                Method idGetter = (Method) getIdentifierMethod.get(init);
+                Method idGetter = (Method) getIdentifierMethodField.get(init);
                 if (idGetter == null) {
                 	return null;
                 }
