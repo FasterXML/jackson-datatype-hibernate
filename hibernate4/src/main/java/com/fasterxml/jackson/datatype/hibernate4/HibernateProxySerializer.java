@@ -1,6 +1,9 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
+import java.beans.Introspector;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.core.*;
@@ -18,6 +21,7 @@ import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+import org.hibernate.proxy.pojo.BasicLazyInitializer;
 
 /**
  * Serializer to use for values proxied using {@link org.hibernate.proxy.HibernateProxy}.
@@ -174,7 +178,7 @@ public class HibernateProxySerializer
         LazyInitializer init = proxy.getHibernateLazyInitializer();
         if (!_forceLazyLoading && init.isUninitialized()) {
             if (_serializeIdentifier) {
-                final String idName;
+                String idName;
                 if (_mapping != null) {
                     idName = _mapping.getIdentifierPropertyName(init.getEntityName());
                 } else {
@@ -182,7 +186,10 @@ public class HibernateProxySerializer
                     if (session != null) {
                         idName = session.getFactory().getIdentifierPropertyName(init.getEntityName());
                     } else {
-                        idName = init.getEntityName();
+                        idName = ProxyReader.getIdentifierPropertyName(init);
+                        if (idName == null) {
+                        	idName = init.getEntityName();
+                        }
                     }
                 }
         		final Object idValue = init.getIdentifier();
@@ -193,5 +200,46 @@ public class HibernateProxySerializer
             return null;
         }
         return init.getImplementation();
+    }
+    
+    /**
+     * Inspects a Hibernate proxy to try and determine the name of the identifier property
+     * (Hibernate proxies know the getter of the identifier property because it receives special 
+     * treatment in the invocation handler). Alas, the field storing the method reference is 
+     * private and has no getter, so we must resort to ugly reflection hacks to read its value ... 
+     */
+    protected static class ProxyReader {
+
+        // static final so the JVM can inline the lookup
+        private static final Field getIdentifierMethodField;
+
+        static {
+            try {
+                getIdentifierMethodField = BasicLazyInitializer.class.getDeclaredField("getIdentifierMethod");
+                getIdentifierMethodField.setAccessible(true);
+            } catch (Exception e) {
+            	// should never happen: the field exists in all versions of hibernate 4 and 5
+                throw new RuntimeException(e); 
+            }
+        }
+
+        /**
+         * @return the name of the identifier property, or null if the name could not be determined
+         */
+        static String getIdentifierPropertyName(LazyInitializer init) {
+            try {
+                Method idGetter = (Method) getIdentifierMethodField.get(init);
+                if (idGetter == null) {
+                	return null;
+                }
+                String name = idGetter.getName();
+                if (name.startsWith("get")) {
+                    name = Introspector.decapitalize(name.substring(3));
+                }
+                return name;
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

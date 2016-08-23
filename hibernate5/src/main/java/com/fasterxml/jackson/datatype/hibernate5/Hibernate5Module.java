@@ -30,10 +30,19 @@ public class Hibernate5Module extends Module
         USE_TRANSIENT_ANNOTATION(true),
         
 	    /**
-	     * If FORCE_LAZY_LOADING is false lazy-loaded object should be serialized as map IdentifierName=>IdentifierValue
-	     * instead of null (true); or serialized as nulls (false)
+	     * If FORCE_LAZY_LOADING is false, this feature serializes uninitialized lazy loading proxies as
+	     * <code>{"identifierName":"identifierValue"}</code> rather than <code>null</code>. 
 	     * <p>
-	     * Default value is false.
+         * Default value is false.
+	     * <p>
+	     * Note that the name of the identifier property can only be determined if 
+	     * <ul>
+	     * <li>the {@link Mapping} is provided to the Hibernate5Module, or </li>
+	     * <li>the persistence context that loaded the proxy has not yet been closed, or</li> 
+	     * <li>the id property is mapped with property access (for instance because the {@code @Id}
+	     * annotation is applied to a method rather than a field)</li>
+	     * </ul>
+	     * Otherwise, the entity name will be used instead. 
 	     */
         SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS(false),
 
