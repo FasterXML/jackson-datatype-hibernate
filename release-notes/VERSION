@@ -4,6 +4,10 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
+2.8.3 (17-Sep-2016)
+
+No changes since 2.8.2
+
 2.8.2 (30-Aug-2016)
 
 #96: Improve `SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS` feature
