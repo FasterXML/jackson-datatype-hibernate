@@ -29,7 +29,25 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.jackson.core>2.8.4</version.jackson.core>
+    <version.jackson.core>2.8.5</version.jackson.core>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- jackson-parent defines version of annotations, but we need to specify version
+           for core, databind
+        -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${version.jackson.core}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${version.jackson.core}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
 </project>

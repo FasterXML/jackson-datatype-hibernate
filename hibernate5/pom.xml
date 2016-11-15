@@ -27,12 +27,10 @@ Hibernate (http://hibernate.org) version 5.x data types.
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${version.jackson.core}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>${version.jackson.core}</version>
     </dependency>
     <!-- 18-Dec-2015, tatu: Since 5.0.1, we get exception for
         missing class "javax.transaction.SystemException", without this:
