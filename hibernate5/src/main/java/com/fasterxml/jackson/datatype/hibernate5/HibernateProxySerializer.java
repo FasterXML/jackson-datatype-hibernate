@@ -46,6 +46,15 @@ public class HibernateProxySerializer
     protected final Mapping _mapping;
 
     /**
+     * Flag to keep track if hibernate abi running is not
+     * compatible with hibernate jackson-datatype-hibernate5
+     * used at build-time.
+     * Maybe using org.hibernate.Version is a better solution
+     * but the build time version is needed too.
+     */
+    protected Boolean hibernateAbiIncompatible;
+
+    /**
      * For efficient serializer lookup, let's use this; most
      * of the time, there's just one type and one serializer.
      */
@@ -182,8 +191,28 @@ public class HibernateProxySerializer
                 if (_mapping != null) {
                     idName = _mapping.getIdentifierPropertyName(init.getEntityName());
                 } else {
-                    final SessionImplementor session = init.getSession();
-                    if (session != null) {
+                    // Detect abi compatibility if not set yet
+                    if(hibernateAbiIncompatible == null){
+                        try {
+                            init.getSession();
+                            hibernateAbiIncompatible = false;
+                        } catch (NoSuchMethodError e) {
+                            hibernateAbiIncompatible = true;
+                        }
+                    }
+                    final Object sessionObj;
+                    if(!hibernateAbiIncompatible){
+                        sessionObj = init.getSession();
+                    }else{
+                        try {
+                            Method method = init.getClass().getMethod("getSession");
+                            sessionObj = method.invoke(init);
+                        } catch (Exception e1) {
+                            throw new RuntimeException(e1);
+                        }
+                    }
+                    if (sessionObj != null) {
+                        final SessionImplementor session = (org.hibernate.engine.spi.SessionImplementor) sessionObj;
                         idName = session.getFactory().getIdentifierPropertyName(init.getEntityName());
                     } else {
                         idName = ProxyReader.getIdentifierPropertyName(init);
@@ -218,7 +247,7 @@ public class HibernateProxySerializer
                 getIdentifierMethodField = BasicLazyInitializer.class.getDeclaredField("getIdentifierMethod");
                 getIdentifierMethodField.setAccessible(true);
             } catch (Exception e) {
-            	// should never happen: the field exists in all versions of hibernate 4 and 5
+                // should never happen: the field exists in all versions of hibernate 4 and 5
                 throw new RuntimeException(e); 
             }
         }
@@ -230,7 +259,7 @@ public class HibernateProxySerializer
             try {
                 Method idGetter = (Method) getIdentifierMethodField.get(init);
                 if (idGetter == null) {
-                	return null;
+                    return null;
                 }
                 String name = idGetter.getName();
                 if (name.startsWith("get")) {
