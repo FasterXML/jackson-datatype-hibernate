@@ -50,4 +50,15 @@
     </dependencies>
   </dependencyManagement>
 
+  <profiles>
+    <profile>
+      <id>hibernate5_2</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <modules>
+        <module>hibernate5_2</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>
