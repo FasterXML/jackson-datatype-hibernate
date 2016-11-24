@@ -2,11 +2,20 @@ package com.fasterxml.jackson.datatype.hibernate5;
 
 import java.util.Arrays;
 
+import org.apache.log4j.Logger;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class BaseTest extends junit.framework.TestCase
 {
-    protected BaseTest() { }
+    protected BaseTest() {
+    	try {
+			Logger.getLogger(this.getClass()).info("Testing using hibernate " + Class.forName("org.hibernate.Version").getMethod("getVersionString").invoke(null));
+		} catch (Exception e) {
+			// Should not happen
+			throw new RuntimeException(e);
+		}
+    }
 
     protected ObjectMapper mapperWithModule(boolean forceLazyLoading)
     {
