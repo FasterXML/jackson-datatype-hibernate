@@ -32,6 +32,7 @@
     <version.jackson>2.9.0-SNAPSHOT</version.jackson>
   </properties>
 
+  <!-- first, force versions of some components -->
   <dependencyManagement>
     <dependencies>
       <!-- jackson-parent defines version of annotations, but we need to specify version
@@ -49,4 +50,47 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <!-- But there are also some well-known test dependencies we may as well add directly -->
+      <!-- and for testing, JUnit is needed, as well as annotations -->
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <!-- Inherited from oss-base. Generate PackageVersion.java.-->
+          <groupId>com.google.code.maven-replacer-plugin</groupId>
+          <artifactId>replacer</artifactId>
+          <executions>
+            <execution>
+              <id>process-packageVersion</id>
+              <phase>generate-sources</phase>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <exclude>com/fasterxml/jackson/**/failing/*.java</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>

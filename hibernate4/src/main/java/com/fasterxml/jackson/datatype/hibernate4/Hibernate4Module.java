@@ -149,7 +149,7 @@ public class Hibernate4Module extends Module
     }
 
     @Override public String getModuleName() { return "jackson-datatype-hibernate"; }
-    @Override public Version version() { return ModuleVersion.instance.version(); }
+    @Override public Version version() { return PackageVersion.VERSION; }
 
     @Override
     public void setupModule(SetupContext context)

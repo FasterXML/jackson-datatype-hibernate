@@ -42,9 +42,9 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
 
     @Override
     public Version version() {
-        return ModuleVersion.instance.version();
+        return PackageVersion.VERSION;
     }
-    
+
     /*
     /**********************************************************************
     /* AnnotationIntrospector implementation/overrides

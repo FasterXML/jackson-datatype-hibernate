@@ -52,10 +52,10 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
     /* Standard method impl/overrides
     /**********************************************************************
      */
-    
+
     @Override
     public Version version() {
-        return ModuleVersion.instance.version();
+        return PackageVersion.VERSION;
     }
 
     /*
@@ -63,7 +63,7 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
     /* Annotation introspection methods
     /**********************************************************************
      */
-    
+
     @Override
     public boolean hasIgnoreMarker(AnnotatedMember m) {
         return _cfgCheckTransient && m.hasAnnotation(Transient.class);
