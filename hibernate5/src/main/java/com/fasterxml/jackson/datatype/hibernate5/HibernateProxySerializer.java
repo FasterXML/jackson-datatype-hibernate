@@ -182,7 +182,7 @@ public class HibernateProxySerializer
                 if (_mapping != null) {
                     idName = _mapping.getIdentifierPropertyName(init.getEntityName());
                 } else {
-                    final SessionImplementor session = init.getSession();
+                    final SessionImplementor session = (SessionImplementor) init.getSession();
                     if (session != null) {
                         idName = session.getFactory().getIdentifierPropertyName(init.getEntityName());
                     } else {
