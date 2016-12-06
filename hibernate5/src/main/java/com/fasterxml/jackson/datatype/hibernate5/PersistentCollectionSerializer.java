@@ -1,6 +1,7 @@
 package com.fasterxml.jackson.datatype.hibernate5;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -340,9 +341,7 @@ public class PersistentCollectionSerializer
 //                .getTransactionFactory()
 //                .compatibleWithJtaSynchronization();
         //Above is removed after Hibernate 5
-        boolean isJTA = ((SessionImplementor) session).getTransactionCoordinator()
-                .getTransactionCoordinatorBuilder()
-                .isJta();
+        boolean isJTA = SessionReader.isJTA(session);
 
         if (!isJTA) {
             session.beginTransaction();
@@ -421,5 +420,56 @@ public class PersistentCollectionSerializer
 
     private Object convertToSet(Set<?> value) {
         return new HashSet<>(value);
+    }
+    
+    protected static class SessionReader {
+        
+        /**
+         *  Return changed from org.hibernate.resource.transaction.TransactionCoordinator
+         *  to org.hibernate.resource.transaction.spi.TransactionCoordinator 
+         */
+        protected static final Method getTransactionCoordinatorMethod;
+        /**
+         *  Return changed from org.hibernate.resource.transaction.TransactionCoordinatorBuilder
+         *  to org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder 
+         */
+        protected static final Method getTransactionCoordinatorBuilderMethod;
+        /**
+         *  Class changed from org.hibernate.resource.transaction.TransactionCoordinatorBuilder
+         *  to org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder 
+         */
+        protected static final Method isJtaMethod;
+        
+        static {
+            try {
+                getTransactionCoordinatorMethod = SessionImplementor.class.getMethod("getTransactionCoordinator");
+            } catch (Exception e) {
+                // should never happen: the class and method exists in all versions of hibernate 5
+                throw new RuntimeException(e); 
+            }
+            try{
+                getTransactionCoordinatorBuilderMethod = Hibernate5Version.getTransactionCoordinatorClass().getMethod("getTransactionCoordinatorBuilder");
+            } catch (Exception e) {
+                // should never happen
+                throw new RuntimeException(e); 
+            }
+            try{
+                isJtaMethod = Hibernate5Version.getTransactionCoordinatorClass().getMethod("isJta");
+            } catch (Exception e) {
+                // should never happen
+                throw new RuntimeException(e); 
+            }
+        }
+        
+        public static boolean isJTA(Session session) {
+            try {
+                Object transactionCoordinator = getTransactionCoordinatorMethod.invoke(session);
+                Object transactionCoordinatorBuilder = getTransactionCoordinatorBuilderMethod.invoke(transactionCoordinator);
+                return (boolean) isJtaMethod.invoke(transactionCoordinatorBuilder);
+            } catch (Exception e) {
+                // Should never happen
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
