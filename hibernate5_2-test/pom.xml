@@ -79,10 +79,20 @@
         </executions>
       </plugin>
       <plugin>
-        <!-- No jar to install, skip configuration needs 2.4+ -->
+        <!-- No jar to install, skip configuration; needs 2.4+ (parent pom 
+            fixed to use that version for 2.9, but not 2.8
+         -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-install-plugin</artifactId>
         <version>2.4</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- ditto for deploy -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
           <skip>true</skip>
         </configuration>
