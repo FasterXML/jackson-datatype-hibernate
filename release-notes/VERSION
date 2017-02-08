@@ -4,6 +4,11 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
+2.8.7 (not yet released)
+
+#102: 2.8.6 NoSuchMethodException with Hibernate 5.2
+ (reported by Jordan G)
+
 2.8.6 (12-Jan-2017)
 
 #92: Add support for Hibernate 5.2
