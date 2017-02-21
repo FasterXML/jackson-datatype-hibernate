@@ -310,6 +310,7 @@ public class PersistentCollectionSerializer
             return null;
         }
         if (_sessionFactory != null) {
+            // 08-Feb-2017, tatu: and not closing this is not problematic... ?
             Session session = openTemporarySessionForLoading(coll);
             initializeCollection(coll, session);
         }
@@ -423,52 +424,14 @@ public class PersistentCollectionSerializer
     }
     
     protected static class SessionReader {
-        
-        /**
-         *  Return changed from org.hibernate.resource.transaction.TransactionCoordinator
-         *  to org.hibernate.resource.transaction.spi.TransactionCoordinator 
-         */
-        protected static final Method getTransactionCoordinatorMethod;
-        /**
-         *  Return changed from org.hibernate.resource.transaction.TransactionCoordinatorBuilder
-         *  to org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder 
-         */
-        protected static final Method getTransactionCoordinatorBuilderMethod;
-        /**
-         *  Class changed from org.hibernate.resource.transaction.TransactionCoordinatorBuilder
-         *  to org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder 
-         */
-        protected static final Method isJtaMethod;
-        
-        static {
-            try {
-                getTransactionCoordinatorMethod = SessionImplementor.class.getMethod("getTransactionCoordinator");
-            } catch (Exception e) {
-                // should never happen: the class and method exists in all versions of hibernate 5
-                throw new RuntimeException(e); 
-            }
-            try{
-                getTransactionCoordinatorBuilderMethod = Hibernate5Version.getTransactionCoordinatorClass().getMethod("getTransactionCoordinatorBuilder");
-            } catch (Exception e) {
-                // should never happen
-                throw new RuntimeException(e); 
-            }
-            try{
-                isJtaMethod = Hibernate5Version.getTransactionCoordinatorClass().getMethod("isJta");
-            } catch (Exception e) {
-                // should never happen
-                throw new RuntimeException(e); 
-            }
-        }
-        
         public static boolean isJTA(Session session) {
             try {
-                Object transactionCoordinator = getTransactionCoordinatorMethod.invoke(session);
-                Object transactionCoordinatorBuilder = getTransactionCoordinatorBuilderMethod.invoke(transactionCoordinator);
-                return (boolean) isJtaMethod.invoke(transactionCoordinatorBuilder);
-            } catch (Exception e) {
-                // Should never happen
-                throw new RuntimeException(e);
+                EntityManager em = (EntityManager) session;
+                em.getTransaction();
+                return false;
+            } catch (IllegalStateException e) {
+                // EntityManager is required to throw an IllegalStateException if it's JTA-managed
+                return true;
             }
         }
     }
