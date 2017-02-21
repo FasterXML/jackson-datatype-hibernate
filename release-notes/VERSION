@@ -4,6 +4,10 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
+2.8.7 (21-Feb-2017)
+
+No changes since 2.8.6
+
 2.8.6 (12-Jan-2017)
 
 #92: Add support for Hibernate 5.2
