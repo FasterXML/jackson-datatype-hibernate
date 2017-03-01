@@ -17,9 +17,7 @@
     <module>hibernate3</module>
     <module>hibernate4</module>
     <module>hibernate5</module>
-<!-- temp, to get release out
     <module>hibernate5_2-test</module>
--->
   </modules>
 
   <url>https://github.com/FasterXML/jackson-datatype-hibernate</url>
