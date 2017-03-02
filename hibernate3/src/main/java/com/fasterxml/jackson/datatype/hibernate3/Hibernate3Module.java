@@ -21,7 +21,7 @@ public class Hibernate3Module extends Module
 
         /**
          * Whether {@link javax.persistence.Transient} annotation should be checked or not; if true, will consider
-         * @Transient to mean that property is to be ignored; if false annotation will
+         * {@code @Transient} to mean that property is to be ignored; if false annotation will
          * have no effect.
          *<p>
          * Default value is true.
@@ -49,7 +49,7 @@ public class Hibernate3Module extends Module
          * Feature that may be enabled to force
          * replacement <code>org.hibernate.collection.spi.PersistentCollection</code>,
          * <code>List</code>, <code>Set</code>, <code>Map</code> subclasses
-         * during serialization as standard JDK {@lin java.util.List},
+         * during serialization as standard JDK {@link java.util.List},
          * {@link java.util.Set} and {@link java.util.Map}.
          * This is usually done to prevent issues with polymorphic handling, so
          * that type id is generated for standard containers and NOT for Hibernate
