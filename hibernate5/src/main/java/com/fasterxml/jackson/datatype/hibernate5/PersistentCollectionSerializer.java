@@ -1,14 +1,7 @@
 package com.fasterxml.jackson.datatype.hibernate5;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -158,21 +151,6 @@ public class PersistentCollectionSerializer
     /**********************************************************************
      */
 
-    // since 2.3
-    @Deprecated // since 2.5
-    @Override
-    public boolean isEmpty(Object value)
-    {
-        if (value == null) { // is null ever passed?
-            return true;
-        }
-        if (value instanceof PersistentCollection) {
-            Object lazy = findLazyValue((PersistentCollection) value);
-            return (lazy == null) || _serializer.isEmpty(lazy);
-        }
-        return _serializer.isEmpty(value);
-    }
-
     @Override // since 2.6
     public boolean isEmpty(SerializerProvider provider, Object value)
     {
@@ -246,39 +224,39 @@ public class PersistentCollectionSerializer
      */
 
     @Override
-    public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider)
+    public void serialize(Object value, JsonGenerator g, SerializerProvider provider)
         throws IOException
     {
         if (value instanceof PersistentCollection) {
             value = findLazyValue((PersistentCollection) value);
             if (value == null) {
-                provider.defaultSerializeNull(jgen);
+                provider.defaultSerializeNull(g);
                 return;
             }
         }
         if (_serializer == null) { // sanity check...
-            throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
+            throw JsonMappingException.from(g, "PersistentCollection does not have serializer set");
         }
 
         // 30-Jul-2016, tatu: wrt [datatype-hibernate#93], should NOT have to do anything here;
         //     only affects polymophic cases
-        _serializer.serialize(value, jgen, provider);
+        _serializer.serialize(value, g, provider);
     }
 
     @Override
-    public void serializeWithType(Object value, JsonGenerator jgen, SerializerProvider provider,
+    public void serializeWithType(Object value, JsonGenerator g, SerializerProvider provider,
             TypeSerializer typeSer)
         throws IOException
     {
         if (value instanceof PersistentCollection) {
             value = findLazyValue((PersistentCollection) value);
             if (value == null) {
-                provider.defaultSerializeNull(jgen);
+                provider.defaultSerializeNull(g);
                 return;
             }
         }
         if (_serializer == null) { // sanity check...
-            throw JsonMappingException.from(jgen, "PersistentCollection does not have serializer set");
+            throw JsonMappingException.from(g, "PersistentCollection does not have serializer set");
         }
 
         // 30-Jul-2016, tatu: wrt [datatype-hibernate#93], conversion IS needed here (or,
@@ -288,7 +266,7 @@ public class PersistentCollectionSerializer
         if (Feature.REPLACE_PERSISTENT_COLLECTIONS.enabledIn(_features)) {
             value = convertToJavaCollection(value); // Strip PersistentCollection
         }
-        _serializer.serializeWithType(value, jgen, provider, typeSer);
+        _serializer.serializeWithType(value, g, provider, typeSer);
     }
 
     /*

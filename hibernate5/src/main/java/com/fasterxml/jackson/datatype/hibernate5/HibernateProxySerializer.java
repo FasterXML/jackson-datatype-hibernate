@@ -98,26 +98,26 @@ public class HibernateProxySerializer
     }
     
     @Override
-    public void serialize(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider)
+    public void serialize(HibernateProxy value, JsonGenerator g, SerializerProvider provider)
         throws IOException
     {
         Object proxiedValue = findProxied(value);
         // TODO: figure out how to suppress nulls, if necessary? (too late for that here)
         if (proxiedValue == null) {
-            provider.defaultSerializeNull(jgen);
+            provider.defaultSerializeNull(g);
             return;
         }
-        findSerializer(provider, proxiedValue).serialize(proxiedValue, jgen, provider);
+        findSerializer(provider, proxiedValue).serialize(proxiedValue, g, provider);
     }
 
     @Override
-    public void serializeWithType(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider,
+    public void serializeWithType(HibernateProxy value, JsonGenerator g, SerializerProvider provider,
             TypeSerializer typeSer)
         throws IOException
     {
         Object proxiedValue = findProxied(value);
         if (proxiedValue == null) {
-            provider.defaultSerializeNull(jgen);
+            provider.defaultSerializeNull(g);
             return;
         }
         /* This isn't exactly right, since type serializer really refers to proxy
@@ -125,7 +125,7 @@ public class HibernateProxySerializer
          * to know how to apply additional type info) or other things;
          * so it's not going to work well. But... we'll do out best.
          */
-        findSerializer(provider, proxiedValue).serializeWithType(proxiedValue, jgen, provider, typeSer);
+        findSerializer(provider, proxiedValue).serializeWithType(proxiedValue, g, provider, typeSer);
     }
 
     @Override
