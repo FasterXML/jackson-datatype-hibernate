@@ -49,7 +49,9 @@ mapper.registerModule(new Hibernate3Module());
 
 after which functionality is available for all normal Jackson operations.
 
-Note that there are actuall 
+### Avoiding infinite loops
+
+* http://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
 
 ### Using with Spring MVC
 
