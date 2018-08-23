@@ -1,27 +1,11 @@
 package com.fasterxml.jackson.datatype.hibernate5;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContainerSerializer;
@@ -29,6 +13,7 @@ import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
 import com.fasterxml.jackson.databind.util.NameTransformer;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
+
 import org.hibernate.FlushMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -38,7 +23,6 @@ import org.hibernate.engine.spi.PersistenceContext;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.mapping.Bag;
-import org.hibernate.resource.transaction.TransactionCoordinator;
 import org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionCoordinatorImpl;
 
 /**
@@ -421,26 +405,23 @@ public class PersistentCollectionSerializer
     {
         public static boolean isJTA(Session session)
         {
-            if (session instanceof EntityManager)
-            {
-                try
-                {
+            if (session instanceof EntityManager) {
+                try {
                     session.getTransaction();
                     return false;
-                }
-                catch (final IllegalStateException e)
-                {
+                } catch (final IllegalStateException e) {
                     // EntityManager is required to throw an IllegalStateException if it's JTA-managed
                     return true;
                 }
             }
-            else if (session instanceof SessionImplementor)
-            {
-                final TransactionCoordinator transactionCoordinator = ((SessionImplementor) session).getTransactionCoordinator();
-
+            if (session instanceof SessionImplementor) {
+                // 23-Aug-2018, tatu: Unfortunately, Hibernate ORM has a pretty severe backwards-compatibility
+                //    breakage between 5.1 and 5.2, due to move of `TransactionCoordinator` being moved to
+                //    different package. As such, we can not cast it... and it's unclear if even calling the
+                //    method directly is kosher.
+                final Object transactionCoordinator = ((SessionImplementor) session).getTransactionCoordinator();
                 return (transactionCoordinator instanceof JtaTransactionCoordinatorImpl);
             }
-
             // If in doubt, do without (transaction)
             return true;
         }
