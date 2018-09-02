@@ -55,13 +55,15 @@ after which functionality is available for all normal Jackson operations.
 
 ### Using with Spring MVC
 
-Sub-class ObjectMapper and register the module (Hibernate 3, 4 or 5)
+Although more common way would be to register the module explicitly, it is alternatively
+possible to just sub-class ObjectMapper and register the module in constructor.
 
 ```java
 public class HibernateAwareObjectMapper extends ObjectMapper {
-
     public HibernateAwareObjectMapper() {
-        registerModule(new Hibernate4Module());
+        // This for Hibernate 5; change 5 to 4 or 3 if you need to support
+        // Hibernate 4 or Hibernate 3 instead
+        registerModule(new Hibernate5Module());
     }
 }
 ```    
