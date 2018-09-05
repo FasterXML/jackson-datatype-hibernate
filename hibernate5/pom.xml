@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion> 
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate-parent</artifactId>
@@ -17,7 +17,7 @@ Hibernate (http://hibernate.org) version 5.x data types.
     <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate5</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate5</packageVersion.package>
     <!-- Hibernate with JPA 2.0 -->
-    <hibernate.version>5.1.0.Final</hibernate.version>
+    <hibernate.version>5.2.17.Final</hibernate.version>
     <surefire.version>2.12</surefire.version>
     <osgi.export>${project.groupId}.hibernate5</osgi.export>
   </properties>
@@ -32,7 +32,7 @@ Hibernate (http://hibernate.org) version 5.x data types.
       <version>1.1</version>
     </dependency>
 
-    <!-- what would be the best scope to use here? -->    
+    <!-- what would be the best scope to use here? -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>

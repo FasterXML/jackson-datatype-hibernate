@@ -1,9 +1,8 @@
 package com.fasterxml.jackson.datatype.hibernate5;
 
+import javax.persistence.*;
 import java.io.IOException;
 import java.util.*;
-
-import javax.persistence.*;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.*;
@@ -24,6 +23,7 @@ import org.hibernate.engine.spi.PersistenceContext;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.mapping.Bag;
+import org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionCoordinatorImpl;
 
 /**
  * Wrapper serializer used to handle aspects of lazy loading that can be used
@@ -89,7 +89,7 @@ public class PersistentCollectionSerializer
     public PersistentCollectionSerializer unwrappingSerializer(NameTransformer unwrapper) {
         return _withSerializer(_serializer.unwrappingSerializer(unwrapper));
     }
-    
+
     protected PersistentCollectionSerializer _withSerializer(JsonSerializer<?> ser) {
         if ((ser == _serializer) || (ser == null)) {
             return this;
@@ -261,7 +261,7 @@ public class PersistentCollectionSerializer
 
         // 30-Jul-2016, tatu: wrt [datatype-hibernate#93], conversion IS needed here (or,
         //    if we could figure out, type id)
-        
+
         // !!! TODO: figure out how to replace type id without having to replace collection
         if (Feature.REPLACE_PERSISTENT_COLLECTIONS.enabledIn(_features)) {
             value = convertToJavaCollection(value); // Strip PersistentCollection
@@ -281,7 +281,7 @@ public class PersistentCollectionSerializer
         }
         return null;
     }
-    
+
     protected Object findLazyValue(PersistentCollection coll) {
         // If lazy-loaded, not yet loaded, may serialize as null?
         if (!Feature.FORCE_LAZY_LOADING.enabledIn(_features) && !coll.wasInitialized()) {
@@ -400,17 +400,30 @@ public class PersistentCollectionSerializer
     private Object convertToSet(Set<?> value) {
         return new HashSet<>(value);
     }
-    
-    protected static class SessionReader {
-        public static boolean isJTA(Session session) {
-            try {
-                EntityManager em = (EntityManager) session;
-                em.getTransaction();
-                return false;
-            } catch (IllegalStateException e) {
-                // EntityManager is required to throw an IllegalStateException if it's JTA-managed
-                return true;
+
+    protected static class SessionReader
+    {
+        public static boolean isJTA(Session session)
+        {
+            if (session instanceof EntityManager) {
+                try {
+                    session.getTransaction();
+                    return false;
+                } catch (final IllegalStateException e) {
+                    // EntityManager is required to throw an IllegalStateException if it's JTA-managed
+                    return true;
+                }
             }
+            if (session instanceof SessionImplementor) {
+                // 23-Aug-2018, tatu: Unfortunately, Hibernate ORM has a pretty severe backwards-compatibility
+                //    breakage between 5.1 and 5.2, due to move of `TransactionCoordinator` being moved to
+                //    different package. As such, we can not cast it... and it's unclear if even calling the
+                //    method directly is kosher.
+                final Object transactionCoordinator = ((SessionImplementor) session).getTransactionCoordinator();
+                return (transactionCoordinator instanceof JtaTransactionCoordinatorImpl);
+            }
+            // If in doubt, do without (transaction)
+            return true;
         }
     }
 }
