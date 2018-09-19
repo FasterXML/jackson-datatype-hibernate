@@ -4,7 +4,7 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
-2.9.7 (not yet released)
+2.9.7 (19-Sep-2018)
 
 #111: Class cast exception on hibernate5 module (with Hibernate 5.1+)
  (reported by tomaldbugz@github)
