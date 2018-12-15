@@ -25,6 +25,8 @@ public class Customer  implements java.io.Serializable
      private String postalCode;
      private String country;
      private Double creditLimit;
+     private String missingProductCode;
+     private Product missingProduct;
      private Set<Payment> payments = new HashSet<Payment>();
      private Set<Order> orders = new HashSet<Order>();
 
@@ -194,5 +196,25 @@ public class Customer  implements java.io.Serializable
     
     public void setPayments(Set<Payment> payments) {
         this.payments = payments;
+    }
+    
+    @Column(name="missingProductCode")
+    public String getMissingProductCode() {
+        return missingProductCode;
+    }
+    
+    public void setMissingProductCode(String missingProductCode) {
+        this.missingProductCode = missingProductCode;
+    }
+
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "missingProductCode", nullable = true, insertable = false, updatable = false)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public Product getMissingProduct() {
+        return missingProduct;
+    }
+    
+    public void setMissingProduct(Product missingProduct) {
+        this.missingProduct = missingProduct;
     }
 }
