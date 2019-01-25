@@ -77,7 +77,14 @@ public class Hibernate5Module extends Module
          *
          * @since 2.8.2
          */
-        REPLACE_PERSISTENT_COLLECTIONS(false)
+        REPLACE_PERSISTENT_COLLECTIONS(false),
+        
+        /**
+         * Using {@link #FORCE_LAZY_LOADING} may result in
+         * `javax.persistence.EntityNotFoundException`. This flag configures Jackson to
+         * ignore the error and serialize a `null`.
+         */
+        WRITE_MISSING_ENTITIES_AS_NULL(false)
         ;
 
         final boolean _defaultState;

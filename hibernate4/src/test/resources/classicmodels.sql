@@ -40,6 +40,7 @@ CREATE TABLE  `classicmodels`.`Customer` (
   `country` varchar(50) NOT NULL,
   `salesRepEmployeeNumber` int(11) DEFAULT NULL,
   `creditLimit` double DEFAULT NULL,
+  `missingProductCode` varchar(50) NULL,
   PRIMARY KEY (`customerNumber`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 INSERT INTO `classicmodels`.`Customer` (`customerNumber`,`customerName`,`contactLastName`,`contactFirstName`,`phone`,`addressLine1`,`addressLine2`,`city`,`state`,`postalCode`,`country`,`salesRepEmployeeNumber`,`creditLimit`) VALUES 
@@ -165,6 +166,9 @@ INSERT INTO `classicmodels`.`Customer` (`customerNumber`,`customerName`,`contact
  (489,'Double Decker Gift Stores, Ltd','Hardy','Thomas ','(171) 555-7555','120 Hanover Sq.',NULL,'London',NULL,'WA1 1DP','UK',1501,43300),
  (495,'Diecast Collectables','Franco','Valarie','6175552555','6251 Ingle Ln.',NULL,'Boston','MA','51003','USA',1188,85100),
  (496,'Kellys Gift Shop','Snowden','Tony','+64 9 5555500','Arenales 1938 3A',NULL,'Auckland  ',NULL,'','New Zealand',1612,110000);
+INSERT INTO `classicmodels`.`Customer` (`customerNumber`,`customerName`,`contactLastName`,`contactFirstName`,`phone`,`addressLine1`,`addressLine2`,`city`,`state`,`postalCode`,`country`,`salesRepEmployeeNumber`,`creditLimit`, `missingProductCode`) VALUES 
+ (500,'Customer with valid product','Schmitt','Carine ','40.32.2555','54, rue Royale',NULL,'Nantes',NULL,'44000','France',1370,21000, 'S10_1678'),
+ (501,'Customer with invalid product','Schmitt','Carine ','40.32.2555','54, rue Royale',NULL,'Nantes',NULL,'44000','France',1370,21000, 'X10_1678'),
 
 DROP TABLE IF EXISTS `classicmodels`.`Employee`;
 CREATE TABLE  `classicmodels`.`Employee` (

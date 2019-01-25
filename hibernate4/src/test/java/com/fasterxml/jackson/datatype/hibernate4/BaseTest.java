@@ -11,13 +11,23 @@ public abstract class BaseTest extends junit.framework.TestCase
 
     protected ObjectMapper mapperWithModule(boolean forceLazyLoading)
     {
-        return new ObjectMapper().registerModule(hibernateModule(forceLazyLoading));
+        return new ObjectMapper().registerModule(hibernateModule(forceLazyLoading, false));
     }
 
-    protected Hibernate4Module hibernateModule(boolean forceLazyLoading)
+    protected ObjectMapper mapperWithModule(boolean forceLazyLoading, boolean nullMissingEntities)
+    {
+        return new ObjectMapper().registerModule(hibernateModule(forceLazyLoading, nullMissingEntities));
+    }
+
+    protected Hibernate4Module hibernateModule(boolean forceLazyLoading) {
+        return hibernateModule(forceLazyLoading, false);
+    }
+    
+    protected Hibernate4Module hibernateModule(boolean forceLazyLoading, boolean nullMissingEntities)
     {
         Hibernate4Module mod = new Hibernate4Module();
         mod.configure(Hibernate4Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
+        mod.configure(Hibernate4Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL, nullMissingEntities);
         return mod;
     }
     
