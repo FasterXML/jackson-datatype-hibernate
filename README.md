@@ -29,9 +29,17 @@ To use module on Maven-based projects, use following dependency:
 </dependency>    
 ```
 
-(or whatever version is most up-to-date at the moment;
+or whatever version is most up-to-date at the moment;
 note that you need to use "jackson-datatype-hibernate3" for Hibernate 3.x,
-or "jackson-datatype-hibernate5" for Hibernate 5.x)
+or "jackson-datatype-hibernate5" for Hibernate 5.x
+
+```xml
+<dependency>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-hibernate5</artifactId>
+    <version>2.9.8</version>
+</dependency>
+```
 
 ### Registering module
 
