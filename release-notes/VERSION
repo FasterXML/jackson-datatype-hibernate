@@ -10,6 +10,7 @@ Project: jackson-datatype-hibernate
    `Feature.WRITE_MISSING_ENTITIES_AS_NULL` is enabled
  (contributed by mobreza@github)
 
+2.9.9 (16-May-2019)
 2.9.8 (15-Dec-2018)
 
 No changes since 2.9.7
