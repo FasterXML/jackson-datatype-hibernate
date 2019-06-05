@@ -29,7 +29,7 @@ Hibernate (http://hibernate.org) version 5.x data types.
     <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>javax.transaction-api</artifactId>
-      <version>1.2</version>
+      <version>1.1-rev-1</version>
     </dependency>
 
     <!-- what would be the best scope to use here? -->
