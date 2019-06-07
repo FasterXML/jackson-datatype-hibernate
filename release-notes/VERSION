@@ -9,6 +9,7 @@ Project: jackson-datatype-hibernate
 #125: Ignore missing entities when lazy loading is enabled, if newly added
    `Feature.WRITE_MISSING_ENTITIES_AS_NULL` is enabled
  (contributed by mobreza@github)
+- Update Hibernate5 javax/transaction-api dependency
 
 2.9.9 (16-May-2019)
 2.9.8 (15-Dec-2018)
