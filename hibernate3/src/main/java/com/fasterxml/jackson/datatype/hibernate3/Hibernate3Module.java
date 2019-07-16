@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.*;
 import org.hibernate.SessionFactory;
 
-public class Hibernate3Module extends Module
+public class Hibernate3Module extends com.fasterxml.jackson.databind.Module
 {
     /**
      * Enumeration that defines all togglable features this module

@@ -6,9 +6,8 @@ import com.fasterxml.jackson.databind.Module;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.Mapping;
 
-public class Hibernate4Module extends Module
+public class Hibernate4Module extends com.fasterxml.jackson.databind.Module
 {
-
     /**
      * Enumeration that defines all toggleable features this module
      */
