@@ -13,6 +13,7 @@ Project: jackson-datatype-hibernate
  (contributed by mobreza@github)
 - Update Hibernate5 javax/transaction-api dependency
 
+2.9.10 (21-Sep-2019)
 2.9.9 (16-May-2019)
 2.9.8 (15-Dec-2018)
 
