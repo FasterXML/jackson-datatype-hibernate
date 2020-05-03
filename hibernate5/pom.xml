@@ -54,23 +54,34 @@ Hibernate (http://hibernate.org) version 5.x data types.
       <scope>test</scope>
     </dependency>
     <dependency>
-	  <groupId>org.slf4j</groupId>
-	  <artifactId>slf4j-log4j12</artifactId>
-	  <version>1.6.6</version>
-	  <scope>test</scope>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.6.6</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
-	  <groupId>log4j</groupId>
-	  <artifactId>log4j</artifactId>
-	  <version>1.2.17</version>
-	  <scope>test</scope>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
-	  <groupId>com.h2database</groupId>
-	  <artifactId>h2</artifactId>
-	  <version>1.3.155</version>
-	  <scope>test</scope>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.3.155</version>
+      <scope>test</scope>
     </dependency>
+
+    <!-- 03-May-2020, tatu: JAXB API needed for tests too on JDK11, somehow
+           (but there are other issues too it seems)
+      -->
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>2.3.2</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
