@@ -1,14 +1,12 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
-import java.beans.Introspector;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashMap;
+import org.hibernate.engine.spi.Mapping;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.proxy.LazyInitializer;
+import org.hibernate.proxy.pojo.BasicLazyInitializer;
 
-import javax.persistence.EntityNotFoundException;
-
-import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -19,11 +17,13 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
 
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.proxy.LazyInitializer;
-import org.hibernate.proxy.pojo.BasicLazyInitializer;
+import java.beans.Introspector;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+
+import javax.persistence.EntityNotFoundException;
 
 /**
  * Serializer to use for values proxied using {@link org.hibernate.proxy.HibernateProxy}.
@@ -46,6 +46,7 @@ public class HibernateProxySerializer
     protected final boolean _forceLazyLoading;
     protected final boolean _serializeIdentifier;
     protected final boolean _nullMissingEntities;
+    protected final boolean _wrappedIdentifier;
     protected final Mapping _mapping;
 
     /**
@@ -62,26 +63,31 @@ public class HibernateProxySerializer
 
     public HibernateProxySerializer(boolean forceLazyLoading)
     {
-        this(forceLazyLoading, false, false, null, null);
+        this(forceLazyLoading, false, false, true, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
-        this(forceLazyLoading, serializeIdentifier, false, null, null);
+        this(forceLazyLoading, serializeIdentifier, false, true, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping) {
-        this(forceLazyLoading, serializeIdentifier, false, mapping, null);
+        this(forceLazyLoading, serializeIdentifier, false, true, mapping, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, Mapping mapping) {
-        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, mapping, null);
+        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, true, mapping, null);
     }
 
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, Mapping mapping,
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, boolean wrappedIdentifier, Mapping mapping) {
+        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, wrappedIdentifier, mapping, null);
+    }
+
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, boolean wrappedIdentifier, Mapping mapping,
             BeanProperty property) {
         _forceLazyLoading = forceLazyLoading;
         _serializeIdentifier = serializeIdentifier;
         _nullMissingEntities = nullMissingEntities;
+        _wrappedIdentifier = wrappedIdentifier;
         _mapping = mapping;
         _dynamicSerializers = PropertySerializerMap.emptyForProperties();
         _property = property;
@@ -90,7 +96,7 @@ public class HibernateProxySerializer
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
         return new HibernateProxySerializer(this._forceLazyLoading, _serializeIdentifier, _nullMissingEntities,
-                _mapping, property);
+            _wrappedIdentifier, _mapping, property);
     }    
 
     /*
@@ -181,7 +187,11 @@ public class HibernateProxySerializer
      * Helper method for finding value being proxied, if it is available
      * or if it is to be forced to be loaded.
      */
-    protected Object findProxied(HibernateProxy proxy)
+    protected Object findProxied(final HibernateProxy proxy) {
+        return findProxied(proxy, _wrappedIdentifier);
+    }
+
+    private Object findProxied(final HibernateProxy proxy, final boolean asMap)
     {
         LazyInitializer init = proxy.getHibernateLazyInitializer();
         if (!_forceLazyLoading && init.isUninitialized()) {
@@ -196,14 +206,20 @@ public class HibernateProxySerializer
                     } else {
                         idName = ProxyReader.getIdentifierPropertyName(init);
                         if (idName == null) {
-                        	idName = init.getEntityName();
+                            idName = init.getEntityName();
                         }
                     }
                 }
-        		final Object idValue = init.getIdentifier();
-        		HashMap<String, Object> map = new HashMap<String, Object>();
-        		map.put(idName, idValue);
-        		return map;
+                final Object idValue = init.getIdentifier();
+                final Object result;
+                if (asMap) {
+                    final HashMap<String, Object> map = new HashMap<>();
+                    map.put(idName, idValue);
+                    result = map;
+                } else {
+                    result = idValue;
+                }
+                return result;
             }
             return null;
         }
