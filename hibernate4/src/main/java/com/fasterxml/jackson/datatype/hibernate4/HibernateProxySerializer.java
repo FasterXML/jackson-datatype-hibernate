@@ -97,7 +97,7 @@ public class HibernateProxySerializer
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
         return new HibernateProxySerializer(this._forceLazyLoading, _serializeIdentifier, _nullMissingEntities,
             _wrappedIdentifier, _mapping, property);
-    }    
+    }
 
     /*
     /**********************************************************************
@@ -187,35 +187,17 @@ public class HibernateProxySerializer
      * Helper method for finding value being proxied, if it is available
      * or if it is to be forced to be loaded.
      */
-    protected Object findProxied(final HibernateProxy proxy) {
-        return findProxied(proxy, _wrappedIdentifier);
-    }
-
-    private Object findProxied(final HibernateProxy proxy, final boolean asMap)
+    protected Object findProxied(final HibernateProxy proxy)
     {
         LazyInitializer init = proxy.getHibernateLazyInitializer();
         if (!_forceLazyLoading && init.isUninitialized()) {
             if (_serializeIdentifier) {
-                String idName;
-                if (_mapping != null) {
-                    idName = _mapping.getIdentifierPropertyName(init.getEntityName());
-                } else {
-                    final SessionImplementor session = init.getSession();
-                    if (session != null) {
-                        idName = session.getFactory().getIdentifierPropertyName(init.getEntityName());
-                    } else {
-                        idName = ProxyReader.getIdentifierPropertyName(init);
-                        if (idName == null) {
-                        	idName = init.getEntityName();
-                        }
-                    }
-                }
                 final Object idValue = init.getIdentifier();
                 final Object result;
-                if (asMap) {
-                    final HashMap<String, Object> map = new HashMap<>();
-                    map.put(idName, idValue);
-                    result = map;
+                if (_wrappedIdentifier) {
+                  final HashMap<String, Object> map = new HashMap<>();
+                  map.put(getIdentifierPropertyName(init), idValue);
+                  result = map;
                 } else {
                     result = idValue;
                 }
@@ -235,10 +217,34 @@ public class HibernateProxySerializer
     }
 
     /**
+     * Helper method to retrieve the name of the identifier property of the
+     * specified lazy initializer.
+     * @param init Lazy initializer to obtain identifier property name from.
+     * @return Name of the identity property of the specified lazy initializer.
+     */
+    private String getIdentifierPropertyName(final LazyInitializer init) {
+      String idName;
+      if (_mapping != null) {
+        idName = _mapping.getIdentifierPropertyName(init.getEntityName());
+      } else {
+        final SessionImplementor session = init.getSession();
+        if (session != null) {
+          idName = session.getFactory().getIdentifierPropertyName(init.getEntityName());
+        } else {
+          idName = ProxyReader.getIdentifierPropertyName(init);
+          if (idName == null) {
+            idName = init.getEntityName();
+          }
+        }
+      }
+      return idName;
+    }
+
+    /**
      * Inspects a Hibernate proxy to try and determine the name of the identifier property
-     * (Hibernate proxies know the getter of the identifier property because it receives special 
-     * treatment in the invocation handler). Alas, the field storing the method reference is 
-     * private and has no getter, so we must resort to ugly reflection hacks to read its value ... 
+     * (Hibernate proxies know the getter of the identifier property because it receives special
+     * treatment in the invocation handler). Alas, the field storing the method reference is
+     * private and has no getter, so we must resort to ugly reflection hacks to read its value ...
      */
     protected static class ProxyReader {
 
