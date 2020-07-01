@@ -1,12 +1,14 @@
 package com.fasterxml.jackson.datatype.hibernate4;
 
-import org.hibernate.engine.spi.Mapping;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.proxy.LazyInitializer;
-import org.hibernate.proxy.pojo.BasicLazyInitializer;
+import java.beans.Introspector;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import javax.persistence.EntityNotFoundException;
+
+import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -17,13 +19,11 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
 
-import java.beans.Introspector;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-
-import javax.persistence.EntityNotFoundException;
+import org.hibernate.engine.spi.Mapping;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.proxy.LazyInitializer;
+import org.hibernate.proxy.pojo.BasicLazyInitializer;
 
 /**
  * Serializer to use for values proxied using {@link org.hibernate.proxy.HibernateProxy}.
@@ -83,7 +83,7 @@ public class HibernateProxySerializer
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, boolean wrappedIdentifier, Mapping mapping,
-            BeanProperty property) {
+        BeanProperty property) {
         _forceLazyLoading = forceLazyLoading;
         _serializeIdentifier = serializeIdentifier;
         _nullMissingEntities = nullMissingEntities;
@@ -109,7 +109,7 @@ public class HibernateProxySerializer
     public boolean isEmpty(SerializerProvider provider, HibernateProxy value) {
         return (value == null) || (findProxied(value) == null);
     }
-    
+
     @Override
     public void serialize(HibernateProxy value, JsonGenerator jgen, SerializerProvider provider)
         throws IOException
@@ -206,7 +206,7 @@ public class HibernateProxySerializer
                     } else {
                         idName = ProxyReader.getIdentifierPropertyName(init);
                         if (idName == null) {
-                            idName = init.getEntityName();
+                        	idName = init.getEntityName();
                         }
                     }
                 }
@@ -233,7 +233,7 @@ public class HibernateProxySerializer
             }
         }
     }
-    
+
     /**
      * Inspects a Hibernate proxy to try and determine the name of the identifier property
      * (Hibernate proxies know the getter of the identifier property because it receives special 
@@ -251,7 +251,7 @@ public class HibernateProxySerializer
                 getIdentifierMethodField.setAccessible(true);
             } catch (Exception e) {
             	// should never happen: the field exists in all versions of hibernate 4 and 5
-                throw new RuntimeException(e); 
+                throw new RuntimeException(e);
             }
         }
 
