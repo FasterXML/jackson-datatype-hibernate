@@ -47,6 +47,7 @@ public class HibernateProxySerializer
     protected final boolean _forceLazyLoading;
     protected final boolean _serializeIdentifier;
     protected final boolean _nullMissingEntities;
+    protected final boolean _wrappedIdentifier;
     protected final Mapping _mapping;
 
     /**
@@ -63,26 +64,36 @@ public class HibernateProxySerializer
 
     public HibernateProxySerializer(boolean forceLazyLoading)
     {
-        this(forceLazyLoading, false, false, null, null);
+        this(forceLazyLoading, false, false, true, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
-        this(forceLazyLoading, serializeIdentifier, false, null, null);
+        this(forceLazyLoading, serializeIdentifier, false, true, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping) {
-        this(forceLazyLoading, serializeIdentifier, false, mapping, null);
+        this(forceLazyLoading, serializeIdentifier, false, true, mapping, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, Mapping mapping) {
-        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, mapping, null);
+        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, true, mapping, null);
+    }
+
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, boolean wrappedIdentifier, Mapping mapping) {
+        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, wrappedIdentifier, mapping, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, Mapping mapping,
             BeanProperty property) {
+        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, true, mapping, property);
+    }
+
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, boolean wrappedIdentifier, Mapping mapping,
+        BeanProperty property) {
         _forceLazyLoading = forceLazyLoading;
         _serializeIdentifier = serializeIdentifier;
         _nullMissingEntities = nullMissingEntities;
+        _wrappedIdentifier = wrappedIdentifier;
         _mapping = mapping;
         _dynamicSerializers = PropertySerializerMap.emptyForProperties();
         _property = property;
@@ -187,22 +198,14 @@ public class HibernateProxySerializer
         LazyInitializer init = proxy.getHibernateLazyInitializer();
         if (!_forceLazyLoading && init.isUninitialized()) {
             if (_serializeIdentifier) {
-                String idName;
-                if (_mapping != null) {
-                    idName = _mapping.getIdentifierPropertyName(init.getEntityName());
+                final Object idValue = init.getIdentifier();
+                if (_wrappedIdentifier) {
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put(getIdentifierPropertyName(init), idValue);
+                    return map;
                 } else {
-                    idName = ProxySessionReader.getIdentifierPropertyName(init);
-                    if (idName == null) {
-                        idName = ProxyReader.getIdentifierPropertyName(init);
-                        if (idName == null) {
-                        	idName = init.getEntityName();
-                        }
-                    }
+                    return idValue;
                 }
-        		final Object idValue = init.getIdentifier();
-        		HashMap<String, Object> map = new HashMap<String, Object>();
-        		map.put(idName, idValue);
-        		return map;
             }
             return null;
         }
@@ -215,6 +218,28 @@ public class HibernateProxySerializer
                 throw e;
             }
         }
+    }
+
+    /**
+     * Helper method to retrieve the name of the identifier property of the
+     * specified lazy initializer.
+     * @param init Lazy initializer to obtain identifier property name from.
+     * @return Name of the identity property of the specified lazy initializer.
+     */
+    private String getIdentifierPropertyName(final LazyInitializer init) {
+        String idName;
+        if (_mapping != null) {
+            idName = _mapping.getIdentifierPropertyName(init.getEntityName());
+        } else {
+            idName = ProxySessionReader.getIdentifierPropertyName(init);
+            if (idName == null) {
+                idName = ProxyReader.getIdentifierPropertyName(init);
+                if (idName == null) {
+                    idName = init.getEntityName();
+                }
+            }
+        }
+        return idName;
     }
     
     /**
