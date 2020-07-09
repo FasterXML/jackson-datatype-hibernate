@@ -92,6 +92,8 @@ public class Hibernate4Module extends com.fasterxml.jackson.databind.Module
          * Feature that may be disables to unwrap the identifier
          * of the serialized entity, returning a value instead of
          * an object.
+         *
+         * @since 2.12
          */
         WRAP_IDENTIFIER_IN_OBJECT(true);
 
