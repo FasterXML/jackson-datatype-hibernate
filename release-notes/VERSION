@@ -6,7 +6,7 @@ Project: jackson-datatype-hibernate
 
 2.12.0 (not yet released)
 
-#136: d feature `WRAP_IDENTIFIER_IN_OBJECT` to allow disabling of wrapping
+#136: Add feature `WRAP_IDENTIFIER_IN_OBJECT` to allow disabling of wrapping
   of "id" attribute
  (contributed by Jose B)
 - Add Gradle Module Metadata (https://blog.gradle.org/alignment-with-gradle-module-metadata)
