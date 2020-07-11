@@ -25,5 +25,12 @@ Edouard Oger (eoger@github)
 
 Tiago Peruzzo (peruzzo@github)
 
-#70: Infinite recursion due to `@JsonIgnoreProperties` not passed to property
+* Reported #70: Infinite recursion due to `@JsonIgnoreProperties` not passed to property
  (2.6.5)
+
+Jose Bosca (jobosk@github)
+
+* Contributed #136: d feature `WRAP_IDENTIFIER_IN_OBJECT` to allow disabling of wrapping
+  of "id" attribute
+ (2.12.0)
+ 
