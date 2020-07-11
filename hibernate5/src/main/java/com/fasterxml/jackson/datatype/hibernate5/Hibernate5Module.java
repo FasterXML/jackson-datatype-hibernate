@@ -86,7 +86,16 @@ public class Hibernate5Module extends com.fasterxml.jackson.databind.Module
          *
          * @since 2.10
          */
-        WRITE_MISSING_ENTITIES_AS_NULL(false)
+        WRITE_MISSING_ENTITIES_AS_NULL(false),
+
+        /**
+         * Feature that may be disables to unwrap the identifier
+         * of the serialized entity, returning a value instead of
+         * an object.
+         *
+         * @since 2.12
+         */
+        WRAP_IDENTIFIER_IN_OBJECT(true)
         ;
 
         final boolean _defaultState;

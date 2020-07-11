@@ -28,21 +28,21 @@ public class Hibernate4Module extends com.fasterxml.jackson.databind.Module
          * Default value is true.
          */
         USE_TRANSIENT_ANNOTATION(true),
-        
+
 	    /**
 	     * If FORCE_LAZY_LOADING is false, this feature serializes uninitialized lazy loading proxies as
-	     * <code>{"identifierName":"identifierValue"}</code> rather than <code>null</code>. 
+	     * <code>{"identifierName":"identifierValue"}</code> rather than <code>null</code>.
 	     * <p>
          * Default value is false.
 	     * <p>
-	     * Note that the name of the identifier property can only be determined if 
+	     * Note that the name of the identifier property can only be determined if
 	     * <ul>
 	     * <li>the {@link Mapping} is provided to the Hibernate4Module, or </li>
-	     * <li>the persistence context that loaded the proxy has not yet been closed, or</li> 
+	     * <li>the persistence context that loaded the proxy has not yet been closed, or</li>
 	     * <li>the id property is mapped with property access (for instance because the {@code @Id}
 	     * annotation is applied to a method rather than a field)</li>
 	     * </ul>
-	     * Otherwise, the entity name will be used instead. 
+	     * Otherwise, the entity name will be used instead.
 	     */
         SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS(false),
 
@@ -58,7 +58,7 @@ public class Hibernate4Module extends com.fasterxml.jackson.databind.Module
           * <p>
           * Default value is false, meaning that laziness is considered to be the
           * default value.
-         * 
+         *
          * @since 2.4
          */
         REQUIRE_EXPLICIT_LAZY_LOADING_MARKER(false),
@@ -78,7 +78,7 @@ public class Hibernate4Module extends com.fasterxml.jackson.databind.Module
          * @since 2.8.2
          */
         REPLACE_PERSISTENT_COLLECTIONS(false),
-        
+
         /**
          * Using {@link #FORCE_LAZY_LOADING} may result in
          * `javax.persistence.EntityNotFoundException`. This flag configures Jackson to
@@ -86,8 +86,16 @@ public class Hibernate4Module extends com.fasterxml.jackson.databind.Module
          *
          * @since 2.10
          */
-        WRITE_MISSING_ENTITIES_AS_NULL(false)
-        ;
+        WRITE_MISSING_ENTITIES_AS_NULL(false),
+
+        /**
+         * Feature that may be disables to unwrap the identifier
+         * of the serialized entity, returning a value instead of
+         * an object.
+         *
+         * @since 2.12
+         */
+        WRAP_IDENTIFIER_IN_OBJECT(true);
 
         final boolean _defaultState;
         final int _mask;
@@ -106,7 +114,7 @@ public class Hibernate4Module extends com.fasterxml.jackson.databind.Module
             }
             return flags;
         }
-        
+
         private Feature(boolean defaultState) {
             _defaultState = defaultState;
             _mask = (1 << ordinal());
@@ -118,7 +126,7 @@ public class Hibernate4Module extends com.fasterxml.jackson.databind.Module
     }
 
     protected final static int DEFAULT_FEATURES = Feature.collectDefaults();
-    
+
     /**
      * Bit flag composed of bits that indicate which
      * {@link Feature}s
