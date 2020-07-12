@@ -49,6 +49,8 @@ public class HibernateProxySerializer
     protected final boolean _serializeIdentifier;
     protected final boolean _nullMissingEntities;
     protected final Mapping _mapping;
+
+    // @since 2.11.2 (datatype-hibernate#97)
     protected final NameTransformer _unwrapper;
 
     /**

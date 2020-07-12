@@ -48,6 +48,8 @@ public class HibernateProxySerializer
     protected final boolean _serializeIdentifier;
     protected final boolean _nullMissingEntities;
     protected final Mapping _mapping;
+
+    // @since 2.11.2 (datatype-hibernate#97)
     protected final NameTransformer _unwrapper;
 
     /**
@@ -98,7 +100,7 @@ public class HibernateProxySerializer
 
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
-        return new HibernateProxySerializer(this._forceLazyLoading, _serializeIdentifier, _nullMissingEntities,
+        return new HibernateProxySerializer(_forceLazyLoading, _serializeIdentifier, _nullMissingEntities,
                 _mapping, property, _unwrapper);
     }
 

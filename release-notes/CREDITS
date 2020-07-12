@@ -25,5 +25,10 @@ Edouard Oger (eoger@github)
 
 Tiago Peruzzo (peruzzo@github)
 
-#70: Infinite recursion due to `@JsonIgnoreProperties` not passed to property
+* Reported #70: Infinite recursion due to `@JsonIgnoreProperties` not passed to property
  (2.6.5)
+
+Vladimir Tsanev (tsachev@github)
+
+* Contributed fix for #97: `@JsonUnwrapped` fails for HibernateProxy instances
+ (2.11.2)
