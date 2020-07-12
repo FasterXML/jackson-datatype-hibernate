@@ -28,9 +28,14 @@ Tiago Peruzzo (peruzzo@github)
 * Reported #70: Infinite recursion due to `@JsonIgnoreProperties` not passed to property
  (2.6.5)
 
+Vladimir Tsanev (tsachev@github)
+
+* Contributed fix for #97: `@JsonUnwrapped` fails for HibernateProxy instances
+ (2.11.2)
+
 Jose Bosca (jobosk@github)
 
 * Contributed #136: d feature `WRAP_IDENTIFIER_IN_OBJECT` to allow disabling of wrapping
   of "id" attribute
  (2.12.0)
- 
+

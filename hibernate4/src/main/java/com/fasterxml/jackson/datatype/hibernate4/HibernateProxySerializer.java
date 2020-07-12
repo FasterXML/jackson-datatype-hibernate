@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrappe
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
+import com.fasterxml.jackson.databind.util.NameTransformer;
 
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionImplementor;
@@ -49,6 +50,9 @@ public class HibernateProxySerializer
     protected final boolean _wrappedIdentifier;
     protected final Mapping _mapping;
 
+    // @since 2.11.2 (datatype-hibernate#97)
+    protected final NameTransformer _unwrapper;
+
     /**
      * For efficient serializer lookup, let's use this; most
      * of the time, there's just one type and one serializer.
@@ -61,42 +65,98 @@ public class HibernateProxySerializer
     /**********************************************************************
      */
 
+    @Deprecated // since 2.12
     public HibernateProxySerializer(boolean forceLazyLoading)
     {
-        this(forceLazyLoading, false, false, true, null, null);
+        this(forceLazyLoading, false, false, true, null, null, null);
     }
 
+    @Deprecated // since 2.12
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
-        this(forceLazyLoading, serializeIdentifier, false, true, null, null);
+        this(forceLazyLoading, serializeIdentifier, false, true,
+                null, null, null);
     }
 
+    @Deprecated // since 2.12
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping) {
-        this(forceLazyLoading, serializeIdentifier, false, true, mapping, null);
+        this(forceLazyLoading, serializeIdentifier, false,  true,
+                mapping, null, null);
     }
 
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, Mapping mapping) {
-        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, true, mapping, null);
+    @Deprecated // since 2.12
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier,
+            boolean nullMissingEntities, Mapping mapping) {
+        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, true,
+                mapping, null, null);
     }
 
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, boolean wrappedIdentifier, Mapping mapping) {
-        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, wrappedIdentifier, mapping, null);
+    @Deprecated // since 2.12
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier,
+            boolean nullMissingEntities, Mapping mapping, BeanProperty property) {
+        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, true,
+                mapping, property, null);
     }
 
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, boolean wrappedIdentifier, Mapping mapping,
-        BeanProperty property) {
+    /**
+     * @since 2.12
+     */
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier,
+            boolean nullMissingEntities, boolean wrappedIdentifier,
+            Mapping mapping)
+    {
+        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, wrappedIdentifier,
+                mapping, null, null);
+    }
+
+    /**
+     * @since 2.12
+     */
+    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier,
+            boolean nullMissingEntities, boolean wrappedIdentifier,
+            Mapping mapping, BeanProperty property, NameTransformer unwrapper)
+    {
         _forceLazyLoading = forceLazyLoading;
         _serializeIdentifier = serializeIdentifier;
         _nullMissingEntities = nullMissingEntities;
         _wrappedIdentifier = wrappedIdentifier;
         _mapping = mapping;
-        _dynamicSerializers = PropertySerializerMap.emptyForProperties();
         _property = property;
+        _unwrapper = unwrapper;
+
+        _dynamicSerializers = PropertySerializerMap.emptyForProperties();
+    }
+
+    /**
+     * @since 2.12
+     */
+    protected HibernateProxySerializer(HibernateProxySerializer base,
+            BeanProperty property, NameTransformer unwrapper)
+    {
+        _forceLazyLoading = base._forceLazyLoading;
+        _serializeIdentifier = base._serializeIdentifier;
+        _nullMissingEntities = base._nullMissingEntities;
+        _wrappedIdentifier = base._wrappedIdentifier;
+        _mapping = base._mapping;
+        _property = property;
+        _unwrapper = unwrapper;
+
+        _dynamicSerializers = PropertySerializerMap.emptyForProperties();
+    }
+    
+    @Override
+    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
+        return new HibernateProxySerializer(this, property, _unwrapper);
     }
 
     @Override
-    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
-        return new HibernateProxySerializer(this._forceLazyLoading, _serializeIdentifier, _nullMissingEntities,
-            _wrappedIdentifier, _mapping, property);
+    public JsonSerializer<HibernateProxy> unwrappingSerializer(final NameTransformer unwrapper)
+    {
+        return new HibernateProxySerializer(this, _property, unwrapper);
+    }
+
+    @Override
+    public boolean isUnwrappingSerializer() {
+        return _unwrapper != null;
     }
 
     /*
@@ -179,6 +239,10 @@ public class HibernateProxySerializer
                 _dynamicSerializers.findAndAddPrimarySerializer(type, provider, _property);
         if (_dynamicSerializers != result.map) {
             _dynamicSerializers = result.map;
+        }
+        if (_unwrapper != null)
+        {
+            return result.serializer.unwrappingSerializer(_unwrapper);
         }
         return result.serializer;
     }

@@ -36,7 +36,8 @@ public class HibernateSerializers extends Serializers.Base
     {
         Class<?> raw = type.getRawClass();
         if (HibernateProxy.class.isAssignableFrom(raw)) {
-            return new HibernateProxySerializer(_forceLoading, _serializeIdentifiers, _nullMissingEntities, _wrappedIdentifier, _mapping);
+            return new HibernateProxySerializer(_forceLoading, _serializeIdentifiers,
+                    _nullMissingEntities, _wrappedIdentifier, _mapping);
         }
         return null;
     }
