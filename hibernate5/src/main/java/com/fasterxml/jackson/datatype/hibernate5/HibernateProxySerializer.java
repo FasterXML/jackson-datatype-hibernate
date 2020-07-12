@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrappe
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
+import com.fasterxml.jackson.databind.util.NameTransformer;
 
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
@@ -48,6 +49,7 @@ public class HibernateProxySerializer
     protected final boolean _serializeIdentifier;
     protected final boolean _nullMissingEntities;
     protected final Mapping _mapping;
+    protected final NameTransformer _unwrapper;
 
     /**
      * For efficient serializer lookup, let's use this; most
@@ -63,36 +65,57 @@ public class HibernateProxySerializer
 
     public HibernateProxySerializer(boolean forceLazyLoading)
     {
-        this(forceLazyLoading, false, false, null, null);
+        this(forceLazyLoading, false, false, null, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
-        this(forceLazyLoading, serializeIdentifier, false, null, null);
+        this(forceLazyLoading, serializeIdentifier, false, null, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping) {
-        this(forceLazyLoading, serializeIdentifier, false, mapping, null);
+        this(forceLazyLoading, serializeIdentifier, false, mapping, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, Mapping mapping) {
-        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, mapping, null);
+        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, mapping, null, null);
     }
 
     public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, Mapping mapping,
-            BeanProperty property) {
+                                    BeanProperty property) {
+        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, mapping, property, null);
+    }
+
+
+    protected HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, boolean nullMissingEntities, Mapping mapping,
+                                       BeanProperty property, NameTransformer unwrapper) {
         _forceLazyLoading = forceLazyLoading;
         _serializeIdentifier = serializeIdentifier;
         _nullMissingEntities = nullMissingEntities;
         _mapping = mapping;
         _dynamicSerializers = PropertySerializerMap.emptyForProperties();
         _property = property;
+        _unwrapper = unwrapper;
     }
 
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
         return new HibernateProxySerializer(this._forceLazyLoading, _serializeIdentifier, _nullMissingEntities,
-                _mapping, property);
-    }    
+                _mapping, property, _unwrapper);
+    }
+
+    @Override
+    public JsonSerializer<HibernateProxy> unwrappingSerializer(
+        final NameTransformer unwrapper)
+    {
+        return new HibernateProxySerializer(_forceLazyLoading, _serializeIdentifier, _nullMissingEntities,
+                _mapping, _property, unwrapper == null ? NameTransformer.NOP : unwrapper);
+    }
+
+    @Override
+    public boolean isUnwrappingSerializer()
+    {
+        return _unwrapper != null;
+    }
 
     /*
     /**********************************************************************
@@ -174,6 +197,10 @@ public class HibernateProxySerializer
                 _dynamicSerializers.findAndAddPrimarySerializer(type, provider, _property);
         if (_dynamicSerializers != result.map) {
             _dynamicSerializers = result.map;
+        }
+        if (_unwrapper != null)
+        {
+            return result.serializer.unwrappingSerializer(_unwrapper);
         }
         return result.serializer;
     }
