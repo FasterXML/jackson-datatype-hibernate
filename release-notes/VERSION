@@ -7,7 +7,8 @@ Project: jackson-datatype-hibernate
 2.11.2 (not yet released)
 
 #97: `@JsonUnwrapped` fails for HibernateProxy instances
- (reported by jwgmeligmeyling@github, fix contributed by Vladimir T)
+ (reported by jwgmeligmeyling@github,
+  fix contributed by Vladimir T / Nemesis Software (http://nemesis.io))
 
 2.11.1 (25-Jun-2020)
 2.11.0 (26-Apr-2020)
