@@ -4,7 +4,7 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
-2.11.2 (not yet released)
+2.11.2 (02-Aug-2020)
 
 #97: `@JsonUnwrapped` fails for HibernateProxy instances
  (reported by jwgmeligmeyling@github,
