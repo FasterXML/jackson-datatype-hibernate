@@ -11,7 +11,7 @@ Project: jackson-datatype-hibernate
  (contributed by Jose B)
 - Add Gradle Module Metadata (https://blog.gradle.org/alignment-with-gradle-module-metadata)
 
-2.11.2 (not yet released)
+2.11.2 (02-Aug-2020)
 
 #97: `@JsonUnwrapped` fails for HibernateProxy instances
  (reported by jwgmeligmeyling@github,
