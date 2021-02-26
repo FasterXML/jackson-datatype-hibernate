@@ -14,7 +14,9 @@
   </description>
 
   <modules>
+<!-- [datatype-hibernate#139]: drop hibernate3 support
     <module>hibernate3</module>
+-->
     <module>hibernate4</module>
     <module>hibernate5</module>
 <!--
