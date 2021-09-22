@@ -41,6 +41,17 @@ or "jackson-datatype-hibernate5" for Hibernate 5.x
 </dependency>
 ```
 
+if you plan to use Hibernate 5.5 with the Jakarta Persistence API 3.0;
+you will need the jakarta suffixed dependency for Hibernate 5.5:
+
+```xml
+<dependency>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
+    <version>2.16.0</version>
+</dependency>
+```
+
 ### Registering module
 
 Like all standard Jackson modules (libraries that implement Module interface), registration is done as follows:
@@ -53,6 +64,8 @@ mapper.registerModule(new Hibernate4Module());
 mapper.registerModule(new Hibernate5Module());
 // or, for Hibernate 3.6
 mapper.registerModule(new Hibernate3Module());
+// or, for Hibernate 5.5+ with Jakarta
+mapper.registerModule(new Hibernate5JakartaModule());
 ```
 
 after which functionality is available for all normal Jackson operations.
