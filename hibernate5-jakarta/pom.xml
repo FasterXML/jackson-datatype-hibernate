@@ -24,7 +24,7 @@ Hibernate (http://hibernate.org) version 5.5 with Jakarta data types.
     <!-- Hibernate with Jakarta Persistence 3.0 -->
     <hibernate.version>5.5.7.Final</hibernate.version>
     <surefire.version>2.12</surefire.version>
-    <osgi.export>${project.groupId}.hibernate5-jakarta</osgi.export>
+    <osgi.export>${project.groupId}.hibernate5.jakarta</osgi.export>
   </properties>
 
   <dependencies>
