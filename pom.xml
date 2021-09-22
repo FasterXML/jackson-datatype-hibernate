@@ -19,6 +19,7 @@
 -->
     <module>hibernate4</module>
     <module>hibernate5</module>
+    <module>hibernate5-jakarta</module>
 <!--
     <module>hibernate5_2-test</module>
 -->
