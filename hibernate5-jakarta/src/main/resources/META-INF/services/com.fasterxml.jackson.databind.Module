@@ -1,1 +1,1 @@
-com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
+com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule
