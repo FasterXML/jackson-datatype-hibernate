@@ -21,7 +21,7 @@ public class Hibernate5JakartaModule extends com.fasterxml.jackson.databind.Modu
         FORCE_LAZY_LOADING(false),
 
         /**
-         * Whether {@link javax.persistence.Transient} annotation should be checked or not;
+         * Whether {@link jakarta.persistence.Transient} annotation should be checked or not;
          * if true, will consider {@code @Transient} to mean that property is to be ignored;
          * if false annotation will have no effect.
          *<p>
@@ -81,7 +81,7 @@ public class Hibernate5JakartaModule extends com.fasterxml.jackson.databind.Modu
         
         /**
          * Using {@link #FORCE_LAZY_LOADING} may result in
-         * `javax.persistence.EntityNotFoundException`. This flag configures Jackson to
+         * `jakarta.persistence.EntityNotFoundException`. This flag configures Jackson to
          * ignore the error and serialize a `null`.
          *
          * @since 2.10
