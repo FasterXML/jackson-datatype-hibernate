@@ -48,7 +48,7 @@ you will need the jakarta suffixed dependency for Hibernate 5.5:
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
-    <version>2.16.0</version>
+    <version>2.13.0</version>
 </dependency>
 ```
 
