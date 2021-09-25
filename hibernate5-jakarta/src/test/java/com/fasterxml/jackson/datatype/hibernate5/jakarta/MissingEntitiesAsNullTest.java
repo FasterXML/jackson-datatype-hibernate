@@ -64,8 +64,8 @@ public class MissingEntitiesAsNullTest extends BaseTest {
         }
     }
 
-    // caused by javax.persistence.EntityNotFoundException: Unable to find
-    // com.fasterxml.jackson.datatype.hibernate4.data.Product with id X10_1678
+    // caused by jakarta.persistence.EntityNotFoundException: Unable to find
+    // com.fasterxml.jackson.datatype.hibernate5.jakarta.data.Product with id X10_1678
     public void testExceptionWithInvalidForeignKey() throws Exception {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");
 
@@ -78,7 +78,7 @@ public class MissingEntitiesAsNullTest extends BaseTest {
             Customer customer = em.find(Customer.class, 501);
             assertFalse(Hibernate.isInitialized(customer.getPayments()));
 
-            // javax.persistence.EntityNotFoundException thrown here
+            // jakarta.persistence.EntityNotFoundException thrown here
             mapper.writerWithDefaultPrettyPrinter().writeValueAsString(customer);
             // JUnit 3.8
             fail("Expected EntityNotFoundException exception");
@@ -101,7 +101,7 @@ public class MissingEntitiesAsNullTest extends BaseTest {
 
             Customer customer = em.find(Customer.class, 501);
             assertFalse(Hibernate.isInitialized(customer.getPayments()));
-            // javax.persistence.EntityNotFoundException thrown here
+            // jakarta.persistence.EntityNotFoundException thrown here
             String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(customer);
             assertNotNull(json);
 
