@@ -2,7 +2,6 @@ Project to build [Jackson](../../../jackson) module (jar) to
 support JSON serialization and deserialization of Hibernate (http://hibernate.org) specific datatypes
 and properties; especially lazy-loading aspects.
 
-[![Build Status](https://travis-ci.org/FasterXML/jackson-datatype-hibernate.svg?branch=master)](https://travis-ci.org/FasterXML/jackson-datatype-hibernate)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5/)
 [![Javadoc](https://javadoc.io/badge/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5.svg)](http://www.javadoc.io/doc/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5)
 
@@ -10,10 +9,15 @@ and properties; especially lazy-loading aspects.
 
 As of version 2.0 module is usable and used by non-trivial number of developers and projects.
 
-Note: Hibernate 3.x, 4.x and 5.x are supported (5.x starting with Jackson 2.6),
+Note: Hibernate 4.x and 5.x are supported (5.x starting with Jackson 2.6),
 but they require different jar, and Maven artifact names (and jar names differ).
-This document refers to "Hibernate 4" version, but changes with 3.x or 5.x should require
-little more than replacing "4" in names with "3" or "5".
+This document refers to "Hibernate 5" version, but changes with 4.x should require
+little more than replacing "5" in names with "4".
+
+Hibernate 3.x was supported up to Jackson 2.12 but is no longer supported at and after 2.13
+
+Jackson 2.13 adds Support for "Hibernate 5 Jakarta" variant (for Hibernate 5.5 and beyond);
+see below for more information.
 
 ## Usage
 
@@ -24,14 +28,13 @@ To use module on Maven-based projects, use following dependency:
 ```xml
 <dependency>
   <groupId>com.fasterxml.jackson.datatype</groupId>
-  <artifactId>jackson-datatype-hibernate4</artifactId>
-  <version>2.9.0</version>
+  <artifactId>jackson-datatype-hibernate5</artifactId>
+  <version>2.12.5</version>
 </dependency>    
 ```
 
 or whatever version is most up-to-date at the moment;
-note that you need to use "jackson-datatype-hibernate3" for Hibernate 3.x,
-or "jackson-datatype-hibernate5" for Hibernate 5.x
+note that you need to use "jackson-datatype-hibernate4" for Hibernate 4.x.
 
 ```xml
 <dependency>
@@ -62,8 +65,6 @@ ObjectMapper mapper = new ObjectMapper();
 mapper.registerModule(new Hibernate4Module());
 // or, for Hibernate 5.x
 mapper.registerModule(new Hibernate5Module());
-// or, for Hibernate 3.6
-mapper.registerModule(new Hibernate3Module());
 // or, for Hibernate 5.5+ with Jakarta
 mapper.registerModule(new Hibernate5JakartaModule());
 ```
@@ -82,8 +83,8 @@ possible to just sub-class ObjectMapper and register the module in constructor.
 ```java
 public class HibernateAwareObjectMapper extends ObjectMapper {
     public HibernateAwareObjectMapper() {
-        // This for Hibernate 5; change 5 to 4 or 3 if you need to support
-        // Hibernate 4 or Hibernate 3 instead
+        // This for Hibernate 5; change 5 to 4 if you need to support
+        // Hibernate 4 instead
         registerModule(new Hibernate5Module());
     }
 }
