@@ -23,7 +23,6 @@ Hibernate (http://hibernate.org) version 5.x data types.
     <packageVersion.package>${project.groupId}.hibernate5</packageVersion.package>
     <!-- Hibernate with JPA 2.0 -->
     <hibernate.version>5.2.18.Final</hibernate.version>
-    <surefire.version>2.12</surefire.version>
     <osgi.export>${project.groupId}.hibernate5</osgi.export>
   </properties>
 
@@ -55,25 +54,21 @@ Hibernate (http://hibernate.org) version 5.x data types.
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>1.10.19</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.6.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>1.3.155</version>
       <scope>test</scope>
     </dependency>
 

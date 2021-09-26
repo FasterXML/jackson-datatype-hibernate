@@ -7,6 +7,9 @@ Project: jackson-datatype-hibernate
 2.13.0 (not yet released)
 
 #139: Drop support for Hibernate 3.x from Jackson 2.13
+#144: Add new module (`jackson-datatype-hibernate5-jakarta`) to support
+  Jakarta EE for Hibernate 5.5
+ (contributed by Jon H)
 
 2.12.5 (27-Aug-2021)
 2.12.4 (06-Jul-2021)

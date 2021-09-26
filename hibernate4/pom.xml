@@ -23,7 +23,6 @@ Hibernate (http://hibernate.org) version 4.x data types.
     <packageVersion.package>${project.groupId}.hibernate4</packageVersion.package>
     <!-- Hibernate with JPA 2.0 -->
     <hibernate.version>4.1.12.Final</hibernate.version>
-    <surefire.version>2.12</surefire.version>
     <osgi.export>${project.groupId}.hibernate4</osgi.export>
   </properties>
 
@@ -46,19 +45,16 @@ Hibernate (http://hibernate.org) version 4.x data types.
     <dependency>
 	  <groupId>org.slf4j</groupId>
 	  <artifactId>slf4j-log4j12</artifactId>
-	  <version>1.6.6</version>
 	  <scope>test</scope>
     </dependency>
     <dependency>
 	  <groupId>log4j</groupId>
 	  <artifactId>log4j</artifactId>
-	  <version>1.2.17</version>
 	  <scope>test</scope>
     </dependency>
     <dependency>
 	  <groupId>com.h2database</groupId>
 	  <artifactId>h2</artifactId>
-	  <version>1.3.155</version>
 	  <scope>test</scope>
     </dependency>
   </dependencies>

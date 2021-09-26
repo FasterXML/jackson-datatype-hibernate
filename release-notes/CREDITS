@@ -39,3 +39,8 @@ Jose Bosca (jobosk@github)
   of "id" attribute
  (2.12.0)
 
+Jon Huang (jon5477@github)
+
+* Contributed #144: Add new module (`jackson-datatype-hibernate5-jakarta`) to support
+  Jakarta EE for Hibernate 5.5
+ (2.13.0)

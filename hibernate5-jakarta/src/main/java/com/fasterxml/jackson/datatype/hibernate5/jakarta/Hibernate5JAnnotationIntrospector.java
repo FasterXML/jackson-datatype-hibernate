@@ -13,7 +13,7 @@ import jakarta.persistence.Transient;
  * {@link jakarta.persistence.Transient} to denote ignorable fields (alongside with Jackson
  * and/or JAXB annotations).
  */
-public class HibernateAnnotationIntrospector extends AnnotationIntrospector
+public class Hibernate5JAnnotationIntrospector extends AnnotationIntrospector
 {
     private static final long serialVersionUID = 1L;
     
@@ -29,14 +29,14 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
     /**********************************************************************
      */
     
-    public HibernateAnnotationIntrospector() { }
+    public Hibernate5JAnnotationIntrospector() { }
 
     /**
      * Method to call to specify whether @Transient annotation is to be
      * supported; if false, will be ignored, if true, will be used to
      * detect "ignorable" properties.
      */
-    public HibernateAnnotationIntrospector setUseTransient(boolean state) {
+    public Hibernate5JAnnotationIntrospector setUseTransient(boolean state) {
         _cfgCheckTransient = state;
         return this;
     }

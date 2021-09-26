@@ -1,13 +1,7 @@
 package com.fasterxml.jackson.datatype.hibernate5.jakarta;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.hibernate.FlushMode;
 import org.hibernate.Hibernate;
@@ -21,11 +15,7 @@ import org.hibernate.mapping.Bag;
 import org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionCoordinatorImpl;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContainerSerializer;
@@ -51,12 +41,10 @@ public class PersistentCollectionSerializer
     extends ContainerSerializer<Object>
     implements ContextualSerializer, ResolvableSerializer
 {
-    private static final long serialVersionUID = 1L; // since 2.7
+    private static final long serialVersionUID = 1L;
 
     /**
      * Type for which underlying serializer was created.
-     *
-     * @since 2.7
      */
     protected final JavaType _originalType;
 
@@ -89,9 +77,6 @@ public class PersistentCollectionSerializer
         _sessionFactory = sessionFactory;
     }
 
-    /**
-     * @since 2.7
-     */
     @SuppressWarnings("unchecked")
     protected PersistentCollectionSerializer(PersistentCollectionSerializer base, JsonSerializer<?> serializer)
     {
@@ -168,7 +153,7 @@ public class PersistentCollectionSerializer
     /**********************************************************************
      */
 
-    @Override // since 2.6
+    @Override
     public boolean isEmpty(SerializerProvider provider, Object value)
     {
         if (value == null) { // is null ever passed?

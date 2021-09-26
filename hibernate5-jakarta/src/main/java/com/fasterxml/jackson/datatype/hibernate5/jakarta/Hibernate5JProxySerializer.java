@@ -36,7 +36,7 @@ import jakarta.persistence.EntityNotFoundException;
  * access to more information than value serializers (like
  * this one) have.
  */
-public class HibernateProxySerializer
+public class Hibernate5JProxySerializer
     extends JsonSerializer<HibernateProxy>
     implements ContextualSerializer
 {
@@ -51,7 +51,7 @@ public class HibernateProxySerializer
     protected final boolean _wrappedIdentifier;
     protected final Mapping _mapping;
 
-    // @since 2.11.2 (datatype-hibernate#97)
+    // For datatype-hibernate#97
     protected final NameTransformer _unwrapper;
 
     /**
@@ -66,42 +66,7 @@ public class HibernateProxySerializer
     /**********************************************************************
      */
 
-    @Deprecated // since 2.12
-    public HibernateProxySerializer(boolean forceLazyLoading)
-    {
-        this(forceLazyLoading, false, false, true, null, null, null);
-    }
-
-    @Deprecated // since 2.12
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier) {
-        this(forceLazyLoading, serializeIdentifier, false, true,
-                null, null, null);
-    }
-
-    @Deprecated // since 2.12
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier, Mapping mapping) {
-        this(forceLazyLoading, serializeIdentifier, false,  true,
-                mapping, null, null);
-    }
-
-    @Deprecated // since 2.12
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier,
-            boolean nullMissingEntities, Mapping mapping) {
-        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, true,
-                mapping, null, null);
-    }
-
-    @Deprecated // since 2.12
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier,
-            boolean nullMissingEntities, Mapping mapping, BeanProperty property) {
-        this(forceLazyLoading, serializeIdentifier, nullMissingEntities, true,
-                mapping, property, null);
-    }
-
-    /**
-     * @since 2.12
-     */
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier,
+    public Hibernate5JProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier,
             boolean nullMissingEntities, boolean wrappedIdentifier,
             Mapping mapping)
     {
@@ -109,10 +74,7 @@ public class HibernateProxySerializer
                 mapping, null, null);
     }
 
-    /**
-     * @since 2.12
-     */
-    public HibernateProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier,
+    public Hibernate5JProxySerializer(boolean forceLazyLoading, boolean serializeIdentifier,
             boolean nullMissingEntities, boolean wrappedIdentifier,
             Mapping mapping, BeanProperty property, NameTransformer unwrapper)
     {
@@ -127,10 +89,7 @@ public class HibernateProxySerializer
         _dynamicSerializers = PropertySerializerMap.emptyForProperties();
     }
 
-    /**
-     * @since 2.12
-     */
-    protected HibernateProxySerializer(HibernateProxySerializer base,
+    protected Hibernate5JProxySerializer(Hibernate5JProxySerializer base,
             BeanProperty property, NameTransformer unwrapper)
     {
         _forceLazyLoading = base._forceLazyLoading;
@@ -146,12 +105,12 @@ public class HibernateProxySerializer
     
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
-        return new HibernateProxySerializer(this, property, _unwrapper);
+        return new Hibernate5JProxySerializer(this, property, _unwrapper);
     }
 
     @Override
     public JsonSerializer<HibernateProxy> unwrappingSerializer(final NameTransformer unwrapper) {
-        return new HibernateProxySerializer(this, _property, unwrapper);
+        return new Hibernate5JProxySerializer(this, _property, unwrapper);
     }
 
     @Override

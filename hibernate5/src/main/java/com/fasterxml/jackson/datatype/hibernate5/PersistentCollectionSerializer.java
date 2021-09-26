@@ -1,8 +1,9 @@
 package com.fasterxml.jackson.datatype.hibernate5;
 
-import javax.persistence.*;
 import java.io.IOException;
 import java.util.*;
+
+import javax.persistence.*;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.*;

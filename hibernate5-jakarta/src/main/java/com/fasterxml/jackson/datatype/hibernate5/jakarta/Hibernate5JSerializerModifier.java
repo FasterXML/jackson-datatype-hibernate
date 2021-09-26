@@ -8,18 +8,18 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
 import org.hibernate.SessionFactory;
 
-public class HibernateSerializerModifier
+public class Hibernate5JSerializerModifier
     extends BeanSerializerModifier
 {
     protected final int _features;
 
     protected final SessionFactory _sessionFactory;
 
-    public HibernateSerializerModifier(int features, SessionFactory sessionFactory) {
+    public Hibernate5JSerializerModifier(int features, SessionFactory sessionFactory) {
         _features = features;
         _sessionFactory = sessionFactory;
     }
-    
+
     /*
     @Override
     public JsonSerializer<?> modifySerializer(SerializationConfig config,

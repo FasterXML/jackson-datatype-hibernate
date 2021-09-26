@@ -179,8 +179,8 @@ public class Hibernate5JakartaModule extends com.fasterxml.jackson.databind.Modu
         if (ai != null) {
             context.appendAnnotationIntrospector(ai);
         }
-        context.addSerializers(new HibernateSerializers(_mapping, _moduleFeatures));
-        context.addBeanSerializerModifier(new HibernateSerializerModifier(_moduleFeatures, _sessionFactory));
+        context.addSerializers(new Hibernate5JSerializers(_mapping, _moduleFeatures));
+        context.addBeanSerializerModifier(new Hibernate5JSerializerModifier(_moduleFeatures, _sessionFactory));
     }
 
     /**
@@ -188,7 +188,7 @@ public class Hibernate5JakartaModule extends com.fasterxml.jackson.databind.Modu
      * to register along with module. If null is returned, no introspector is added.
      */
     protected AnnotationIntrospector annotationIntrospector() {
-        HibernateAnnotationIntrospector ai = new HibernateAnnotationIntrospector();
+        Hibernate5JAnnotationIntrospector ai = new Hibernate5JAnnotationIntrospector();
         ai.setUseTransient(isEnabled(Feature.USE_TRANSIENT_ANNOTATION));
         return ai;
     }
