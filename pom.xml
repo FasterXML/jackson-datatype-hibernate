@@ -18,9 +18,9 @@
     <module>hibernate3</module>
 -->
     <module>hibernate4</module>
+    <module>hibernate5</module>
     <!--  added in 2.13.0 to support JAXB->Jakarta move: -->
     <module>hibernate5-jakarta</module>
-    <module>hibernate5</module>
 <!--
     <module>hibernate5_2-test</module>
 -->
@@ -60,7 +60,7 @@
       </dependency>
       <dependency>
 	<!-- 26-Sep-2021, tatu: Alas, newer versions seem to induce other problems
-           for tests, stuck with not-latest of even 1.3.x
+           for tests, stuck with not-latest of even 1.3.x (fails at around .160)
           -->
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
