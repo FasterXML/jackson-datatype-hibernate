@@ -342,29 +342,31 @@ public class PersistentCollectionSerializer
      */
     protected boolean usesLazyLoading(BeanProperty property) {
         if (property != null) {
+
+            boolean replaceCollection = Hibernate5Module.Feature.REPLACE_PERSISTENT_COLLECTIONS.enabledIn(_features);
             // As per [Issue#36]
             ElementCollection ec = property.getAnnotation(ElementCollection.class);
             if (ec != null) {
-                return (ec.fetch() == FetchType.LAZY);
+                return replaceCollection || (ec.fetch() == FetchType.LAZY);
             }
             OneToMany ann1 = property.getAnnotation(OneToMany.class);
             if (ann1 != null) {
-                return (ann1.fetch() == FetchType.LAZY);
+                return replaceCollection || (ann1.fetch() == FetchType.LAZY);
             }
             OneToOne ann2 = property.getAnnotation(OneToOne.class);
             if (ann2 != null) {
-                return (ann2.fetch() == FetchType.LAZY);
+                return replaceCollection || (ann2.fetch() == FetchType.LAZY);
             }
             ManyToOne ann3 = property.getAnnotation(ManyToOne.class);
             if (ann3 != null) {
-                return (ann3.fetch() == FetchType.LAZY);
+                return replaceCollection || (ann3.fetch() == FetchType.LAZY);
             }
             ManyToMany ann4 = property.getAnnotation(ManyToMany.class);
             if (ann4 != null) {
-                return (ann4.fetch() == FetchType.LAZY);
+                return replaceCollection || (ann4.fetch() == FetchType.LAZY);
             }
             // As per [Issue#53]
-            return !Feature.REQUIRE_EXPLICIT_LAZY_LOADING_MARKER.enabledIn(_features);
+            return !Hibernate5Module.Feature.REQUIRE_EXPLICIT_LAZY_LOADING_MARKER.enabledIn(_features);
         }
         return false;
     }
