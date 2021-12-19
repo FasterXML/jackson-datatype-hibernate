@@ -8,6 +8,10 @@ Project: jackson-datatype-hibernate
 
 No changes since 2.13
 
+2.13.1 (19-Dec-2021)
+
+No changes since 2.13.0
+
 2.13.0 (30-Sep-2021)
 
 #139: Drop support for Hibernate 3.x from Jackson 2.13
@@ -15,6 +19,7 @@ No changes since 2.13
   Jakarta EE for Hibernate 5.5
  (contributed by Jon H)
 
+2.12.6 (15-Dec-2021)
 2.12.5 (27-Aug-2021)
 2.12.4 (06-Jul-2021)
 2.12.3 (12-Apr-2021)
