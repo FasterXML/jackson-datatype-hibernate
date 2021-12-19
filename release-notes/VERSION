@@ -8,6 +8,10 @@ Project: jackson-datatype-hibernate
 
 No changes since 2.13
 
+2.13.1 (19-Dec-2021)
+
+No changes since 2.13.0
+
 2.13.0 (30-Sep-2021)
 
 #139: Drop support for Hibernate 3.x from Jackson 2.13
