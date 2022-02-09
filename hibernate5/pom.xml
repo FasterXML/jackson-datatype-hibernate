@@ -22,7 +22,7 @@ Hibernate (http://hibernate.org) version 5.x data types.
     <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate5</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate5</packageVersion.package>
     <!-- Hibernate with JPA 2.0 -->
-    <hibernate.version>5.2.18.Final</hibernate.version>
+    <hibernate.version>5.4.24.Final</hibernate.version>
     <osgi.export>${project.groupId}.hibernate5</osgi.export>
   </properties>
 
