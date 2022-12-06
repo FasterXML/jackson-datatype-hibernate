@@ -1,16 +1,16 @@
-package com.fasterxml.jackson.datatype.hibernate5.jakarta;
+package com.fasterxml.jackson.datatype.hibernate6;
 
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.datatype.hibernate6.data.Customer;
+import com.fasterxml.jackson.datatype.hibernate6.data.Payment;
 import org.hibernate.Hibernate;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.data.Customer;
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.data.Payment;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module.Feature;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -63,7 +63,7 @@ public class LazyLoadingTest extends BaseTest
     
     @Test
     public void testSerializeIdentifierFeature() throws JsonProcessingException {
-    	Hibernate5JakartaModule module = new Hibernate5JakartaModule();
+    	Hibernate6Module module = new Hibernate6Module();
 		module.enable(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS);
 		ObjectMapper objectMapper = new ObjectMapper().registerModule(module);
 

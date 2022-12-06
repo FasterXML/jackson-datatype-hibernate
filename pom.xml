@@ -18,6 +18,7 @@
     <module>hibernate5</module>
     <!--  added in 2.13.0 to support JAXB->Jakarta move: -->
     <module>hibernate5-jakarta</module>
+    <module>hibernate6</module>
 <!--
     <module>hibernate5_2-test</module>
 -->
