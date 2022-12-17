@@ -19,6 +19,9 @@ Hibernate 3.x was supported up to Jackson 2.12 but is no longer supported at and
 Jackson 2.13 adds Support for "Hibernate 5 Jakarta" variant (for Hibernate 5.5 and beyond);
 see below for more information.
 
+Jackson 2.15 adds Support for Hibernate 6.x;
+see below for more information.
+
 ## Usage
 
 ### Maven dependency
@@ -56,6 +59,16 @@ you will need the jakarta suffixed dependency for Hibernate 5.5:
 </dependency>
 ```
 
+you need to use "jackson-datatype-hibernate6" for Hibernate 6.x:
+
+```xml
+<dependency>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-hibernate6</artifactId>
+    <version>2.15.0</version>
+</dependency>
+```
+
 ### Registering module
 
 Like all standard Jackson modules (libraries that implement Module interface), registration is done as follows:
@@ -68,6 +81,8 @@ mapper.registerModule(new Hibernate4Module());
 mapper.registerModule(new Hibernate5Module());
 // or, for Hibernate 5.5+ with Jakarta
 mapper.registerModule(new Hibernate5JakartaModule());
+// or, for Hibernate 6.x
+mapper.registerModule(new Hibernate6Module());
 ```
 
 after which functionality is available for all normal Jackson operations.
