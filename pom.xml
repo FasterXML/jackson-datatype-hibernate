@@ -28,7 +28,7 @@
   <scm>
     <connection>scm:git:git@github.com:FasterXML/jackson-datatype-hibernate.git</connection>
     <developerConnection>scm:git:git@github.com:FasterXML/jackson-datatype-hibernate.git</developerConnection>
-    <url>http://github.com/FasterXML/jackson-datatype-hibernate</url>    
+    <url>https://github.com/FasterXML/jackson-datatype-hibernate</url>
     <tag>HEAD</tag>
   </scm>
 
