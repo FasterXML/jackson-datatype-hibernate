@@ -13,11 +13,13 @@
   <artifactId>jackson-datatype-hibernate5</artifactId>
   <name>Jackson-datatype-Hibernate5</name>
   <packaging>bundle</packaging>
-  <description>Add-on module for Jackson (http://jackson.codehaus.org) to support
-Hibernate (http://hibernate.org) version 5.x data types.
+  <description>Add-on module for Jackson (https://github.com/FasterXML/jackson) to support
+Hibernate (https://hibernate.org) version 5.x data types.
   </description>
   <url>https://github.com/FasterXML/jackson-datatype-hibernate</url>
   <properties>
+    <javac.src.version>1.8</javac.src.version>
+    <javac.target.version>1.8</javac.target.version>
     <!-- Generate PackageVersion.java into this directory. -->
     <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate5</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate5</packageVersion.package>
@@ -96,6 +98,13 @@ Hibernate (http://hibernate.org) version 5.x data types.
             <phase>generate-sources</phase>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED</argLine>
+        </configuration>
       </plugin>
     </plugins>
   </build>
