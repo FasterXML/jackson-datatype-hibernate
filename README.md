@@ -22,11 +22,33 @@ see below for more information.
 Jackson 2.15 adds Support for Hibernate 6.x;
 see below for more information.
 
+### JDK requirements
+
+Before Jackson 2.15, baseline JDK needed for building for JDK 8 and all
+module variants worked on Java 8.
+
+With Jackson 2.15 JDK 11 will be required to build: all modules run on
+Java 8 except for Hibernate 6.x module which requires Java 11 like
+Hibernate 6.x itself.
+
+### Javax vs Jakarta
+
+Due to changes related to
+[Java EE to Jakarta EE](https://blogs.oracle.com/javamagazine/post/transition-from-java-ee-to-jakarta-ee)
+transition (also known as "JAXB to Jakarta" etc etc), there are 2 variants of Hibernate 5 module:
+
+* One that works with "old" JAXB/JavaEE APIs: `jackson-datatype-hibernate5`
+* One that works with "new" Jakarta APIs: `jackson-datatype-hibernate5-jakarta`
+
+Note that for Hibernate 4.x only old APIs matter; and for 6.x and later only new (Jakarta)
+APIs are used -- so there are no separate modules.
+
 ## Usage
 
 ### Maven dependency
 
-To use module on Maven-based projects, use following dependency:
+To use module on Maven-based projects, use following dependency
+(with whatever is the latest version available):
 
 ```xml
 <dependency>
