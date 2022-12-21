@@ -7,6 +7,11 @@
   </parent>
   <artifactId>jackson-datatype-hibernate5_2-test</artifactId>
 
+  <properties>
+    <javac.src.version>1.8</javac.src.version>
+    <javac.target.version>1.8</javac.target.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -105,6 +110,7 @@
               <dependenciesToScan>
                 <dependency>com.fasterxml.jackson.datatype:jackson-datatype-hibernate5</dependency>
               </dependenciesToScan>
+              <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED</argLine>
             </configuration>
           </plugin>
         </plugins>

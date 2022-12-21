@@ -1,9 +1,9 @@
 Project to build [Jackson](../../../jackson) module (jar) to
-support JSON serialization and deserialization of Hibernate (http://hibernate.org) specific datatypes
+support JSON serialization and deserialization of Hibernate (https://hibernate.org) specific datatypes
 and properties; especially lazy-loading aspects.
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5/)
-[![Javadoc](https://javadoc.io/badge/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5.svg)](http://www.javadoc.io/doc/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5)
+[![Javadoc](https://javadoc.io/badge/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5.svg)](https://www.javadoc.io/doc/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5)
 
 ## Status
 
@@ -89,7 +89,7 @@ after which functionality is available for all normal Jackson operations.
 
 ### Avoiding infinite loops
 
-* http://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
+* https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
 
 ### Using with Spring MVC
 
