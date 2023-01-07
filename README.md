@@ -1,9 +1,9 @@
 Project to build [Jackson](../../../jackson) module (jar) to
-support JSON serialization and deserialization of Hibernate (http://hibernate.org) specific datatypes
+support JSON serialization and deserialization of Hibernate (https://hibernate.org) specific datatypes
 and properties; especially lazy-loading aspects.
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5/)
-[![Javadoc](https://javadoc.io/badge/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5.svg)](http://www.javadoc.io/doc/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5)
+[![Javadoc](https://javadoc.io/badge/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5.svg)](https://www.javadoc.io/doc/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5)
 
 ## Status
 
@@ -19,28 +19,54 @@ Hibernate 3.x was supported up to Jackson 2.12 but is no longer supported at and
 Jackson 2.13 adds Support for "Hibernate 5 Jakarta" variant (for Hibernate 5.5 and beyond);
 see below for more information.
 
+Jackson 2.15 adds Support for Hibernate 6.x;
+see below for more information.
+
+### JDK requirements
+
+Before Jackson 2.15, baseline JDK needed for building for JDK 8 and all
+module variants worked on Java 8.
+
+With Jackson 2.15 JDK 11 will be required to build: all modules run on
+Java 8 except for Hibernate 6.x module which requires Java 11 like
+Hibernate 6.x itself.
+
+### Javax vs Jakarta
+
+Due to changes related to
+[Java EE to Jakarta EE](https://blogs.oracle.com/javamagazine/post/transition-from-java-ee-to-jakarta-ee)
+transition (also known as "JAXB to Jakarta" etc etc), there are 2 variants of Hibernate 5 module:
+
+* One that works with "old" JAXB/JavaEE APIs: `jackson-datatype-hibernate5`
+* One that works with "new" Jakarta APIs: `jackson-datatype-hibernate5-jakarta`
+
+Note that for Hibernate 4.x only old APIs matter; and for 6.x and later only new (Jakarta)
+APIs are used -- so there are no separate modules.
+
 ## Usage
 
 ### Maven dependency
 
-To use module on Maven-based projects, use following dependency:
+To use module on Maven-based projects, use following dependency
+(with whatever is the latest version available):
 
 ```xml
 <dependency>
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate5</artifactId>
-  <version>2.12.5</version>
+  <version>2.14.1</version>
 </dependency>    
 ```
 
 or whatever version is most up-to-date at the moment;
-note that you need to use "jackson-datatype-hibernate4" for Hibernate 4.x.
+
+Note that you need to use "jackson-datatype-hibernate4" for Hibernate 4.x.
 
 ```xml
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
-    <artifactId>jackson-datatype-hibernate5</artifactId>
-    <version>2.9.8</version>
+    <artifactId>jackson-datatype-hibernate4</artifactId>
+    <version>2.14.1</version>
 </dependency>
 ```
 
@@ -51,7 +77,17 @@ you will need the jakarta suffixed dependency for Hibernate 5.5:
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
-    <version>2.13.0</version>
+    <version>2.14.1</version>
+</dependency>
+```
+
+you need to use "jackson-datatype-hibernate6" for Hibernate 6.x:
+
+```xml
+<dependency>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-hibernate6</artifactId>
+    <version>2.15.0</version>
 </dependency>
 ```
 
@@ -67,13 +103,15 @@ mapper.registerModule(new Hibernate4Module());
 mapper.registerModule(new Hibernate5Module());
 // or, for Hibernate 5.5+ with Jakarta
 mapper.registerModule(new Hibernate5JakartaModule());
+// or, for Hibernate 6.x
+mapper.registerModule(new Hibernate6Module());
 ```
 
 after which functionality is available for all normal Jackson operations.
 
 ### Avoiding infinite loops
 
-* http://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
+* https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
 
 ### Using with Spring MVC
 

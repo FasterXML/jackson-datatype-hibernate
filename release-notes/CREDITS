@@ -44,3 +44,9 @@ Jon Huang (jon5477@github)
 * Contributed #144: Add new module (`jackson-datatype-hibernate5-jakarta`) to support
   Jakarta EE for Hibernate 5.5
  (2.13.0)
+
+Réda Housni Alaoui (reda-alaoui@github)
+
+* Contributed #158: Add `jackson-datatype-hibernate6` for Hibernate 6
+ (2.15.0)
+
