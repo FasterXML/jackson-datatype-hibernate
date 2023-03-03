@@ -27,7 +27,7 @@ see below for more information.
 Before Jackson 2.15, baseline JDK needed for building for JDK 8 and all
 module variants worked on Java 8.
 
-With Jackson 2.15 JDK 11 will be required to build: all modules run on
+With Jackson 2.15, JDK 11 will be required to build: all modules run on
 Java 8 except for Hibernate 6.x module which requires Java 11 like
 Hibernate 6.x itself.
 
@@ -81,7 +81,7 @@ you will need the jakarta suffixed dependency for Hibernate 5.5:
 </dependency>
 ```
 
-you need to use "jackson-datatype-hibernate6" for Hibernate 6.x:
+you will need to use "jackson-datatype-hibernate6" for Hibernate 6.x (when v2.15.0 is released):
 
 ```xml
 <dependency>
