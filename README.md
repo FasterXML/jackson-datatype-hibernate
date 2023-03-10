@@ -54,7 +54,7 @@ To use module on Maven-based projects, use following dependency
 <dependency>
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate5</artifactId>
-  <version>2.14.1</version>
+  <version>2.14.2</version>
 </dependency>    
 ```
 
@@ -66,7 +66,7 @@ Note that you need to use "jackson-datatype-hibernate4" for Hibernate 4.x.
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate4</artifactId>
-    <version>2.14.1</version>
+    <version>2.14.2</version>
 </dependency>
 ```
 
@@ -77,7 +77,7 @@ you will need the jakarta suffixed dependency for Hibernate 5.5:
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
-    <version>2.14.1</version>
+    <version>2.14.2</version>
 </dependency>
 ```
 
