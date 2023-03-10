@@ -24,7 +24,7 @@ Hibernate (https://hibernate.org) version 5.5 with Jakarta data types.
     <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate5/jakarta</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate5.jakarta</packageVersion.package>
     <!-- Hibernate with Jakarta Persistence 3.0 -->
-    <hibernate.version>5.5.7.Final</hibernate.version>
+    <hibernate.version>5.5.9.Final</hibernate.version>
     <osgi.export>${project.groupId}.hibernate5.jakarta</osgi.export>
   </properties>
 
