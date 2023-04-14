@@ -4,7 +4,7 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
-2.15.0-rc2 (28-Mar-2023)
+2.15.0-rc3 (14-Apr-2023)
 
 #158: Add `jackson-datatype-hibernate6` for Hibernate 6
  (contributed by Réda A)
