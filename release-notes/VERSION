@@ -11,6 +11,7 @@ Project: jackson-datatype-hibernate
 - Update pre-jakarta Hibernate 5.3.28 (from 5.2.10) due to CVE
 - Update Jakarta Hibernate to 5.5.9
 
+2.14.3 (05-May-2023)
 2.14.2 (28-Jan-2023)
 2.14.1 (21-Nov-2022)
 2.14.0 (05-Nov-2022)
