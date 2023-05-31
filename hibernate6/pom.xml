@@ -22,7 +22,7 @@ Hibernate (https://hibernate.org/) version 6.x with Jakarta data types.
     <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate6</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate6</packageVersion.package>
     <!-- Hibernate with Jakarta Persistence 3.0 -->
-    <hibernate.version>6.1.5.Final</hibernate.version>
+    <hibernate.version>6.2.3.Final</hibernate.version>
     <osgi.export>${project.groupId}.hibernate6</osgi.export>
   </properties>
 
