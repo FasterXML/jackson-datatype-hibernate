@@ -343,7 +343,7 @@ public class PersistentCollectionSerializer
     protected boolean usesLazyLoading(BeanProperty property) {
         if (property != null) {
             boolean replaceCollection = Hibernate6Module.Feature.REPLACE_PERSISTENT_COLLECTIONS.enabledIn(_features);
-            // As per [Issue#36]
+            // As per [datatype-hibernate#36]
             ElementCollection ec = property.getAnnotation(ElementCollection.class);
             if (ec != null) {
                 return replaceCollection || (ec.fetch() == FetchType.LAZY);
@@ -364,7 +364,7 @@ public class PersistentCollectionSerializer
             if (ann4 != null) {
                 return replaceCollection || (ann4.fetch() == FetchType.LAZY);
             }
-            // As per [Issue#53]
+            // As per [datatype-hibernate#53]
             return !Hibernate6Module.Feature.REQUIRE_EXPLICIT_LAZY_LOADING_MARKER.enabledIn(_features);
         }
         return false;

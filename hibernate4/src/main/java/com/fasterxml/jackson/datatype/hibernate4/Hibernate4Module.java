@@ -2,7 +2,6 @@ package com.fasterxml.jackson.datatype.hibernate4;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.Module;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.Mapping;
 

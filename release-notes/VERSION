@@ -6,6 +6,8 @@ Project: jackson-datatype-hibernate
 
 2.16.0 (not yet released)
 
+#140: `HibernateModule.REPLACE_PERSISTENT_COLLECTIONS` not working
+  when `FetchType.EAGER`
 - Hibernate deps:
   * 4.x: 4.1.12 -> 4.3.11
   * 5.x/JAXB: 5.3.28 -> 5.3.29
