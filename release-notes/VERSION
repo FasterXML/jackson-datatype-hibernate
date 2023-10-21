@@ -4,7 +4,7 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
-2.16.0 (not yet released)
+2.16.0-rc1 (20-Oct-2023)
 
 #140: `HibernateModule.REPLACE_PERSISTENT_COLLECTIONS` not working
   when `FetchType.EAGER`
