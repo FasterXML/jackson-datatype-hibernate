@@ -24,7 +24,7 @@ Hibernate (https://hibernate.org) version 4.x data types.
     <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate4</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate4</packageVersion.package>
     <!-- Hibernate with JPA 2.0 -->
-    <hibernate.version>4.3.11.Final</hibernate.version>
+    <hibernate.version>5.3.20.Final</hibernate.version>
     <osgi.export>${project.groupId}.hibernate4</osgi.export>
   </properties>
 
