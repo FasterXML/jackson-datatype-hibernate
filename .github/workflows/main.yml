@@ -25,7 +25,7 @@ jobs:
       matrix:
         # 20-Dec-2022, tatu: Build now requires JDK 11; won't yet work with JDK 17 
         java_version: [ '11']
-        os: ['ubuntu-20.04']
+        os: ['ubuntu-22.04']
     env:
       JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     steps:
