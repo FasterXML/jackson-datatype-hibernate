@@ -6,7 +6,9 @@ Project: jackson-datatype-hibernate
 
 2.19.0 (not yet released)
 
--
+- Hibernate deps:
+  * 5.x/JAXB: 5.3.29 -> 5.3.37
+  * 6.x: 6.2.3 -> 6.2.33
 
 2.18.2 (27-Nov-2024)
 2.18.1 (28-Oct-2024)
