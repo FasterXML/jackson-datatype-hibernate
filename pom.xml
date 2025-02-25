@@ -3,12 +3,12 @@
   <parent>
     <groupId>com.fasterxml.jackson</groupId>
     <artifactId>jackson-base</artifactId>
-    <version>2.15.0-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate-parent</artifactId>
   <name>Hibernate module parent</name>
-  <version>2.15.0-SNAPSHOT</version>
+  <version>2.19.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Parent pom for shared settings for project sub-modules
   </description>
@@ -62,7 +62,7 @@
           -->
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
-        <version>1.3.155</version>
+        <version>1.3.156</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -76,6 +76,13 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
+    </dependency>
+
+    <!-- 20-Apr-2024, tatu: JUnit4 no longer from jackson-base, so: -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <!-- But there are also some well-known test dependencies we may as well add directly -->

@@ -4,12 +4,54 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
-2.15.0 (not yet released)
+2.19.0 (not yet released)
+
+-
+
+2.18.2 (27-Nov-2024)
+2.18.1 (28-Oct-2024)
+2.18.0 (26-Sep-2024)
+
+No changes since 2.17
+
+2.17.3 (01-Nov-2024)
+2.17.2 (05-Jul-2024)
+2.17.1 (04-May-2024)
+2.17.0 (12-Mar-2024)
+
+No changes since 2.16
+
+2.16.2 (09-Mar-2024)
+2.16.1 (24-Dec-2023)
+
+No changes since 2.16.0
+
+2.16.0 (15-Nov-2023)
+
+#140: `HibernateModule.REPLACE_PERSISTENT_COLLECTIONS` not working
+  when `FetchType.EAGER`
+- Hibernate deps:
+  * 4.x: 4.1.12 -> 4.3.11
+  * 5.x/JAXB: 5.3.28 -> 5.3.29
+  * 5.x/Jakarta: 5.5.9 -> 5.6.15
+  * 6.x: 6.1.5 -> 6.2.3
+
+2.15.4 (15-Feb-2024)
+2.15.3 (12-Oct-2023)
+2.15.2 (30-May-2023)
+2.15.1 (16-May-2023)
+
+No changes since 2.15.0
+
+2.15.0 (23-Apr-2023)
 
 #158: Add `jackson-datatype-hibernate6` for Hibernate 6
  (contributed by Réda A)
-- Update Hibernate 5.x to 5.3.20 (from 5.2.10) due to CVE
+- Update pre-jakarta Hibernate 5.3.28 (from 5.2.10) due to CVE
+- Update Jakarta Hibernate to 5.5.9
 
+2.14.3 (05-May-2023)
+2.14.2 (28-Jan-2023)
 2.14.1 (21-Nov-2022)
 2.14.0 (05-Nov-2022)
 

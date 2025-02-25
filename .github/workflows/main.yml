@@ -3,14 +3,14 @@ on:
   push:
     branches:
     - master
-    - "2.15"
+    - "2.19"
     paths-ignore:
     - "README.md"
     - "release-notes/*"
   pull_request:
     branches:
     - master
-    - "2.15"
+    - "2.19"
     paths-ignore:
     - "README.md"
     - "release-notes/*"
@@ -23,9 +23,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 20-Dec-2022, tatu: Build now requires JDK 11; won't yet work with JDK 17
+        # 20-Dec-2022, tatu: Build now requires JDK 11; won't yet work with JDK 17 
         java_version: [ '11']
-        os: ['ubuntu-20.04']
+        os: ['ubuntu-22.04']
     env:
       JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     steps:
@@ -50,7 +50,7 @@ jobs:
       id: projectVersion
       run: echo "version=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.3.0:evaluate -DforceStdout -Dexpression=project.version -q)" >>$GITHUB_OUTPUT
     - name: Deploy snapshot
-      if: github.event_name != 'pull_request' && matrix.java_version == '8' && endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT')
+      if: github.event_name != 'pull_request' && matrix.java_version == '11' && endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT')
       env:
         CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
         CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
