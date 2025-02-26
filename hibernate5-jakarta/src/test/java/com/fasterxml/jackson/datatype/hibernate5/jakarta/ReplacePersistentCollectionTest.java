@@ -11,6 +11,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.data.Payment;
 
@@ -41,10 +42,9 @@ public class ReplacePersistentCollectionTest extends BaseTest
     // [Issue#93], backwards compatible case
     @Test
     public void testNoReplacePersistentCollection() throws Exception {
-		final ObjectMapper mapper = new ObjectMapper()
-				.registerModule(new Hibernate5JakartaModule()
+		final ObjectMapper mapper = hibernateMapper(new Hibernate5JakartaModule()
 						.configure(Hibernate5JakartaModule.Feature.FORCE_LAZY_LOADING, true)
-				).enableDefaultTyping(DefaultTyping.NON_FINAL);
+				);
 
         Customer customer = em.find(Customer.class, 103);
         Assert.assertFalse(Hibernate.isInitialized(customer.getPayments()));
@@ -65,11 +65,10 @@ public class ReplacePersistentCollectionTest extends BaseTest
     // [Issue#93], backwards compatible case
     @Test
     public void testReplacePersistentCollection() throws Exception {
-		final ObjectMapper mapper = new ObjectMapper()
-				.registerModule(new Hibernate5JakartaModule()
+		final ObjectMapper mapper = hibernateMapper(new Hibernate5JakartaModule()
 						.configure(Hibernate5JakartaModule.Feature.FORCE_LAZY_LOADING, true)
 						.configure(Hibernate5JakartaModule.Feature.REPLACE_PERSISTENT_COLLECTIONS, true)
-				        ).enableDefaultTyping(DefaultTyping.NON_FINAL);
+				        );
 
 		Customer customer = em.find(Customer.class, 103);
 		Assert.assertFalse(Hibernate.isInitialized(customer.getPayments()));
@@ -87,5 +86,12 @@ public class ReplacePersistentCollectionTest extends BaseTest
 //		Assert.assertTrue(stuff.containsKey("payments"));
 //		Assert.assertTrue(stuff.containsKey("orders"));
 //		Assert.assertNull(stuff.get("orderes"));
+    }
+
+    private ObjectMapper hibernateMapper(Hibernate5JakartaModule module) {
+        return JsonMapper.builder()
+                .addModule(module)
+                .build()
+                .enableDefaultTyping(DefaultTyping.NON_FINAL);
     }
 }

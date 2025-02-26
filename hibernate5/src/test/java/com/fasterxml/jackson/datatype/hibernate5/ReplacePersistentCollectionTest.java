@@ -1,10 +1,11 @@
 package com.fasterxml.jackson.datatype.hibernate5;
 
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.hibernate5.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate5.data.Payment;
 import org.hibernate.Hibernate;
@@ -40,10 +41,9 @@ public class ReplacePersistentCollectionTest extends BaseTest
     // [Issue#93], backwards compatible case
     @Test
     public void testNoReplacePersistentCollection() throws Exception {
-		final ObjectMapper mapper = new ObjectMapper()
-				.registerModule(new Hibernate5Module()
+		final ObjectMapper mapper = hibernateMapper(new Hibernate5Module()
 						.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, true)
-				).enableDefaultTyping(DefaultTyping.NON_FINAL);
+				);
 
         Customer customer = em.find(Customer.class, 103);
         Assert.assertFalse(Hibernate.isInitialized(customer.getPayments()));
@@ -64,11 +64,10 @@ public class ReplacePersistentCollectionTest extends BaseTest
     // [Issue#93], backwards compatible case
     @Test
     public void testReplacePersistentCollection() throws Exception {
-		final ObjectMapper mapper = new ObjectMapper()
-				.registerModule(new Hibernate5Module()
+		final ObjectMapper mapper = hibernateMapper(new Hibernate5Module()
 						.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, true)
 						.configure(Hibernate5Module.Feature.REPLACE_PERSISTENT_COLLECTIONS, true)
-				        ).enableDefaultTyping(DefaultTyping.NON_FINAL);
+						);
 
 		Customer customer = em.find(Customer.class, 103);
 		Assert.assertFalse(Hibernate.isInitialized(customer.getPayments()));
@@ -78,13 +77,23 @@ public class ReplacePersistentCollectionTest extends BaseTest
 		Set<Payment> payments = customer.getPayments();
 
 		Assert.assertTrue(Hibernate.isInitialized(payments));
-		Customer stuff = mapper.readValue(json, Customer.class);
-		assertNotNull(stuff);
+		Customer cust = mapper.readValue(json, Customer.class);
+		assertNotNull(cust);
 
-//		Map<?, ?> stuff = mapper.readValue(json, Map.class);
-//
-//		Assert.assertTrue(stuff.containsKey("payments"));
-//		Assert.assertTrue(stuff.containsKey("orders"));
-//		Assert.assertNull(stuff.get("orderes"));
+		// For debugging?
+		/*
+		Map<?, ?> stuff = mapper.readValue(json, Map.class);
+
+		Assert.assertTrue(stuff.containsKey("payments"));
+		Assert.assertTrue(stuff.containsKey("orders"));
+		Assert.assertNull(stuff.get("orderes"));
+		*/
+    }
+
+    private ObjectMapper hibernateMapper(Hibernate5Module module) {
+        return JsonMapper.builder()
+                .addModule(module)
+                .build()
+                .enableDefaultTyping(DefaultTyping.NON_FINAL);
     }
 }
