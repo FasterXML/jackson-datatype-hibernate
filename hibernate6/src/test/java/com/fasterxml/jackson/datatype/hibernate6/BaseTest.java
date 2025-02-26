@@ -9,14 +9,14 @@ import org.apache.log4j.Logger;
 public abstract class BaseTest extends junit.framework.TestCase
 {
     protected BaseTest() {
-    	try {
-    		System.out.println(Hibernate6Version.isHibernate6_Plus());
-			Logger.getLogger(this.getClass()).info("Testing using hibernate " + Hibernate6Version.getHibernateVersion() +
-					", is 6+: " + Hibernate6Version.isHibernate6_Plus());
-		} catch (Exception e) {
-			// Should not happen
-			throw new RuntimeException(e);
-		}
+        try {
+            System.out.println(Hibernate6Version.isHibernate6_Plus());
+            Logger.getLogger(this.getClass()).info("Testing using hibernate " + Hibernate6Version.getHibernateVersion() +
+                    ", is 6+: " + Hibernate6Version.isHibernate6_Plus());
+        } catch (Exception e) {
+            // Should not happen
+            throw new RuntimeException(e);
+        }
     }
 
     protected ObjectMapper mapperWithModule(boolean forceLazyLoading)

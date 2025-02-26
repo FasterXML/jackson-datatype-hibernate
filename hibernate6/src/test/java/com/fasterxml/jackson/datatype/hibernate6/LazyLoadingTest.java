@@ -35,11 +35,10 @@ public class LazyLoadingTest extends BaseTest
             String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(customer);
             // should not force loading...
             Set<Payment> payments = customer.getPayments();
-            /*
-            System.out.println("--- JSON ---");
-            System.out.println(json);
-            System.out.println("--- /JSON ---");
-            */
+
+            //System.out.println("--- JSON ---");
+            //System.out.println(json);
+            //System.out.println("--- /JSON ---");
 
             assertFalse(Hibernate.isInitialized(payments));
             // TODO: verify
