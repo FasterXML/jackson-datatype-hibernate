@@ -50,11 +50,10 @@ public class HibernateTest extends BaseTest
         
         // TODO: verify
         assertNotNull(json);
-        /*
-        System.out.println("--- JSON ---");
-        System.out.println(json);
-        System.out.println("--- /JSON ---");
-        */
+
+        //System.out.println("--- JSON ---");
+        //System.out.println(json);
+        //System.out.println("--- /JSON ---");
     }
 
     @Test
@@ -69,11 +68,10 @@ public class HibernateTest extends BaseTest
 
         // TODO: verify
         assertNotNull(json);
-        /*
-        System.out.println("--- JSON ---");
-        System.out.println(json);
-        System.out.println("--- /JSON ---");
-        */
+
+        //System.out.println("--- JSON ---");
+        //System.out.println(json);
+        // System.out.println("--- /JSON ---");
     }
     
     /**

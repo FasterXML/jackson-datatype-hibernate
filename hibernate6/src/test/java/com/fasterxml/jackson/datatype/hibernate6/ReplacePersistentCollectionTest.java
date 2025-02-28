@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -41,10 +42,9 @@ public class ReplacePersistentCollectionTest extends BaseTest
     // [Issue#93], backwards compatible case
     @Test
     public void testNoReplacePersistentCollection() throws Exception {
-		final ObjectMapper mapper = new ObjectMapper()
-				.registerModule(new Hibernate6Module()
+		final ObjectMapper mapper = hibernateMapper(new Hibernate6Module()
 						.configure(Hibernate6Module.Feature.FORCE_LAZY_LOADING, true)
-				).enableDefaultTyping(DefaultTyping.NON_FINAL);
+				);
 
         Customer customer = em.find(Customer.class, 103);
         assertFalse(Hibernate.isInitialized(customer.getPayments()));
@@ -65,11 +65,10 @@ public class ReplacePersistentCollectionTest extends BaseTest
     // [Issue#93], backwards compatible case
     @Test
     public void testReplacePersistentCollection() throws Exception {
-		final ObjectMapper mapper = new ObjectMapper()
-				.registerModule(new Hibernate6Module()
+		final ObjectMapper mapper = hibernateMapper(new Hibernate6Module()
 						.configure(Hibernate6Module.Feature.FORCE_LAZY_LOADING, true)
 						.configure(Hibernate6Module.Feature.REPLACE_PERSISTENT_COLLECTIONS, true)
-				        ).enableDefaultTyping(DefaultTyping.NON_FINAL);
+				        );
 
 		Customer customer = em.find(Customer.class, 103);
 		assertFalse(Hibernate.isInitialized(customer.getPayments()));
@@ -87,5 +86,12 @@ public class ReplacePersistentCollectionTest extends BaseTest
 //		assertTrue(stuff.containsKey("payments"));
 //		assertTrue(stuff.containsKey("orders"));
 //		assertNull(stuff.get("orderes"));
+    }
+
+    private ObjectMapper hibernateMapper(Hibernate6Module module) {
+        return JsonMapper.builder()
+                .addModule(module)
+                .build()
+                .enableDefaultTyping(DefaultTyping.NON_FINAL);
     }
 }

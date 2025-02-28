@@ -33,16 +33,16 @@ CREATE TABLE  `classicmodels`.`Customer` (
   `contactFirstName` varchar(50) NOT NULL,
   `phone` varchar(50) NOT NULL,
   `addressLine1` varchar(50) NOT NULL,
-  `addressLine2` varchar(50) DEFAULT NULL,
+  `addressLine2` varchar(50),
   `city` varchar(50) NOT NULL,
-  `state` varchar(50) DEFAULT NULL,
-  `postalCode` varchar(15) DEFAULT NULL,
+  `state` varchar(50),
+  `postalCode` varchar(15),
   `country` varchar(50) NOT NULL,
-  `salesRepEmployeeNumber` int(11) DEFAULT NULL,
-  `creditLimit` double DEFAULT NULL,
+  `salesRepEmployeeNumber` int(11),
+  `creditLimit` double,
   `missingProductCode` varchar(50) NULL,
   PRIMARY KEY (`customerNumber`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+);
 INSERT INTO `classicmodels`.`Customer` (`customerNumber`,`customerName`,`contactLastName`,`contactFirstName`,`phone`,`addressLine1`,`addressLine2`,`city`,`state`,`postalCode`,`country`,`salesRepEmployeeNumber`,`creditLimit`) VALUES 
  (103,'Atelier graphique','Schmitt','Carine ','40.32.2555','54, rue Royale',NULL,'Nantes',NULL,'44000','France',1370,21000),
  (112,'Signal Gift Stores','King','Sue','7025551838','8489 Strong St.',NULL,'Las Vegas','NV','83030','USA',1166,71800),
@@ -168,7 +168,7 @@ INSERT INTO `classicmodels`.`Customer` (`customerNumber`,`customerName`,`contact
  (496,'Kellys Gift Shop','Snowden','Tony','+64 9 5555500','Arenales 1938 3A',NULL,'Auckland  ',NULL,'','New Zealand',1612,110000);
 INSERT INTO `classicmodels`.`Customer` (`customerNumber`,`customerName`,`contactLastName`,`contactFirstName`,`phone`,`addressLine1`,`addressLine2`,`city`,`state`,`postalCode`,`country`,`salesRepEmployeeNumber`,`creditLimit`, `missingProductCode`) VALUES 
  (500,'Customer with valid product','Schmitt','Carine ','40.32.2555','54, rue Royale',NULL,'Nantes',NULL,'44000','France',1370,21000, 'S10_1678'),
- (501,'Customer with invalid product','Schmitt','Carine ','40.32.2555','54, rue Royale',NULL,'Nantes',NULL,'44000','France',1370,21000, 'X10_1678'),
+ (501,'Customer with invalid product','Schmitt','Carine ','40.32.2555','54, rue Royale',NULL,'Nantes',NULL,'44000','France',1370,21000, 'X10_1678');
 
 DROP TABLE IF EXISTS `classicmodels`.`Employee`;
 CREATE TABLE  `classicmodels`.`Employee` (
@@ -178,10 +178,10 @@ CREATE TABLE  `classicmodels`.`Employee` (
   `extension` varchar(10) NOT NULL,
   `email` varchar(100) NOT NULL,
   `officeCode` varchar(50) NOT NULL,
-  `reportsTo` int(11) DEFAULT NULL,
+  `reportsTo` int(11),
   `jobTitle` varchar(50) NOT NULL,
   PRIMARY KEY (`employeeNumber`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+);
 INSERT INTO `classicmodels`.`Employee` (`employeeNumber`,`lastName`,`firstName`,`extension`,`email`,`officeCode`,`reportsTo`,`jobTitle`) VALUES 
  (1002,'Murphy','Diane','x5800','dmurphy@classicmodelcars.com','1',NULL,'President'),
  (1056,'Patterson','Mary','x4611','mpatterso@classicmodelcars.com','1',1002,'VP Sales'),
@@ -213,13 +213,13 @@ CREATE TABLE  `classicmodels`.`Office` (
   `city` varchar(50) NOT NULL,
   `phone` varchar(50) NOT NULL,
   `addressLine1` varchar(50) NOT NULL,
-  `addressLine2` varchar(50) DEFAULT NULL,
-  `state` varchar(50) DEFAULT NULL,
+  `addressLine2` varchar(50),
+  `state` varchar(50),
   `country` varchar(50) NOT NULL,
   `postalCode` varchar(10) NOT NULL,
   `territory` varchar(10) NOT NULL,
   PRIMARY KEY (`officeCode`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+);
 INSERT INTO `classicmodels`.`Office` (`officeCode`,`city`,`phone`,`addressLine1`,`addressLine2`,`state`,`country`,`postalCode`,`territory`) VALUES 
  ('1','San Francisco','+1 650 219 4782','100 Market Street','Suite 300','CA','USA','94080','NA'),
  ('2','Boston','+1 215 837 0825','1550 Court Place','Suite 102','MA','USA','02107','NA'),
@@ -234,12 +234,12 @@ CREATE TABLE  `classicmodels`.`Order` (
   `orderNumber` int(11) NOT NULL,
   `orderDate` datetime NOT NULL,
   `requiredDate` datetime NOT NULL,
-  `shippedDate` datetime DEFAULT NULL,
+  `shippedDate` datetime,
   `status` varchar(15) NOT NULL,
   `comments` text,
   `customerNumber` int(11) NOT NULL,
   PRIMARY KEY (`orderNumber`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+);
 INSERT INTO `classicmodels`.`Order` (`orderNumber`,`orderDate`,`requiredDate`,`shippedDate`,`status`,`comments`,`customerNumber`) VALUES 
  (10100,'2003-01-06 00:00:00','2003-01-13 00:00:00','2003-01-10 00:00:00','Shipped',NULL,363),
  (10101,'2003-01-09 00:00:00','2003-01-18 00:00:00','2003-01-11 00:00:00','Shipped','Check on availability.',128),
@@ -576,7 +576,7 @@ CREATE TABLE  `classicmodels`.`OrderDetail` (
   `priceEach` double NOT NULL,
   `orderLineNumber` smallint(6) NOT NULL,
   PRIMARY KEY (`orderNumber`,`productCode`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+);
 INSERT INTO `classicmodels`.`OrderDetail` (`orderNumber`,`productCode`,`quantityOrdered`,`priceEach`,`orderLineNumber`) VALUES 
  (10100,'S18_1749',30,171.7,3),
  (10100,'S18_2248',50,67.8,2),
@@ -3583,7 +3583,7 @@ CREATE TABLE  `classicmodels`.`Payment` (
   `paymentDate` datetime NOT NULL,
   `amount` double NOT NULL,
   PRIMARY KEY (`customerNumber`,`checkNumber`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+);
 INSERT INTO `classicmodels`.`Payment` (`customerNumber`,`checkNumber`,`paymentDate`,`amount`) VALUES 
  (103,'HQ336336','2004-10-19 00:00:00',5307.98),
  (103,'JM555205','2003-06-05 00:00:00',16560.3),
@@ -3870,7 +3870,7 @@ CREATE TABLE  `classicmodels`.`Product` (
   `buyPrice` double NOT NULL,
   `MSRP` double NOT NULL,
   PRIMARY KEY (`productCode`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+);
 INSERT INTO `classicmodels`.`Product` (`productCode`,`productName`,`productLine`,`productScale`,`productVendor`,`productDescription`,`quantityInStock`,`buyPrice`,`MSRP`) VALUES 
  ('S10_1678','1969 Harley Davidson Ultimate Chopper','Motorcycles','1:10','Min Lin Diecast','This replica features working kickstand, front suspension, gear-shift lever, footbrake lever, drive chain, wheels and steering. All parts are particularly delicate due to their precise scale and require special care and attention.',7933,48.81,95.7),
  ('S10_1949','1952 Alpine Renault 1300','Classic Cars','1:10','Classic Metal Creations','Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.',7305,98.58,214.3),
@@ -3989,7 +3989,7 @@ CREATE TABLE  `classicmodels`.`Contrato` (
   `id` numeric(10) NOT NULL,
   `numero_contrato` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+);
 INSERT INTO `classicmodels`.`Contrato` (`id`,`numero_contrato`) VALUES 
  (1, '100001-9');
  
@@ -3999,7 +3999,7 @@ CREATE TABLE  `classicmodels`.`Parcela` (
   `numero_parcela` numeric(10) NOT NULL,
   `contrato_id` numeric(10) NOT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+);
 INSERT INTO `classicmodels`.`Parcela` (`id`,`numero_parcela`,`contrato_id`) VALUES 
  (1, 1, 1);
  
@@ -4010,13 +4010,11 @@ CREATE TABLE  `classicmodels`.`Liquidacao` (
   `contrato_id` numeric(10) NOT NULL,
   `parcela_id` numeric(10) NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+);
 INSERT INTO `classicmodels`.`Liquidacao` (`id`,`valor_total`,`contrato_id`, `parcela_id`) VALUES 
  (1, 10000, 1, 1);
  
 
- 
- 
 -- Return to H2 regular mode
 SET MODE REGULAR;
 
