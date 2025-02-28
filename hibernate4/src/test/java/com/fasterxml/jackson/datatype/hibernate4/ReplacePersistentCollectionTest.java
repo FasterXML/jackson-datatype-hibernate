@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate4.data.Payment;
 import org.hibernate.Hibernate;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -16,19 +14,21 @@ import javax.persistence.Persistence;
 import java.util.Map;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ReplacePersistentCollectionTest {
 
 	private EntityManagerFactory emf;
 
 	private EntityManager em;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		emf = Persistence.createEntityManagerFactory("persistenceUnit");
 		em = emf.createEntityManager();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		em.close();
 		emf.close();
@@ -43,9 +43,9 @@ public class ReplacePersistentCollectionTest {
 				).enableDefaultTyping();
 
 		Customer customer = em.find(Customer.class, 103);
-		Assert.assertFalse(Hibernate.isInitialized(customer.getPayments()));
+		assertFalse(Hibernate.isInitialized(customer.getPayments()));
 		String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(customer);
-		Assert.assertTrue(json.contains("org.hibernate.collection"));
+		assertTrue(json.contains("org.hibernate.collection"));
 		// should force loading...
 		Set<Payment> payments = customer.getPayments();
                         /*
@@ -54,9 +54,9 @@ public class ReplacePersistentCollectionTest {
                         System.out.println("--- /JSON ---");
                         */
 
-		Assert.assertTrue(Hibernate.isInitialized(payments));
+		assertTrue(Hibernate.isInitialized(payments));
 		// TODO: verify
-		Assert.assertNotNull(json);
+		assertNotNull(json);
 
 		boolean exceptionThrown = false;
 		try {
@@ -64,7 +64,7 @@ public class ReplacePersistentCollectionTest {
 		} catch (JsonMappingException e) {
 			exceptionThrown = true;
 		}
-		Assert.assertTrue(exceptionThrown);
+		assertTrue(exceptionThrown);
 	}
 
 	// [Issue#93], backwards compatible case
@@ -77,9 +77,9 @@ public class ReplacePersistentCollectionTest {
 				).enableDefaultTyping();
 
 		Customer customer = em.find(Customer.class, 103);
-		Assert.assertFalse(Hibernate.isInitialized(customer.getPayments()));
+		assertFalse(Hibernate.isInitialized(customer.getPayments()));
 		String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(customer);
-		Assert.assertFalse(json.contains("org.hibernate.collection"));
+		assertFalse(json.contains("org.hibernate.collection"));
 		// should force loading...
 		Set<Payment> payments = customer.getPayments();
         /*
@@ -88,9 +88,9 @@ public class ReplacePersistentCollectionTest {
         System.out.println("--- /JSON ---");
         */
 
-		Assert.assertTrue(Hibernate.isInitialized(payments));
+		assertTrue(Hibernate.isInitialized(payments));
 		// TODO: verify
-		Assert.assertNotNull(json);
+		assertNotNull(json);
 
         /*
          * Currently this cannot be verified due to Issue#94 default typing fails on 2.7.0 - 2.8.2-SNAPSHOT,
@@ -104,12 +104,12 @@ public class ReplacePersistentCollectionTest {
 			issue94failed = true;
 		}
 
-		Assert.assertTrue("If this fails, means #94 is fixed. Replace to the below commented lines", issue94failed);
+		assertTrue(issue94failed, "If this fails, means #94 is fixed. Replace to the below commented lines");
 
 //		Map<?, ?> stuff = mapper.readValue(json, Map.class);
 //
-//		Assert.assertTrue(stuff.containsKey("payments"));
-//		Assert.assertTrue(stuff.containsKey("orders"));
-//		Assert.assertNull(stuff.get("orderes"));
+//		assertTrue(stuff.containsKey("payments"));
+//		assertTrue(stuff.containsKey("orders"));
+//		assertNull(stuff.get("orderes"));
 	}
 }

@@ -6,7 +6,9 @@ import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class BaseTest extends junit.framework.TestCase
+import static org.junit.jupiter.api.Assertions.fail;
+
+public abstract class BaseTest
 {
     protected BaseTest() {
     	try {

@@ -13,7 +13,9 @@ import com.fasterxml.jackson.datatype.hibernate5.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate5.data.Payment;
 
 import org.hibernate.Hibernate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LazyLoadingTest extends BaseTest
 {

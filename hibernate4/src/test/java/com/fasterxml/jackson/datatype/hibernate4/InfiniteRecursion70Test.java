@@ -5,13 +5,17 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.hibernate.Hibernate;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.data.Contrato;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class InfiniteRecursion70Test extends BaseTest
 {
 	// [datatype-hibernate#70]
+    @Test
     public void testInfinite() throws Exception
     {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");
