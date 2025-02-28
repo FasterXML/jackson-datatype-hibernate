@@ -3,7 +3,6 @@ package com.fasterxml.jackson.datatype.hibernate4;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import static org.junit.jupiter.api.Assertions.fail;
 

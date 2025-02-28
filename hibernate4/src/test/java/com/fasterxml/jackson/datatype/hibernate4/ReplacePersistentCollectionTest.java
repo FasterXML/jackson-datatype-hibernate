@@ -2,6 +2,7 @@ package com.fasterxml.jackson.datatype.hibernate4;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.hibernate4.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate4.data.Payment;
 import org.hibernate.Hibernate;
@@ -37,10 +38,9 @@ public class ReplacePersistentCollectionTest {
 	// [Issue#93], backwards compatible case
 	@Test
 	public void testNoReplacePersistentCollection() throws Exception {
-		final ObjectMapper mapper = new ObjectMapper()
-				.registerModule(new Hibernate4Module()
+		final ObjectMapper mapper = hibernateMapper(new Hibernate4Module()
 						.configure(Hibernate4Module.Feature.FORCE_LAZY_LOADING, true)
-				).enableDefaultTyping();
+						);
 
 		Customer customer = em.find(Customer.class, 103);
 		assertFalse(Hibernate.isInitialized(customer.getPayments()));
@@ -60,7 +60,7 @@ public class ReplacePersistentCollectionTest {
 
 		boolean exceptionThrown = false;
 		try {
-			Map<?, ?> stuff = mapper.readValue(json, Map.class);
+			/*Map<?, ?> stuff =*/ mapper.readValue(json, Map.class);
 		} catch (JsonMappingException e) {
 			exceptionThrown = true;
 		}
@@ -70,11 +70,9 @@ public class ReplacePersistentCollectionTest {
 	// [Issue#93], backwards compatible case
 	@Test
 	public void testReplacePersistentCollection() throws Exception {
-		final ObjectMapper mapper = new ObjectMapper()
-				.registerModule(new Hibernate4Module()
+		final ObjectMapper mapper = hibernateMapper(new Hibernate4Module()
 						.configure(Hibernate4Module.Feature.FORCE_LAZY_LOADING, true)
-						.configure(Hibernate4Module.Feature.REPLACE_PERSISTENT_COLLECTIONS, true)
-				).enableDefaultTyping();
+						.configure(Hibernate4Module.Feature.REPLACE_PERSISTENT_COLLECTIONS, true));
 
 		Customer customer = em.find(Customer.class, 103);
 		assertFalse(Hibernate.isInitialized(customer.getPayments()));
@@ -99,7 +97,7 @@ public class ReplacePersistentCollectionTest {
 
 		boolean issue94failed = false;
 		try {
-			Map<?, ?> stuff = mapper.readValue(json, Map.class);
+			/* Map<?, ?> stuff =*/ mapper.readValue(json, Map.class);
 		} catch (JsonMappingException e) {
 			issue94failed = true;
 		}
@@ -111,5 +109,12 @@ public class ReplacePersistentCollectionTest {
 //		assertTrue(stuff.containsKey("payments"));
 //		assertTrue(stuff.containsKey("orders"));
 //		assertNull(stuff.get("orderes"));
+	}
+
+	private ObjectMapper hibernateMapper(Hibernate4Module module) {
+         return JsonMapper.builder()
+                 .addModule(module)
+                 .build()
+                 .enableDefaultTyping();
 	}
 }
