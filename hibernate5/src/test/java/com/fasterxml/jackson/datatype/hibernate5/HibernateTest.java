@@ -6,22 +6,24 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import com.fasterxml.jackson.datatype.hibernate5.data.Customer;
-import org.junit.Assert;
-import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.data.Employee;
+
+import org.junit.jupiter.api.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HibernateTest extends BaseTest
 {
     protected EntityManagerFactory emf;
 
-    @Override
+    @BeforeEach
     public void setUp() {
         emf = Persistence.createEntityManagerFactory("persistenceUnit");
     }
-    
-    @Override
+
+    @AfterEach
     public void tearDown() {
         if (emf!=null) {
             emf.close();
@@ -37,7 +39,7 @@ public class HibernateTest extends BaseTest
     @Test
     public void testGetEntityManager() {
         EntityManager em = emf.createEntityManager();
-        Assert.assertNotNull(em);
+        assertNotNull(em);
     }
 
     @Test
@@ -58,7 +60,7 @@ public class HibernateTest extends BaseTest
     @Test
     public void testAllCustomersJson() throws Exception {
         EntityManager em = emf.createEntityManager();
-        Assert.assertNotNull(em);
+        assertNotNull(em);
         
         Query query = em.createQuery("select c from Customer c");
         // false -> no forcing of lazy loading
@@ -85,8 +87,8 @@ public class HibernateTest extends BaseTest
         EntityManager em = emf.createEntityManager();
         
         Employee salesEmployee = em.find(Employee.class, 1370);
-        Assert.assertNotNull(salesEmployee);
-        Assert.assertTrue(salesEmployee.getCustomers().size()>0);
+        assertNotNull(salesEmployee);
+        assertTrue(salesEmployee.getCustomers().size()>0);
         
         // false -> no forcing of lazy loading
         ObjectMapper mapper = mapperWithModule(false);
