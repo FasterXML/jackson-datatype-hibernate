@@ -2,10 +2,14 @@ package com.fasterxml.jackson.datatype.hibernate4;
 
 import javax.persistence.Transient;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for [#61]
@@ -41,6 +45,7 @@ public class TransientTest extends BaseTest
      /**********************************************************************
       */
 
+    @Test
      public void testSimpleTransient() throws Exception
      {
           // First, with defaults, which allow use of Transient
@@ -55,6 +60,7 @@ public class TransientTest extends BaseTest
           assertEquals(aposToQuotes("{'a':1,'b':2}"), mapper.writeValueAsString(new WithTransient()));
      }
 
+     @Test
      public void testTransientWithView() throws Exception
      {
           ObjectMapper mapper = mapperWithModule(false);
