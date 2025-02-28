@@ -87,4 +87,11 @@ public class ReplacePersistentCollectionTest extends BaseTest
 		Assert.assertNull(stuff.get("orderes"));
 		*/
     }
+
+    private ObjectMapper hibernateMapper(Hibernate5Module module) {
+        return JsonMapper.builder()
+                .addModule(module)
+                .build()
+                .enableDefaultTyping(DefaultTyping.NON_FINAL);
+    }
 }
