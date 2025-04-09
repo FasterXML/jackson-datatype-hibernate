@@ -42,6 +42,8 @@ jobs:
         # gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
     - name: Build
       run: ./mvnw -B -q -ff -ntp verify
+    - name: Build With Enhancement
+      run: ./mvnw -Penhanced -B -q -ff -ntp verify
     - name: Extract project Maven version
       id: projectVersion
       run: echo "version=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate -DforceStdout -Dexpression=project.version -q)" >>$GITHUB_OUTPUT
