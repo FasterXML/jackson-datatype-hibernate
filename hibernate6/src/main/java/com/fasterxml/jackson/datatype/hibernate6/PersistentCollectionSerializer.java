@@ -307,7 +307,7 @@ public class PersistentCollectionSerializer
         session.setHibernateFlushMode(FlushMode.MANUAL);
 
         persistenceContext.addUninitializedDetachedCollection(
-                ((SessionFactoryImplementor) _sessionFactory).getMetamodel().collectionPersister(coll.getRole()),
+                ((SessionFactoryImplementor) _sessionFactory).getMappingMetamodel().getCollectionDescriptor(coll.getRole()),
                 coll
         );
 

@@ -307,7 +307,8 @@ public class Hibernate7ProxySerializer
             final SharedSessionContractImplementor session = init.getSession();
             if (session != null) {
                 SessionFactoryImplementor factory = session.getFactory();
-                return factory.getIdentifierPropertyName(init.getEntityName());
+                //TODO fixme - used to work with Hibernate 6, but not anymore
+                //return factory.getIdentifierPropertyName(init.getEntityName());
             }
             return null;
         }
