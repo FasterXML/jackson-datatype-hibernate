@@ -20,14 +20,6 @@ public class Hibernate7SerializerModifier
         _sessionFactory = sessionFactory;
     }
 
-    /*
-    @Override
-    public JsonSerializer<?> modifySerializer(SerializationConfig config,
-            BeanDescription beanDesc, JsonSerializer<?> serializer) {
-        return serializer;
-    }
-    */
-
     @Override
     public JsonSerializer<?> modifyCollectionSerializer(SerializationConfig config,
             CollectionType valueType, BeanDescription beanDesc, JsonSerializer<?> serializer) {
