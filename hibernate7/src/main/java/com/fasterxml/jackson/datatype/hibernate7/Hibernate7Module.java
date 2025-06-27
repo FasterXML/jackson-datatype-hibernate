@@ -1,10 +1,10 @@
 package com.fasterxml.jackson.datatype.hibernate7;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.type.MappingContext;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import org.hibernate.type.MappingContext;
 
 public class Hibernate7Module extends com.fasterxml.jackson.databind.Module
 {
