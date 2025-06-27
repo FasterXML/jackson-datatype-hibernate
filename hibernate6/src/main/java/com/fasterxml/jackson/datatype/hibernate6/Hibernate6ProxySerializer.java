@@ -249,6 +249,7 @@ public class Hibernate6ProxySerializer
         if (_mapping != null) {
             idName = _mapping.getIdentifierPropertyName(init.getEntityName());
         } else {
+            // no unit tests rely on this next call and Hibernate 7 does not support it
             idName = ProxySessionReader.getIdentifierPropertyName(init);
             if (idName == null) {
                 idName = ProxyReader.getIdentifierPropertyName(init);

@@ -6,9 +6,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.hibernate.proxy.pojo.BasicLazyInitializer;
@@ -250,12 +247,9 @@ public class Hibernate7ProxySerializer
         if (_mapping != null) {
             idName = _mapping.getIdentifierPropertyName(init.getEntityName());
         } else {
-            idName = ProxySessionReader.getIdentifierPropertyName(init);
+            idName = ProxyReader.getIdentifierPropertyName(init);
             if (idName == null) {
-                idName = ProxyReader.getIdentifierPropertyName(init);
-                if (idName == null) {
-                    idName = init.getEntityName();
-                }
+                idName = init.getEntityName();
             }
         }
         return idName;
@@ -299,18 +293,6 @@ public class Hibernate7ProxySerializer
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-        }
-    }
-
-    protected static class ProxySessionReader {
-        static String getIdentifierPropertyName(LazyInitializer init) {
-            final SharedSessionContractImplementor session = init.getSession();
-            if (session != null) {
-                SessionFactoryImplementor factory = session.getFactory();
-                //TODO fixme - used to work with Hibernate 6, but not anymore
-                //return factory.getIdentifierPropertyName(init.getEntityName());
-            }
-            return null;
         }
     }
 }
