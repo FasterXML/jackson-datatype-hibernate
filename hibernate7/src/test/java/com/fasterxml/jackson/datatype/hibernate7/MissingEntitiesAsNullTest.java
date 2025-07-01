@@ -91,7 +91,8 @@ public class MissingEntitiesAsNullTest extends BaseTest {
             fail("Expected EntityNotFoundException exception");
 
         } catch (JsonMappingException e) {
-            assertEquals("Unable to find com.fasterxml.jackson.datatype.hibernate7.data.Product with id X10_1678", e.getCause().getMessage());
+            assertEquals("No row with the given identifier exists for entity [com.fasterxml.jackson.datatype.hibernate7.data.Product with id 'X10_1678']",
+                    e.getCause().getMessage());
         } finally {
             emf.close();
         }
