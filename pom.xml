@@ -16,12 +16,12 @@
   <modules>
     <module>hibernate4</module>
     <module>hibernate5</module>
+    <!--
+        <module>hibernate5_2-test</module>
+    -->
     <!--  added in 2.13.0 to support JAXB->Jakarta move: -->
     <module>hibernate5-jakarta</module>
     <module>hibernate6</module>
-<!--
-    <module>hibernate5_2-test</module>
--->
   </modules>
 
   <url>https://github.com/FasterXML/jackson-datatype-hibernate</url>
