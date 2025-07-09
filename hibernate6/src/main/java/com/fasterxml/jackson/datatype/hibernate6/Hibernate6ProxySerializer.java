@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.hibernate.proxy.pojo.BasicLazyInitializer;
@@ -249,7 +249,6 @@ public class Hibernate6ProxySerializer
         if (_mapping != null) {
             idName = _mapping.getIdentifierPropertyName(init.getEntityName());
         } else {
-            // no unit tests rely on this next call and Hibernate 7 does not support it
             idName = ProxySessionReader.getIdentifierPropertyName(init);
             if (idName == null) {
                 idName = ProxyReader.getIdentifierPropertyName(init);
@@ -302,12 +301,47 @@ public class Hibernate6ProxySerializer
         }
     }
     
+    /**
+     * Hibernate 5.2 broke abi compatibility of org.hibernate.proxy.LazyInitializer.getSession()
+     * The api contract changed
+     * from org.hibernate.proxy.LazyInitializer.getSession()Lorg.hibernate.engine.spi.SessionImplementor;
+     * to org.hibernate.proxy.LazyInitializer.getSession()Lorg.hibernate.engine.spi.SharedSessionContractImplementor
+     * 
+     * On hibernate 5.2 the interface SessionImplementor extends SharedSessionContractImplementor.
+     * And an instance of org.hibernate.internal.SessionImpl is returned from getSession().
+     */
     protected static class ProxySessionReader {
+    	
+    	/**
+    	 * The getSession method must be executed using reflection for compatibility purpose.
+    	 * For efficiency keep the method cached.
+    	 */
+        protected static final Method lazyInitializerGetSessionMethod;
+        
+        static {
+            try {
+                lazyInitializerGetSessionMethod = LazyInitializer.class.getMethod("getSession");
+            } catch (Exception e) {
+                // should never happen: the class and method exists in all versions of hibernate 5
+                throw new RuntimeException(e); 
+            }
+        }
+        
         static String getIdentifierPropertyName(LazyInitializer init) {
-            final SharedSessionContractImplementor session = init.getSession();
-            if (session != null) {
-                SessionFactoryImplementor factory = session.getFactory();
-                return factory.getIdentifierPropertyName(init.getEntityName());
+            final Object session;
+            try{
+                session = lazyInitializerGetSessionMethod.invoke(init);
+            } catch (Exception e) {
+                // Should never happen
+                throw new RuntimeException(e);
+            }
+            if(session instanceof SessionImplementor){
+            	SessionFactoryImplementor factory = ((SessionImplementor)session).getFactory();
+            	return factory.getIdentifierPropertyName(init.getEntityName());
+            }else if (session != null) {
+                // Should never happen: session should be an instance of org.hibernate.internal.SessionImpl
+                // factory = session.getClass().getMethod("getFactory").invoke(session);
+                throw new RuntimeException("Session is not instance of SessionImplementor");
             }
             return null;
         }
