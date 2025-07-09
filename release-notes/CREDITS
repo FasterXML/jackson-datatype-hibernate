@@ -50,3 +50,12 @@ Réda Housni Alaoui (reda-alaoui@github)
 * Contributed #158: Add `jackson-datatype-hibernate6` for Hibernate 6
  (2.15.0)
 
+PJ Fanning (@pjfanning)
+
+* Contributed #184: Add `jackson-datatype-hibernate7` module for hibernate version 7
+ (2.20.0)
+* Contributed #186: Update hibernate 6 code to avoid deprecated code
+ (2.20.0)
+
+
+

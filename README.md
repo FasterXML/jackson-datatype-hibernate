@@ -9,18 +9,19 @@ and properties; especially lazy-loading aspects.
 
 As of version 2.0 module is usable and used by non-trivial number of developers and projects.
 
-Note: Hibernate 4.x and 5.x are supported (5.x starting with Jackson 2.6),
-but they require different jar, and Maven artifact names (and jar names differ).
-This document refers to "Hibernate 5" version, but changes with 4.x should require
-little more than replacing "5" in names with "4".
+Note: Hibernate 4.x, 5.x, 6.x and 7.x are supported (5.x starting with Jackson 2.6; 6.x with Jackson 2.15 and 7.x with Jackson 2.20) but they require different jars, and Maven artifact names (and jar names differ).
+
+This document refers to "Hibernate 5" version, but changes with 4.x/6.x/7.x should require
+little more than replacing "5" in names with "4", "6" or "7".
 
 Hibernate 3.x was supported up to Jackson 2.12 but is no longer supported at and after 2.13
 
 Jackson 2.13 adds Support for "Hibernate 5 Jakarta" variant (for Hibernate 5.5 and beyond);
 see below for more information.
 
-Jackson 2.15 adds Support for Hibernate 6.x;
-see below for more information.
+Jackson 2.15 adds Support for Hibernate 6.x; see below for more information.
+
+Jackson 2.20 adds Support for Hibernate 7.x; see below for more information.
 
 ### JDK requirements
 
@@ -30,6 +31,10 @@ module variants worked on Java 8.
 With Jackson 2.15, JDK 11 will be required to build: all modules run on
 Java 8 except for Hibernate 6.x module which requires Java 11 like
 Hibernate 6.x itself.
+
+With Jackson 2.20, JDK 17 will be required to build: 4.x and 5.x modules run on
+Java 8, 6.x on 11 and Hibernate 7.x module requires Java 17 like
+Hibernate 7.x itself.
 
 ### Javax vs Jakarta
 
@@ -54,7 +59,7 @@ To use module on Maven-based projects, use following dependency
 <dependency>
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate5</artifactId>
-  <version>2.14.2</version>
+  <version>2.19.1</version>
 </dependency>    
 ```
 
@@ -66,7 +71,7 @@ Note that you need to use "jackson-datatype-hibernate4" for Hibernate 4.x.
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate4</artifactId>
-    <version>2.14.2</version>
+    <version>2.19.1</version>
 </dependency>
 ```
 
@@ -77,17 +82,28 @@ you will need the jakarta suffixed dependency for Hibernate 5.5:
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
-    <version>2.14.2</version>
+    <version>2.19.1</version>
 </dependency>
 ```
 
-you will need to use "jackson-datatype-hibernate6" for Hibernate 6.x (when v2.15.0 is released):
+but you will need to use "jackson-datatype-hibernate6" for Hibernate 6.x:
+(for which only "jakarta" version exists).
 
 ```xml
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate6</artifactId>
-    <version>2.15.0</version>
+    <version>2.19.1</version>
+</dependency>
+```
+
+and finally, for Hibernate 7.x
+
+```xml
+<dependency>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-hibernate7</artifactId>
+    <version>2.19.1</version>
 </dependency>
 ```
 
@@ -99,12 +115,30 @@ Like all standard Jackson modules (libraries that implement Module interface), r
 ObjectMapper mapper = new ObjectMapper();
 // for Hibernate 4.x:
 mapper.registerModule(new Hibernate4Module());
+// OR newer style
+ObjectMapper mapper = JsonMapper.builder()
+    .addModule(new Hibernate4Module()));
+    .build();
+
 // or, for Hibernate 5.x
-mapper.registerModule(new Hibernate5Module());
+ObjectMapper mapper = JsonMapper.builder()
+    .addModule(new Hibernate5Module()));
+    .build();
+
 // or, for Hibernate 5.5+ with Jakarta
-mapper.registerModule(new Hibernate5JakartaModule());
+ObjectMapper mapper = JsonMapper.builder()
+    .addModule(new Hibernate5JakartaModule()));
+    .build();
+
 // or, for Hibernate 6.x
-mapper.registerModule(new Hibernate6Module());
+ObjectMapper mapper = JsonMapper.builder()
+    .addModule(new Hibernate6Module()));
+    .build();
+
+// or, for Hibernate 7.x
+ObjectMapper mapper = JsonMapper.builder()
+    .addModule(new Hibernate7Module()));
+    .build();
 ```
 
 after which functionality is available for all normal Jackson operations.

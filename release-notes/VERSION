@@ -6,6 +6,9 @@ Project: jackson-datatype-hibernate
 
 2.20.0 (not yet released)
 
+#184: Add `jackson-datatype-hibernate7` module for hibernate version 7
+ (requested by @Chris-1-000)
+ (contributed by @pjfanning)
 #186: Update hibernate 6 code to avoid deprecated code
  (fixed by @pjfanning)
 - Generate SBOMs [JSTEP-14]
