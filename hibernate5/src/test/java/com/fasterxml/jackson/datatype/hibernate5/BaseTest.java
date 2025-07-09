@@ -12,14 +12,12 @@ public abstract class BaseTest
 {
     protected BaseTest() {
     	try {
-    		System.out.println(Hibernate5Version.getHibernateVersion());
-    		System.out.println(Hibernate5Version.isHibernate5_2_Plus());
-			Logger.getLogger(this.getClass()).info("Testing using hibernate " + Hibernate5Version.getHibernateVersion() +
-					", is 5.2+: " + Hibernate5Version.isHibernate5_2_Plus());
-		} catch (Exception e) {
-			// Should not happen
-			throw new RuntimeException(e);
-		}
+	    Logger.getLogger(this.getClass()).info("Testing using hibernate " + Hibernate5Version.getHibernateVersion() +
+						   ", is 5.2+: " + Hibernate5Version.isHibernate5_2_Plus());
+	} catch (Exception e) {
+	    // Should not happen
+	    throw new RuntimeException(e);
+	}
     }
 
     protected ObjectMapper mapperWithModule(boolean forceLazyLoading)
