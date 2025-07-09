@@ -6,6 +6,8 @@ Project: jackson-datatype-hibernate
 
 2.20.0 (not yet released)
 
+#186: Update hibernate 6 code to avoid deprecated code
+ (fixed by @pjfanning)
 - Generate SBOMs [JSTEP-14]
 
 2.19.1 (13-Jun-2025)
