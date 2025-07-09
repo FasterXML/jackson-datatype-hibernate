@@ -12,7 +12,6 @@ public abstract class BaseTest
 {
     protected BaseTest() {
         try {
-            System.out.println(Hibernate7Version.isHibernate7_Plus());
             Logger.getLogger(this.getClass()).info("Testing using hibernate " + Hibernate7Version.getHibernateVersion() +
                     ", is 7+: " + Hibernate7Version.isHibernate7_Plus());
         } catch (Exception e) {
