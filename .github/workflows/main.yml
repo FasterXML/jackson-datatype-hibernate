@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         # Hibernate 7 requires Java 17+
-        java_version: [ '17' ]
+        java_version: [ '17', '21' ]
     env:
       JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     steps:
