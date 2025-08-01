@@ -103,7 +103,8 @@ and finally, for Hibernate 7.x
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate7</artifactId>
-    <version>2.19.1</version>
+    <!-- will be added in Jackson 2.20.0: -->
+    <version>2.20.0-SNAPSHOT</version>
 </dependency>
 ```
 
