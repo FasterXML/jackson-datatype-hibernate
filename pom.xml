@@ -5,6 +5,7 @@
     <artifactId>jackson-base</artifactId>
     <version>2.20.1-SNAPSHOT</version>
   </parent>
+
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate-parent</artifactId>
   <name>Hibernate module parent</name>
