@@ -1,13 +1,15 @@
-Project to build [Jackson](../../../jackson) module (jar) to
-support JSON serialization and deserialization of Hibernate (https://hibernate.org) specific datatypes
-and properties; especially lazy-loading aspects.
+Project to build [Jackson](../../../jackson) module to
+support JSON serialization and deserialization of Hibernate (https://hibernate.org) specific data types and properties; and features like lazy-loading.
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5/)
 [![Javadoc](https://javadoc.io/badge/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5.svg)](https://www.javadoc.io/doc/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5)
 
 ## Status
 
-As of version 2.0 module is usable and used by non-trivial number of developers and projects.
+Module is usable and supported for Jackson 2.x. and used by non-trivial number of developers and projects.
+
+Currently (October 2025) module is **NOT supported for Jackson 3.x** due to lack of active maintainer.
+It is considered Deprecated as part of [JSTEP-9](https://github.com/FasterXML/jackson-future-ideas/wiki/JSTEP-9).
 
 Note: Hibernate 4.x, 5.x, 6.x and 7.x are supported (5.x starting with Jackson 2.6; 6.x with Jackson 2.15 and 7.x with Jackson 2.20) but they require different jars, and Maven artifact names (and jar names differ).
 
@@ -59,8 +61,8 @@ To use module on Maven-based projects, use following dependency
 <dependency>
   <groupId>com.fasterxml.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate5</artifactId>
-  <version>2.19.2</version>
-</dependency>    
+  <version>2.20.0</version>
+</dependency>
 ```
 
 or whatever version is most up-to-date at the moment;
@@ -69,9 +71,9 @@ Note that you need to use "jackson-datatype-hibernate4" for Hibernate 4.x.
 
 ```xml
 <dependency>
-    <groupId>com.fasterxml.jackson.datatype</groupId>
-    <artifactId>jackson-datatype-hibernate4</artifactId>
-    <version>2.19.2</version>
+  <groupId>com.fasterxml.jackson.datatype</groupId>
+  <artifactId>jackson-datatype-hibernate4</artifactId>
+  <version>2.20.0</version>
 </dependency>
 ```
 
@@ -80,9 +82,9 @@ you will need the jakarta suffixed dependency for Hibernate 5.5:
 
 ```xml
 <dependency>
-    <groupId>com.fasterxml.jackson.datatype</groupId>
-    <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
-    <version>2.19.2</version>
+  <groupId>com.fasterxml.jackson.datatype</groupId>
+  <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
+  <version>2.20.0</version>
 </dependency>
 ```
 
@@ -91,9 +93,9 @@ but you will need to use "jackson-datatype-hibernate6" for Hibernate 6.x:
 
 ```xml
 <dependency>
-    <groupId>com.fasterxml.jackson.datatype</groupId>
-    <artifactId>jackson-datatype-hibernate6</artifactId>
-    <version>2.19.2</version>
+  <groupId>com.fasterxml.jackson.datatype</groupId>
+  <artifactId>jackson-datatype-hibernate6</artifactId>
+  <version>2.20.0</version>
 </dependency>
 ```
 
