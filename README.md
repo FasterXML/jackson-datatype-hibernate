@@ -99,14 +99,14 @@ but you will need to use "jackson-datatype-hibernate6" for Hibernate 6.x:
 </dependency>
 ```
 
-and finally, for Hibernate 7.x (not yet released)
+and finally, for Hibernate 7.x
 
 ```xml
 <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate7</artifactId>
-    <!-- will be added in Jackson 2.20.0: -->
-    <version>2.20.0-SNAPSHOT</version>
+    <!-- added in Jackson 2.20.0: -->
+    <version>2.20.0</version>
 </dependency>
 ```
 
