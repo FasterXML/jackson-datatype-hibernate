@@ -6,9 +6,9 @@
   <!-- do_not_remove: published-with-gradle-metadata -->
   <modelVersion>4.0.0</modelVersion> 
   <parent>
-    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <groupId>tools.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate-parent</artifactId>
-    <version>2.21.0-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
   </parent>
   <artifactId>jackson-datatype-hibernate4</artifactId>
   <name>Jackson-datatype-Hibernate4</name>
@@ -21,7 +21,7 @@ Hibernate (https://hibernate.org) version 4.x data types.
     <javac.src.version>1.8</javac.src.version>
     <javac.target.version>1.8</javac.target.version>
     <!-- Generate PackageVersion.java into this directory. -->
-    <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate4</packageVersion.dir>
+    <packageVersion.dir>tools/jackson/datatype/hibernate4</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate4</packageVersion.package>
     <!-- Hibernate with JPA 2.0 -->
     <hibernate.version>4.3.11.Final</hibernate.version>
@@ -67,8 +67,8 @@ Hibernate (https://hibernate.org) version 4.x data types.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>8</source>
-          <target>8</target>
+          <source>17</source>
+          <target>17</target>
         </configuration>
       </plugin>
       <plugin>

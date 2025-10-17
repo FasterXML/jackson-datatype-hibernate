@@ -1,0 +1,67 @@
+package tools.jackson.datatype.hibernate5;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.datatype.hibernate5.data.Customer;
+import tools.jackson.datatype.hibernate5.data.Product;
+import org.hibernate.Hibernate;
+import org.junit.jupiter.api.Test;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Unit test for [#97]
+ */
+public class UnwrappedTest extends BaseTest
+{
+    static class HasUnwrapped<T>
+    {
+        private final T content;
+
+        @JsonCreator
+        public HasUnwrapped(T content)
+        {
+            this.content = content;
+        }
+
+        @JsonUnwrapped
+        public T getContent()
+        {
+            return content;
+        }
+    }
+
+    @Test
+    public void testSimpleUnwrapped() throws JacksonException
+    {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");
+        try {
+            EntityManager em = emf.createEntityManager();
+
+            ObjectMapper mapper = mapperWithModule(true);
+
+            Customer customer = em.find(Customer.class, 500);
+            Product product = customer.getMissingProduct();
+            assertFalse(Hibernate.isInitialized(product));
+
+            String json = mapper.writeValueAsString(new HasUnwrapped<>(product));
+
+            assertTrue(Hibernate.isInitialized(product));
+            assertNotNull(json);
+            HasUnwrapped<Product> deserialized = mapper.readValue(json, new TypeReference<HasUnwrapped<Product>>(){});
+            assertTrue(deserialized != null);
+            assertTrue(deserialized.getContent() != null);
+            assertTrue(deserialized.getContent().getProductCode() != null);
+
+        } finally {
+            emf.close();
+        }
+    }
+}

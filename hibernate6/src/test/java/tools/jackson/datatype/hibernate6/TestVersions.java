@@ -1,0 +1,27 @@
+package tools.jackson.datatype.hibernate6;
+
+import org.junit.jupiter.api.Test;
+
+import tools.jackson.core.Version;
+import tools.jackson.core.Versioned;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+public class TestVersions extends BaseTest
+{
+    @Test
+    public void testMapperVersions()
+    {
+        assertVersion(new Hibernate6Module());
+    }
+
+    private void assertVersion(Versioned vers)
+    {
+        Version v = vers.version();
+        assertFalse(v.isUnknownVersion(), "Should find version information (got "+v+")");
+//        Version exp = PackageVersion.VERSION;
+//        assertEquals(exp.toFullString(), v.toFullString());
+//        assertEquals(exp, v);
+    }
+}
+
