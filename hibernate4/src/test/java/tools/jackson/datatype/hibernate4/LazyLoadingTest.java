@@ -71,11 +71,11 @@ public class LazyLoadingTest extends BaseTest
             EntityManager em = emf.createEntityManager();
             Customer customerRef = em.getReference(Customer.class, 103);
             em.close();
-    		    assertFalse(Hibernate.isInitialized(customerRef));
+            assertFalse(Hibernate.isInitialized(customerRef));
 
-    		    String json = objectMapper.writeValueAsString(customerRef);
-    		    assertFalse(Hibernate.isInitialized(customerRef));
-    		    assertEquals("{\"customerNumber\":103}", json);
+            String json = objectMapper.writeValueAsString(customerRef);
+            assertFalse(Hibernate.isInitialized(customerRef));
+            assertEquals("{\"customerNumber\":103}", json);
         } finally {
             emf.close();
         }

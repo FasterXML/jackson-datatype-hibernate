@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -64,7 +65,9 @@ public class TransientTest extends BaseTest
      @Test
      public void testTransientWithView() throws Exception
      {
-          ObjectMapper mapper = mapperWithModule(false);
+          ObjectMapper mapper = mapperBuilderWithModule(false)
+                  .enable(MapperFeature.DEFAULT_VIEW_INCLUSION)
+                  .build();
           assertEquals(aposToQuotes("{'aaa':'xxx'}"),
                   mapper.writerWithView(PublicView.class)
                   .writeValueAsString(new WithTransientAndView()));
