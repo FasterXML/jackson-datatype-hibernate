@@ -1,6 +1,5 @@
 package tools.jackson.datatype.hibernate4;
 
-import java.io.IOException;
 import java.util.*;
 
 import javax.persistence.*;
@@ -31,12 +30,8 @@ import org.hibernate.mapping.Bag;
 public class PersistentCollectionSerializer
     extends StdContainerSerializer<Object>
 {
-    private static final long serialVersionUID = 1L; // since 2.7
-
     /**
      * Type for which underlying serializer was created.
-     *
-     * @since 2.7
      */
     protected final JavaType _originalType;
 
@@ -69,9 +64,6 @@ public class PersistentCollectionSerializer
         _sessionFactory = sessionFactory;
     }
 
-    /**
-     * @since 2.7
-     */
     @SuppressWarnings("unchecked")
     protected PersistentCollectionSerializer(PersistentCollectionSerializer base, ValueSerializer<?> serializer)
     {
