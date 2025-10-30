@@ -38,6 +38,7 @@ public class ReplacePersistentCollectionTest extends BaseTest
     }
 
     // [Issue#93], backwards compatible case
+    @Disabled // https://github.com/FasterXML/jackson-datatype-hibernate/issues/192
     @Test
     public void testNoReplacePersistentCollection() throws Exception {
 		final ObjectMapper mapper = hibernateMapper(new Hibernate5Module()
