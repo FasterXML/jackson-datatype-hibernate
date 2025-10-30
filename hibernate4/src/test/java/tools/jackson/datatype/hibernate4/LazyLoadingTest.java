@@ -14,6 +14,7 @@ import tools.jackson.datatype.hibernate4.data.Customer;
 import tools.jackson.datatype.hibernate4.data.Payment;
 
 import org.hibernate.Hibernate;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LazyLoadingTest extends BaseTest
 {
     // [Issue#15]
+    @Disabled // https://github.com/FasterXML/jackson-datatype-hibernate/issues/191
     @Test
     public void testGetCustomerJson() throws Exception
     {

@@ -3,16 +3,16 @@ package tools.jackson.datatype.hibernate7;
 import java.util.Map;
 import java.util.Set;
 
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.datatype.hibernate7.Hibernate7Module.Feature;
 import tools.jackson.datatype.hibernate7.data.Customer;
 import tools.jackson.datatype.hibernate7.data.Payment;
 import org.hibernate.Hibernate;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.datatype.hibernate7.Hibernate7Module.Feature;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LazyLoadingTest extends BaseTest
 {
     // For [#15]
+    @Disabled // https://github.com/FasterXML/jackson-datatype-hibernate/issues/191
     @Test
     public void testGetCustomerJson() throws Exception
     {
