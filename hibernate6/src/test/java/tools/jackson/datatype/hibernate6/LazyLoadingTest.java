@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LazyLoadingTest extends BaseTest
 {
     // For [#15]
-    @Disabled // https://github.com/FasterXML/jackson-datatype-hibernate/issues/191
     @Test
     public void testGetCustomerJson() throws Exception
     {
@@ -64,7 +63,8 @@ public class LazyLoadingTest extends BaseTest
             emf.close();
         }
     }
-    
+
+    @Disabled // https://github.com/FasterXML/jackson-datatype-hibernate/issues/191
     @Test
     public void testSerializeIdentifierFeature() throws JacksonException {
     	Hibernate6Module module = new Hibernate6Module();
