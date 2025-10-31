@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate-parent</artifactId>
-    <version>2.20.1</version>
+    <version>2.20.2-SNAPSHOT</version>
   </parent>
   <artifactId>jackson-datatype-hibernate7</artifactId>
   <name>Jackson-datatype-hibernate7</name>
