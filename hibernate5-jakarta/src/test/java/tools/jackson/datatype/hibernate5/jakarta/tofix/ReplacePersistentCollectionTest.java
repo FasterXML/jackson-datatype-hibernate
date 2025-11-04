@@ -1,4 +1,4 @@
-package tools.jackson.datatype.hibernate5.jakarta;
+package tools.jackson.datatype.hibernate5.jakarta.tofix;
 
 import java.util.Set;
 
@@ -9,6 +9,8 @@ import tools.jackson.databind.DefaultTyping;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.jsontype.DefaultBaseTypeLimitingValidator;
+import tools.jackson.datatype.hibernate5.jakarta.BaseTest;
+import tools.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import tools.jackson.datatype.hibernate5.jakarta.data.Customer;
 import tools.jackson.datatype.hibernate5.jakarta.data.Payment;
 
@@ -38,7 +40,7 @@ public class ReplacePersistentCollectionTest extends BaseTest
 		emf.close();
     }
 
-    // [Issue#93], backwards compatible case
+    // [datatypes-hibernate#93], backwards compatible case
     @Disabled // https://github.com/FasterXML/jackson-datatype-hibernate/issues/192
     @Test
     public void testNoReplacePersistentCollection() throws Exception {
@@ -62,7 +64,7 @@ public class ReplacePersistentCollectionTest extends BaseTest
         }
     }
 
-    // [Issue#93], backwards compatible case
+    // [datatypes-hibernate#93], backwards compatible case
     @Test
     public void testReplacePersistentCollection() throws Exception {
         final ObjectMapper mapper = hibernateMapper(new Hibernate5JakartaModule()
@@ -91,7 +93,8 @@ public class ReplacePersistentCollectionTest extends BaseTest
     private ObjectMapper hibernateMapper(Hibernate5JakartaModule module) {
         return JsonMapper.builder()
                 .addModule(module)
-                .activateDefaultTyping(new DefaultBaseTypeLimitingValidator(), DefaultTyping.NON_FINAL)
+                .activateDefaultTyping(new DefaultBaseTypeLimitingValidator(),
+                        DefaultTyping.NON_FINAL)
                 .build();
     }
 }

@@ -116,7 +116,8 @@ public class ReplacePersistentCollectionTest
     private ObjectMapper hibernateMapper(Hibernate4Module module) {
         return JsonMapper.builder()
                 .addModule(module)
-                .activateDefaultTyping(new DefaultBaseTypeLimitingValidator(), DefaultTyping.NON_FINAL)
+                .activateDefaultTyping(new DefaultBaseTypeLimitingValidator(),
+                        DefaultTyping.NON_FINAL)
                 .build();
     }
 }
