@@ -8,15 +8,10 @@ import java.util.HashMap;
 import javax.persistence.EntityNotFoundException;
 
 import tools.jackson.core.JsonGenerator;
-import tools.jackson.databind.BeanProperty;
-import tools.jackson.databind.JavaType;
-import tools.jackson.databind.DatabindException;
-import tools.jackson.databind.ValueSerializer;
-import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.*;
 import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import tools.jackson.databind.jsontype.TypeSerializer;
 import tools.jackson.databind.ser.impl.PropertySerializerMap;
-import tools.jackson.databind.type.TypeFactory;
 import tools.jackson.databind.util.NameTransformer;
 
 import org.hibernate.engine.spi.Mapping;
@@ -233,8 +228,7 @@ public class HibernateProxySerializer
          */
         PropertySerializerMap.SerializerAndMapResult result =
                 _dynamicSerializers.findAndAddPrimarySerializer(
-                        //TODO find better way to get JavaType
-                        TypeFactory.createDefaultInstance().unsafeSimpleType(type),
+                        provider.constructType(type),
                         provider,
                         _property);
         if (_dynamicSerializers != result.map) {

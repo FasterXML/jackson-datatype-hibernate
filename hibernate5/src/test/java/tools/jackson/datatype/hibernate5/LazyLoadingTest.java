@@ -2,6 +2,8 @@ package tools.jackson.datatype.hibernate5;
 
 import java.util.*;
 
+import org.junit.jupiter.api.Test;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -14,8 +16,6 @@ import tools.jackson.datatype.hibernate5.data.Customer;
 import tools.jackson.datatype.hibernate5.data.Payment;
 
 import org.hibernate.Hibernate;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,7 +64,6 @@ public class LazyLoadingTest extends BaseTest
         }
     }
 
-    @Disabled // https://github.com/FasterXML/jackson-datatype-hibernate/issues/191
     @Test
     public void testSerializeIdentifierFeature() throws JacksonException {
 		Hibernate5Module module = new Hibernate5Module();
