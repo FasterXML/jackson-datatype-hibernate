@@ -5,7 +5,6 @@ import tools.jackson.databind.AnnotationIntrospector;
 import tools.jackson.databind.cfg.MapperConfig;
 import tools.jackson.databind.introspect.AnnotatedClass;
 import tools.jackson.databind.introspect.AnnotatedMember;
-import tools.jackson.datatype.hibernate5.jakarta.PackageVersion;
 
 import jakarta.persistence.Transient;
 

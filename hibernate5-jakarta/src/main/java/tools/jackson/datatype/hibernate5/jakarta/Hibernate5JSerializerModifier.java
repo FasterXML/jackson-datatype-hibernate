@@ -11,6 +11,8 @@ import org.hibernate.SessionFactory;
 public class Hibernate5JSerializerModifier
     extends ValueSerializerModifier
 {
+    private static final long serialVersionUID = 3L;
+
     protected final int _features;
 
     protected final SessionFactory _sessionFactory;

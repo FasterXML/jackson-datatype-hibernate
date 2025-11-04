@@ -31,8 +31,6 @@ import org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionCoo
 public class PersistentCollectionSerializer
     extends StdContainerSerializer<Object>
 {
-    private static final long serialVersionUID = 1L; // since 2.7
-
     /**
      * Type for which underlying serializer was created.
      *

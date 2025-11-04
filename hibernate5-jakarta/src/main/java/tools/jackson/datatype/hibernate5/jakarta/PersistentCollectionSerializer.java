@@ -37,8 +37,6 @@ import jakarta.persistence.OneToOne;
 public class PersistentCollectionSerializer
     extends StdContainerSerializer<Object>
 {
-    private static final long serialVersionUID = 1L;
-
     /**
      * Type for which underlying serializer was created.
      */
