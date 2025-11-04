@@ -33,17 +33,17 @@ public class ReplacePersistentCollectionTest extends BaseTest
 
     @AfterEach
     public void tearDown() throws Exception {
-		em.close();
-		emf.close();
+        em.close();
+        emf.close();
     }
 
     // [Issue#93], backwards compatible case
     @Disabled // https://github.com/FasterXML/jackson-datatype-hibernate/issues/192
     @Test
     public void testNoReplacePersistentCollection() throws Exception {
-		final ObjectMapper mapper = hibernateMapper(new Hibernate5Module()
-						.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, true)
-				);
+        final ObjectMapper mapper = hibernateMapper(new Hibernate5Module()
+                .configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, true)
+                );
 
         Customer customer = em.find(Customer.class, 103);
         assertFalse(Hibernate.isInitialized(customer.getPayments()));
