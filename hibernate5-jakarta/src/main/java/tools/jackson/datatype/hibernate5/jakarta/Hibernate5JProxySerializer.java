@@ -1,7 +1,6 @@
 package tools.jackson.datatype.hibernate5.jakarta;
 
 import java.beans.Introspector;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -22,7 +21,6 @@ import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import tools.jackson.databind.jsontype.TypeSerializer;
 import tools.jackson.databind.ser.impl.PropertySerializerMap;
-import tools.jackson.databind.type.TypeFactory;
 import tools.jackson.databind.util.NameTransformer;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -193,8 +191,7 @@ public class Hibernate5JProxySerializer
          */
         PropertySerializerMap.SerializerAndMapResult result =
                 _dynamicSerializers.findAndAddPrimarySerializer(
-                        //TODO find better way to get JavaType
-                        TypeFactory.createDefaultInstance().unsafeSimpleType(type),
+                        provider.constructType(type),
                         provider,
                         _property);
         if (_dynamicSerializers != result.map) {
