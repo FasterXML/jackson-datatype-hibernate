@@ -1,15 +1,15 @@
-module com.fasterxml.jackson.datatype.hibernate5.jakarta {
-    requires transitive com.fasterxml.jackson.core;
-    requires transitive com.fasterxml.jackson.databind;
+module tools.jackson.datatype.hibernate5.jakarta {
+    requires transitive tools.jackson.core;
+    requires transitive tools.jackson.databind;
     requires transitive org.hibernate.orm.core;
 
-    requires static com.fasterxml.jackson.annotation;
+    requires static tools.jackson.annotation;
     requires static jakarta.activation;
     requires static jakarta.persistence;
 
-    exports com.fasterxml.jackson.datatype.hibernate5.jakarta;
-    opens com.fasterxml.jackson.datatype.hibernate5.jakarta;
+    exports tools.jackson.datatype.hibernate5.jakarta;
+    opens tools.jackson.datatype.hibernate5.jakarta;
 
-    provides com.fasterxml.jackson.databind.Module with
-        com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
+    provides tools.jackson.databind.JacksonModule with
+        tools.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 }

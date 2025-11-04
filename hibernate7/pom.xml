@@ -6,9 +6,9 @@
   <!-- do_not_remove: published-with-gradle-metadata -->
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <groupId>tools.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate-parent</artifactId>
-    <version>2.21.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>jackson-datatype-hibernate7</artifactId>
   <name>Jackson-datatype-hibernate7</name>
@@ -19,7 +19,7 @@ Hibernate (https://hibernate.org/) version 7.x with Jakarta data types.
   <url>https://github.com/FasterXML/jackson-datatype-hibernate</url>
   <properties>
     <!-- Generate PackageVersion.java into this directory. -->
-    <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate7</packageVersion.dir>
+    <packageVersion.dir>tools/jackson/datatype/hibernate7</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate7</packageVersion.package>
     <!-- Hibernate with Jakarta Persistence 3.0 -->
     <hibernate.version>7.0.3.Final</hibernate.version>

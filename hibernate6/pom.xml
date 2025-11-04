@@ -6,9 +6,9 @@
   <!-- do_not_remove: published-with-gradle-metadata -->
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <groupId>tools.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate-parent</artifactId>
-    <version>2.21.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>jackson-datatype-hibernate6</artifactId>
   <name>Jackson-datatype-hibernate6</name>
@@ -19,7 +19,7 @@ Hibernate (https://hibernate.org/) version 6.x with Jakarta data types.
   <url>https://github.com/FasterXML/jackson-datatype-hibernate</url>
   <properties>
     <!-- Generate PackageVersion.java into this directory. -->
-    <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate6</packageVersion.dir>
+    <packageVersion.dir>tools/jackson/datatype/hibernate6</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate6</packageVersion.package>
     <!-- Hibernate with Jakarta Persistence 3.0 -->
     <hibernate.version>6.2.33.Final</hibernate.version>
@@ -76,8 +76,8 @@ Hibernate (https://hibernate.org/) version 6.x with Jakarta data types.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>11</source>
-          <target>11</target>
+          <source>17</source>
+          <target>17</target>
         </configuration>
       </plugin>
       <plugin>

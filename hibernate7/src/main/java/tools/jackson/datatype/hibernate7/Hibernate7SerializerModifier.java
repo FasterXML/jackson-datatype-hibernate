@@ -1,0 +1,36 @@
+package tools.jackson.datatype.hibernate7;
+
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationConfig;
+import tools.jackson.databind.ser.ValueSerializerModifier;
+import tools.jackson.databind.type.CollectionType;
+import tools.jackson.databind.type.MapType;
+import org.hibernate.SessionFactory;
+
+public class Hibernate7SerializerModifier
+    extends ValueSerializerModifier
+{
+    private static final long serialVersionUID = 3L;
+
+    protected final int _features;
+
+    protected final SessionFactory _sessionFactory;
+
+    public Hibernate7SerializerModifier(int features, SessionFactory sessionFactory) {
+        _features = features;
+        _sessionFactory = sessionFactory;
+    }
+
+    @Override
+    public ValueSerializer<?> modifyCollectionSerializer(SerializationConfig config,
+            CollectionType valueType, BeanDescription.Supplier beanDesc, ValueSerializer<?> serializer) {
+        return new PersistentCollectionSerializer(valueType, serializer, _features, _sessionFactory);
+    }
+
+    @Override
+    public ValueSerializer<?> modifyMapSerializer(SerializationConfig config,
+            MapType valueType, BeanDescription.Supplier beanDesc, ValueSerializer<?> serializer) {
+        return new PersistentCollectionSerializer(valueType, serializer, _features, _sessionFactory);
+    }
+}

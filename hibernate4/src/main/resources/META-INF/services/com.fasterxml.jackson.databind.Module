@@ -1,1 +1,1 @@
-com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module
+tools.jackson.datatype.hibernate4.Hibernate4Module

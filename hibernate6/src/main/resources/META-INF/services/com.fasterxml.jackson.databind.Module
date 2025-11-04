@@ -1,1 +1,1 @@
-com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module
+tools.jackson.datatype.hibernate6.Hibernate6Module
