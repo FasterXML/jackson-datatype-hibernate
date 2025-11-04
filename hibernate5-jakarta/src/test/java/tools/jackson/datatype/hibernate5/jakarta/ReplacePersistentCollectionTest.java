@@ -1,24 +1,23 @@
-package tools.jackson.datatype.hibernate5.jakarta.tofix;
+package tools.jackson.datatype.hibernate5.jakarta;
 
 import java.util.Set;
 
-import org.hibernate.Hibernate;
+import org.junit.jupiter.api.*;
 
 import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.DefaultTyping;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.databind.jsontype.DefaultBaseTypeLimitingValidator;
 import tools.jackson.datatype.hibernate5.jakarta.BaseTest;
 import tools.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import tools.jackson.datatype.hibernate5.jakarta.data.Customer;
 import tools.jackson.datatype.hibernate5.jakarta.data.Payment;
-
+import tools.jackson.datatype.hibernate5.jakarta.testutil.NoCheckSubTypeValidator;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
-import org.junit.jupiter.api.*;
+import org.hibernate.Hibernate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,7 +40,6 @@ public class ReplacePersistentCollectionTest extends BaseTest
     }
 
     // [datatypes-hibernate#93], backwards compatible case
-    @Disabled // https://github.com/FasterXML/jackson-datatype-hibernate/issues/192
     @Test
     public void testNoReplacePersistentCollection() throws Exception {
         final ObjectMapper mapper = hibernateMapper(new Hibernate5JakartaModule()
@@ -93,7 +91,7 @@ public class ReplacePersistentCollectionTest extends BaseTest
     private ObjectMapper hibernateMapper(Hibernate5JakartaModule module) {
         return JsonMapper.builder()
                 .addModule(module)
-                .activateDefaultTyping(new DefaultBaseTypeLimitingValidator(),
+                .activateDefaultTyping(new NoCheckSubTypeValidator(),
                         DefaultTyping.NON_FINAL)
                 .build();
     }

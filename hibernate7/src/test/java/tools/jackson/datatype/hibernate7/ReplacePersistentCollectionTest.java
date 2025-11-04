@@ -39,12 +39,12 @@ public class ReplacePersistentCollectionTest extends BaseTest
 		emf.close();
     }
 
-    // [Issue#93], backwards compatible case
+    // [datatypes-hibernate#93], backwards compatible case
     @Test
     public void testNoReplacePersistentCollection() throws Exception {
-		final ObjectMapper mapper = hibernateMapper(new Hibernate7Module()
-						.configure(Hibernate7Module.Feature.FORCE_LAZY_LOADING, true)
-				);
+        final ObjectMapper mapper = hibernateMapper(new Hibernate7Module()
+                .configure(Hibernate7Module.Feature.FORCE_LAZY_LOADING, true)
+                );
 
         Customer customer = em.find(Customer.class, 103);
         assertFalse(Hibernate.isInitialized(customer.getPayments()));
@@ -62,24 +62,24 @@ public class ReplacePersistentCollectionTest extends BaseTest
         }
     }
 
-    // [Issue#93], backwards compatible case
+    // [datatypes-hibernate#93], backwards compatible case
     @Test
     public void testReplacePersistentCollection() throws Exception {
-		final ObjectMapper mapper = hibernateMapper(new Hibernate7Module()
-						.configure(Hibernate7Module.Feature.FORCE_LAZY_LOADING, true)
-						.configure(Hibernate7Module.Feature.REPLACE_PERSISTENT_COLLECTIONS, true)
-				        );
+        final ObjectMapper mapper = hibernateMapper(new Hibernate7Module()
+                .configure(Hibernate7Module.Feature.FORCE_LAZY_LOADING, true)
+                .configure(Hibernate7Module.Feature.REPLACE_PERSISTENT_COLLECTIONS, true)
+                );
 
-		Customer customer = em.find(Customer.class, 103);
-		assertFalse(Hibernate.isInitialized(customer.getPayments()));
-		String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(customer);
-		assertFalse(json.contains("org.hibernate.collection"));
-		// should force loading...
-		Set<Payment> payments = customer.getPayments();
+        Customer customer = em.find(Customer.class, 103);
+        assertFalse(Hibernate.isInitialized(customer.getPayments()));
+        String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(customer);
+        assertFalse(json.contains("org.hibernate.collection"));
+        // should force loading...
+        Set<Payment> payments = customer.getPayments();
 
-		assertTrue(Hibernate.isInitialized(payments));
-		Customer stuff = mapper.readValue(json, Customer.class);
-		assertNotNull(stuff);
+        assertTrue(Hibernate.isInitialized(payments));
+        Customer stuff = mapper.readValue(json, Customer.class);
+        assertNotNull(stuff);
 
 //		Map<?, ?> stuff = mapper.readValue(json, Map.class);
 //
