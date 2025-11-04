@@ -3,6 +3,8 @@ package tools.jackson.datatype.hibernate6;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.jupiter.api.Test;
+
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -10,9 +12,6 @@ import tools.jackson.datatype.hibernate6.Hibernate6Module.Feature;
 import tools.jackson.datatype.hibernate6.data.Customer;
 import tools.jackson.datatype.hibernate6.data.Payment;
 import org.hibernate.Hibernate;
-
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -64,12 +63,11 @@ public class LazyLoadingTest extends BaseTest
         }
     }
 
-    @Disabled // https://github.com/FasterXML/jackson-datatype-hibernate/issues/191
     @Test
     public void testSerializeIdentifierFeature() throws JacksonException {
-    	Hibernate6Module module = new Hibernate6Module();
-		module.enable(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS);
-		ObjectMapper objectMapper =
+        Hibernate6Module module = new Hibernate6Module();
+        module.enable(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS);
+        ObjectMapper objectMapper =
                 JsonMapper.builder()
                         .addModule(module)
                         .build();
