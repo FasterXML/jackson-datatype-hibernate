@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.junit.jupiter.api.Test;
+
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -14,8 +16,6 @@ import tools.jackson.datatype.hibernate4.data.Customer;
 import tools.jackson.datatype.hibernate4.data.Payment;
 
 import org.hibernate.Hibernate;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,7 +61,6 @@ public class LazyLoadingTest extends BaseTest
         }
     }
 
-    @Disabled // https://github.com/FasterXML/jackson-datatype-hibernate/issues/191
     @Test
     public void testSerializeIdentifierFeature() throws JacksonException {
         Hibernate4Module module = new Hibernate4Module();
