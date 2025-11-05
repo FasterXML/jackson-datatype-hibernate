@@ -1,6 +1,5 @@
 package tools.jackson.datatype.hibernate6;
 
-import java.beans.Introspector;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -290,12 +289,26 @@ public class Hibernate6ProxySerializer
                 }
                 String name = idGetter.getName();
                 if (name.startsWith("get")) {
-                    name = Introspector.decapitalize(name.substring(3));
+                    name = _decapitalize(name.substring(3));
                 }
                 return name;
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        // Same as `java.beans.Introspector.decapitalize()`:
+        private static String _decapitalize(String name) {
+            if (name == null || name.length() == 0) {
+                return name;
+            }
+            if (name.length() > 1 && Character.isUpperCase(name.charAt(1)) &&
+                    Character.isUpperCase(name.charAt(0))){
+                return name;
+            }
+            char[] chars = name.toCharArray();
+            chars[0] = Character.toLowerCase(chars[0]);
+            return new String(chars);
         }
     }
     
