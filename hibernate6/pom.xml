@@ -90,14 +90,6 @@ Hibernate (https://hibernate.org/) version 6.x with Jakarta data types.
         <groupId>org.cyclonedx</groupId>
         <artifactId>cyclonedx-maven-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.moditect</groupId>
-        <artifactId>moditect-maven-plugin</artifactId>
-        <inherited>true</inherited>
-        <configuration>
-          <jvmVersion>11</jvmVersion>
-        </configuration>
-      </plugin>
       <!-- 05-Jul-2020, tatu: Add generation of Gradle Module Metadata -->
       <!-- 28-Feb-2025, jjohannes: Apply plugin last as it has to be the last of all 'package phase' plugins -->
       <plugin>
