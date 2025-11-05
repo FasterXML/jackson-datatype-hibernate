@@ -8,8 +8,6 @@ import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.DefaultTyping;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.datatype.hibernate5.jakarta.BaseTest;
-import tools.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import tools.jackson.datatype.hibernate5.jakarta.data.Customer;
 import tools.jackson.datatype.hibernate5.jakarta.data.Payment;
 import tools.jackson.datatype.hibernate5.jakarta.testutil.NoCheckSubTypeValidator;

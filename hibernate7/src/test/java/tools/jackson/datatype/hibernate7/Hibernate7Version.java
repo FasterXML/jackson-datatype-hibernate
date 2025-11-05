@@ -1,17 +1,20 @@
 package tools.jackson.datatype.hibernate7;
 
-public class Hibernate7Version {
-
-    public static String getHibernateVersion(){
+public class Hibernate7Version
+{
+    public static String getHibernateVersion() {
         try {
-            return Class.forName("org.hibernate.Version").getPackage().getImplementationVersion();
+            // Use Version.getVersionString() instead of Package.getImplementationVersion()
+            // because the latter returns null in JPMS/module-info contexts
+            Class<?> versionClass = Class.forName("org.hibernate.Version");
+            return (String) versionClass.getMethod("getVersionString").invoke(null);
         } catch (Exception e) {
             // Should not happen: hibernate not found in the classpath
             throw new RuntimeException(e);
         }
     }
 
-    public static boolean isHibernate7_Plus(){
+    public static boolean isHibernate7_Plus() {
         String version = getHibernateVersion();
         String[] split = version.split("\\.");
         return split[0].compareTo("7") == 0;

@@ -171,9 +171,8 @@ public class Hibernate5JakartaModule extends tools.jackson.databind.JacksonModul
     @Override
     public void setupModule(SetupContext context)
     {
-        /* First, append annotation introspector (no need to override, esp.
-         * as we just implement couple of methods)
-         */
+        // First, append annotation introspector (no need to override, esp.
+        // as we just implement couple of methods)
         // Then add serializers we need
         AnnotationIntrospector ai = annotationIntrospector();
         if (ai != null) {
@@ -192,7 +191,7 @@ public class Hibernate5JakartaModule extends tools.jackson.databind.JacksonModul
         ai.setUseTransient(isEnabled(Feature.USE_TRANSIENT_ANNOTATION));
         return ai;
     }
-    
+
     /*
     /**********************************************************************
     /* Extended API, configuration
