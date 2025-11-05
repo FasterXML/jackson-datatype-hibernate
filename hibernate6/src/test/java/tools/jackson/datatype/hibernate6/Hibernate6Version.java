@@ -1,8 +1,8 @@
-package tools.jackson.datatype.hibernate7;
+package tools.jackson.datatype.hibernate6;
 
-public class Hibernate7Version {
-
-    public static String getHibernateVersion(){
+public class Hibernate6Version
+{
+    public static String getHibernateVersion() {
         try {
             // Use Version.getVersionString() instead of Package.getImplementationVersion()
             // because the latter returns null in JPMS/module-info contexts
@@ -14,10 +14,10 @@ public class Hibernate7Version {
         }
     }
 
-    public static boolean isHibernate7_Plus(){
+    public static boolean isHibernate6_Plus() {
         String version = getHibernateVersion();
         String[] split = version.split("\\.");
-        return split[0].compareTo("7") == 0;
+        return split[0].compareTo("6") == 0;
     }
 
     public static Class<?> getTransactionCoordinatorClass() {
