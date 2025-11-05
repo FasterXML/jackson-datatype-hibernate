@@ -80,13 +80,17 @@ Hibernate (https://hibernate.org/) version 7.x with Jakarta data types.
           <target>17</target>
         </configuration>
       </plugin>
+      <!-- 05-Nov-2025, tatu: Could not figure out how to make it all work
+         with separate test `module-info.java`, so for now just open up access
+        -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED
                    --add-opens=java.base/java.util=ALL-UNNAMED
-                   --add-opens=tools.jackson.datatype.hibernate7/tools.jackson.datatype.hibernate7.data=ALL-UNNAMED --add-opens=tools.jackson.datatype.hibernate7/tools.jackson.datatype.hibernate7.data=org.hibernate.orm.core
+                   --add-opens=tools.jackson.datatype.hibernate7/tools.jackson.datatype.hibernate7.data=ALL-UNNAMED
+                   --add-opens=tools.jackson.datatype.hibernate7/tools.jackson.datatype.hibernate7.data=org.hibernate.orm.core
                    --add-opens=tools.jackson.datatype.hibernate7/tools.jackson.datatype.hibernate7.data=tools.jackson.databind
           </argLine>
         </configuration>
