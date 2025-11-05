@@ -30,7 +30,7 @@ Hibernate (https://hibernate.org/) version 7.x with Jakarta data types.
     <dependency>
       <groupId>jakarta.transaction</groupId>
       <artifactId>jakarta.transaction-api</artifactId>
-      <version>2.0.1</version>
+      <version>2.0.0</version>
     </dependency>
 
     <!-- what would be the best scope to use here? -->
@@ -89,14 +89,6 @@ Hibernate (https://hibernate.org/) version 7.x with Jakarta data types.
       <plugin>
         <groupId>org.cyclonedx</groupId>
         <artifactId>cyclonedx-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.moditect</groupId>
-        <artifactId>moditect-maven-plugin</artifactId>
-        <inherited>true</inherited>
-        <configuration>
-          <jvmVersion>11</jvmVersion>
-        </configuration>
       </plugin>
       <!-- 05-Jul-2020, tatu: Add generation of Gradle Module Metadata -->
       <!-- 28-Feb-2025, jjohannes: Apply plugin last as it has to be the last of all 'package phase' plugins -->
