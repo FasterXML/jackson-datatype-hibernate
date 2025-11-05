@@ -22,7 +22,7 @@ Hibernate (https://hibernate.org/) version 6.x with Jakarta data types.
     <packageVersion.dir>tools/jackson/datatype/hibernate6</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate6</packageVersion.package>
     <!-- Hibernate with Jakarta Persistence 3.0 -->
-    <hibernate.version>6.2.33.Final</hibernate.version>
+    <hibernate.version>6.2.48.Final</hibernate.version>
     <osgi.export>${project.groupId}.hibernate6</osgi.export>
   </properties>
 
@@ -90,12 +90,20 @@ Hibernate (https://hibernate.org/) version 6.x with Jakarta data types.
         <groupId>org.cyclonedx</groupId>
         <artifactId>cyclonedx-maven-plugin</artifactId>
       </plugin>
+      <!-- 05-Nov-2025, tatu: Could not figure out how to make it all work
+         with separate test `module-info.java` (like hibernate5-jakarta does), so
+         for now just open up access. Same approach as hibernate7.
+        -->
       <plugin>
-        <groupId>org.moditect</groupId>
-        <artifactId>moditect-maven-plugin</artifactId>
-        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <jvmVersion>11</jvmVersion>
+          <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED
+                   --add-opens=java.base/java.util=ALL-UNNAMED
+                   --add-opens=tools.jackson.datatype.hibernate6/tools.jackson.datatype.hibernate6.data=ALL-UNNAMED
+                   --add-opens=tools.jackson.datatype.hibernate6/tools.jackson.datatype.hibernate6.data=org.hibernate.orm.core
+                   --add-opens=tools.jackson.datatype.hibernate6/tools.jackson.datatype.hibernate6.data=tools.jackson.databind
+          </argLine>
         </configuration>
       </plugin>
       <!-- 05-Jul-2020, tatu: Add generation of Gradle Module Metadata -->
