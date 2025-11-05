@@ -6,15 +6,15 @@
 
     <persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>data.tools.jackson.datatype.hibernate6.Customer</class>
-        <class>data.tools.jackson.datatype.hibernate6.Employee</class>
-        <class>data.tools.jackson.datatype.hibernate6.Office</class>
-        <class>data.tools.jackson.datatype.hibernate6.Order</class>
-        <class>data.tools.jackson.datatype.hibernate6.OrderDetail</class>
-        <class>data.tools.jackson.datatype.hibernate6.OrderDetailId</class>
-        <class>data.tools.jackson.datatype.hibernate6.Payment</class>
-        <class>data.tools.jackson.datatype.hibernate6.PaymentId</class>
-        <class>data.tools.jackson.datatype.hibernate6.Product</class>
+        <class>tools.jackson.datatype.hibernate6.data.Customer</class>
+        <class>tools.jackson.datatype.hibernate6.data.Employee</class>
+        <class>tools.jackson.datatype.hibernate6.data.Office</class>
+        <class>tools.jackson.datatype.hibernate6.data.Order</class>
+        <class>tools.jackson.datatype.hibernate6.data.OrderDetail</class>
+        <class>tools.jackson.datatype.hibernate6.data.OrderDetailId</class>
+        <class>tools.jackson.datatype.hibernate6.data.Payment</class>
+        <class>tools.jackson.datatype.hibernate6.data.PaymentId</class>
+        <class>tools.jackson.datatype.hibernate6.data.Product</class>
         <properties>
 			<property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
 			<property name="jakarta.persistence.jdbc.user" value=""/>
