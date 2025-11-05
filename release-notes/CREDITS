@@ -1,0 +1,18 @@
+Here are people who have contributed to development Jackson JSON processor
+Hibernate module,  version 3.x
+(version numbers in brackets indicate release in which the problem was fixed)
+
+Tatu Saloranta, tatu.saloranta@iki.fi: author
+
+------------
+Contributors
+------------
+
+PJ Fanning (@pjfanning)
+
+* Contributed #114: Initial conversion to 3.0
+ (3.0.0)
+
+
+
+

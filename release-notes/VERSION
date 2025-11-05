@@ -1,0 +1,12 @@
+Project: jackson-datatype-hibernate
+
+For versions 3.x (for earlier see VERSION-2.x)
+
+------------------------------------------------------------------------
+=== Releases ===
+------------------------------------------------------------------------
+
+3.0.0 (not yet released)
+
+* #114: Initial conversion to 3.0
+ (@pjfanning)
