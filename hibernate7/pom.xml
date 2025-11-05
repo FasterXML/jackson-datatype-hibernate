@@ -81,6 +81,17 @@ Hibernate (https://hibernate.org/) version 7.x with Jakarta data types.
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED
+                   --add-opens=java.base/java.util=ALL-UNNAMED
+                   --add-opens=tools.jackson.datatype.hibernate7/tools.jackson.datatype.hibernate7.data=ALL-UNNAMED --add-opens=tools.jackson.datatype.hibernate7/tools.jackson.datatype.hibernate7.data=org.hibernate.orm.core
+                   --add-opens=tools.jackson.datatype.hibernate7/tools.jackson.datatype.hibernate7.data=tools.jackson.databind
+          </argLine>
+        </configuration>
+      </plugin>
+      <plugin>
         <!-- Inherited from oss-base. Generate PackageVersion.java.-->
         <groupId>com.google.code.maven-replacer-plugin</groupId>
         <artifactId>replacer</artifactId>
@@ -89,14 +100,6 @@ Hibernate (https://hibernate.org/) version 7.x with Jakarta data types.
       <plugin>
         <groupId>org.cyclonedx</groupId>
         <artifactId>cyclonedx-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.moditect</groupId>
-        <artifactId>moditect-maven-plugin</artifactId>
-        <inherited>true</inherited>
-        <configuration>
-          <jvmVersion>11</jvmVersion>
-        </configuration>
       </plugin>
       <!-- 05-Jul-2020, tatu: Add generation of Gradle Module Metadata -->
       <!-- 28-Feb-2025, jjohannes: Apply plugin last as it has to be the last of all 'package phase' plugins -->
