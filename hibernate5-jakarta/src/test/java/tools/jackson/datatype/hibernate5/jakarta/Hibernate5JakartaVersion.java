@@ -7,7 +7,7 @@ public abstract class Hibernate5JakartaVersion
             // Use Version.getVersionString() instead of Package.getImplementationVersion()
             // because the latter returns null in JPMS/module-info contexts
             Class<?> versionClass = Class.forName("org.hibernate.Version");
-            return (String) versionClass.getMethod("getVersionString").invoke(null);        
+            return (String) versionClass.getMethod("getVersionString").invoke(null);
         } catch (Exception e) {
             // Should not happen: hibernate not found in the classpath
             throw new RuntimeException(e);
