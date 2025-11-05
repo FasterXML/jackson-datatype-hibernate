@@ -1,9 +1,12 @@
-module tools.jackson.datatype.hibernate6 {
-    requires transitive tools.jackson.core;
-    requires transitive tools.jackson.databind;
-    requires transitive org.hibernate.orm.core;
-
+// Hibernate 6 Jackson datatype module
+module tools.jackson.datatype.hibernate6
+{
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
     requires static com.fasterxml.jackson.annotation;
+
+    requires org.hibernate.orm.core;
+
     requires static jakarta.activation;
     requires static jakarta.persistence;
 

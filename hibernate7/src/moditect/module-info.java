@@ -1,9 +1,12 @@
-module tools.jackson.datatype.hibernate7 {
-    requires transitive tools.jackson.core;
-    requires transitive tools.jackson.databind;
-    requires transitive org.hibernate.orm.core;
+// Hibernate 7 Jackson datatype module
+module tools.jackson.datatype.hibernate7
+{
+    requires tools.jackson.core;
+    requires tools.jackson.databind;
+    requires static com.fasterxml.jackson.annotation;
 
-    requires static tools.jackson.annotation;
+    requires org.hibernate.orm.core;
+
     requires static jakarta.activation;
     requires static jakarta.persistence;
 
