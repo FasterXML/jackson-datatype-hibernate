@@ -10,4 +10,4 @@ For versions 3.x (for earlier see VERSION-2.x)
 
 #114: Initial conversion to 3.0
  (@pjfanning)
-- (hibernate5-jakarta, hibernate7) Convert from Moditect to native JPMS
+- (hibernate5-jakarta/6/7) Convert from Moditect to native JPMS
