@@ -1,16 +1,11 @@
 name: Build and Deploy Snapshot
 on:
   push:
-    branches:
-    - master
-    - "2.19"
+    branches: ['2.*']
     paths-ignore:
     - "README.md"
     - "release-notes/*"
   pull_request:
-    branches:
-    - master
-    - "2.19"
     paths-ignore:
     - "README.md"
     - "release-notes/*"
@@ -19,24 +14,23 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: 'ubuntu-24.04'
     strategy:
       fail-fast: false
       matrix:
-        # 20-Dec-2022, tatu: Build now requires JDK 11; won't yet work with JDK 17 
-        java_version: [ '11']
-        os: ['ubuntu-22.04']
+        # Hibernate 7 requires Java 17+
+        java_version: [ '17', '21' ]
     env:
       JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5.0.0
     - name: Set up JDK
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v5.0.0
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java_version }}
         cache: 'maven'
-        server-id: sonatype-nexus-snapshots
+        server-id: central-snapshots
         server-username: CI_DEPLOY_USERNAME
         server-password: CI_DEPLOY_PASSWORD
         # See https://github.com/actions/setup-java/blob/v2/docs/advanced-usage.md#Publishing-using-Apache-Maven
@@ -48,11 +42,11 @@ jobs:
       run: ./mvnw -Penhanced -B -q -ff -ntp verify
     - name: Extract project Maven version
       id: projectVersion
-      run: echo "version=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.3.0:evaluate -DforceStdout -Dexpression=project.version -q)" >>$GITHUB_OUTPUT
+      run: echo "version=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate -DforceStdout -Dexpression=project.version -q)" >>$GITHUB_OUTPUT
     - name: Deploy snapshot
-      if: github.event_name != 'pull_request' && matrix.java_version == '11' && endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT')
+      if: ${{ github.event_name != 'pull_request' && matrix.java_version == '17' && endsWith(steps.projectVersion.outputs.version, '-SNAPSHOT') }}
       env:
-        CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
-        CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+        CI_DEPLOY_USERNAME: ${{ secrets.CENTRAL_DEPLOY_USERNAME }}
+        CI_DEPLOY_PASSWORD: ${{ secrets.CENTRAL_DEPLOY_PASSWORD }}
         # MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
       run: ./mvnw -B -q -ff -DskipTests -ntp source:jar deploy

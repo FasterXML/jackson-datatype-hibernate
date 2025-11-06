@@ -6,18 +6,18 @@ import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class BaseTest extends junit.framework.TestCase
+import static org.junit.jupiter.api.Assertions.fail;
+
+public abstract class BaseTest
 {
     protected BaseTest() {
     	try {
-    		System.out.println(Hibernate5JakartaVersion.getHibernateVersion());
-    		System.out.println(Hibernate5JakartaVersion.isHibernate5_5_Plus());
-			Logger.getLogger(this.getClass()).info("Testing using hibernate " + Hibernate5JakartaVersion.getHibernateVersion() +
-					", is 5.5+: " + Hibernate5JakartaVersion.isHibernate5_5_Plus());
-		} catch (Exception e) {
-			// Should not happen
-			throw new RuntimeException(e);
-		}
+	    Logger.getLogger(this.getClass()).info("Testing using hibernate " + Hibernate5JakartaVersion.getHibernateVersion() +
+						   ", is 5.5+: " + Hibernate5JakartaVersion.isHibernate5_5_Plus());
+	} catch (Exception e) {
+	    // Should not happen
+	    throw new RuntimeException(e);
+	}
     }
 
     protected ObjectMapper mapperWithModule(boolean forceLazyLoading)

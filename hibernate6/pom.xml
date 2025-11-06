@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.fasterxml.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate-parent</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
+    <version>2.21.0-SNAPSHOT</version>
   </parent>
   <artifactId>jackson-datatype-hibernate6</artifactId>
   <name>Jackson-datatype-hibernate6</name>
@@ -22,7 +22,7 @@ Hibernate (https://hibernate.org/) version 6.x with Jakarta data types.
     <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate6</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate6</packageVersion.package>
     <!-- Hibernate with Jakarta Persistence 3.0 -->
-    <hibernate.version>6.2.3.Final</hibernate.version>
+    <hibernate.version>6.2.33.Final</hibernate.version>
     <osgi.export>${project.groupId}.hibernate6</osgi.export>
   </properties>
 
@@ -73,17 +73,23 @@ Hibernate (https://hibernate.org/) version 6.x with Jakarta data types.
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>11</source>
+          <target>11</target>
+        </configuration>
+      </plugin>
+      <plugin>
         <!-- Inherited from oss-base. Generate PackageVersion.java.-->
         <groupId>com.google.code.maven-replacer-plugin</groupId>
         <artifactId>replacer</artifactId>
-        <executions>
-          <execution>
-            <id>process-packageVersion</id>
-            <phase>generate-sources</phase>
-          </execution>
-        </executions>
       </plugin>
-
+      <!-- 29-Apr-2025, tatu: SBOM generation [JSTEP-14] -->
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.moditect</groupId>
         <artifactId>moditect-maven-plugin</artifactId>
@@ -91,6 +97,12 @@ Hibernate (https://hibernate.org/) version 6.x with Jakarta data types.
         <configuration>
           <jvmVersion>11</jvmVersion>
         </configuration>
+      </plugin>
+      <!-- 05-Jul-2020, tatu: Add generation of Gradle Module Metadata -->
+      <!-- 28-Feb-2025, jjohannes: Apply plugin last as it has to be the last of all 'package phase' plugins -->
+      <plugin>
+        <groupId>org.gradlex</groupId>
+        <artifactId>gradle-module-metadata-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

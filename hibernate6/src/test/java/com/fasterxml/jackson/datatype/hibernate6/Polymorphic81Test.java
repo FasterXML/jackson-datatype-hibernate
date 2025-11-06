@@ -3,10 +3,14 @@ package com.fasterxml.jackson.datatype.hibernate6;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Polymorphic81Test extends BaseTest
 {
@@ -62,6 +66,7 @@ public class Polymorphic81Test extends BaseTest
         }
     }
 
+    @Test
     public void testPolymorphic81() throws Exception
     {
         final ObjectMapper mapper = mapperWithModule(true);

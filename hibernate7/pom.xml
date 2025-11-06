@@ -1,0 +1,109 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <!-- This module was also published with a richer model, Gradle metadata,  -->
+  <!-- which should be used instead. Do not delete the following line which  -->
+  <!-- is to indicate to Gradle or any Gradle module metadata file consumer  -->
+  <!-- that they should prefer consuming it instead. -->
+  <!-- do_not_remove: published-with-gradle-metadata -->
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-hibernate-parent</artifactId>
+    <version>2.21.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>jackson-datatype-hibernate7</artifactId>
+  <name>Jackson-datatype-hibernate7</name>
+  <packaging>bundle</packaging>
+  <description>Add-on module for Jackson (https://github.com/FasterXML/jackson) to support
+Hibernate (https://hibernate.org/) version 7.x with Jakarta data types.
+  </description>
+  <url>https://github.com/FasterXML/jackson-datatype-hibernate</url>
+  <properties>
+    <!-- Generate PackageVersion.java into this directory. -->
+    <packageVersion.dir>com/fasterxml/jackson/datatype/hibernate7</packageVersion.dir>
+    <packageVersion.package>${project.groupId}.hibernate7</packageVersion.package>
+    <!-- Hibernate with Jakarta Persistence 3.0 -->
+    <hibernate.version>7.0.3.Final</hibernate.version>
+    <osgi.export>${project.groupId}.hibernate7</osgi.export>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>jakarta.transaction</groupId>
+      <artifactId>jakarta.transaction-api</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+
+    <!-- what would be the best scope to use here? -->
+    <dependency>
+      <groupId>org.hibernate.orm</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>${hibernate.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!--  and for some contributed tests Mockito -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>3.0.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>17</source>
+          <target>17</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- Inherited from oss-base. Generate PackageVersion.java.-->
+        <groupId>com.google.code.maven-replacer-plugin</groupId>
+        <artifactId>replacer</artifactId>
+      </plugin>
+      <!-- 29-Apr-2025, tatu: SBOM generation [JSTEP-14] -->
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.moditect</groupId>
+        <artifactId>moditect-maven-plugin</artifactId>
+        <inherited>true</inherited>
+        <configuration>
+          <jvmVersion>11</jvmVersion>
+        </configuration>
+      </plugin>
+      <!-- 05-Jul-2020, tatu: Add generation of Gradle Module Metadata -->
+      <!-- 28-Feb-2025, jjohannes: Apply plugin last as it has to be the last of all 'package phase' plugins -->
+      <plugin>
+        <groupId>org.gradlex</groupId>
+        <artifactId>gradle-module-metadata-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>

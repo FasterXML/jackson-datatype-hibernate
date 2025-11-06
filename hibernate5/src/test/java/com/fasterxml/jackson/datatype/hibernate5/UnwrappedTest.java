@@ -8,11 +8,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate5.data.Product;
 import org.hibernate.Hibernate;
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for [#97]
@@ -36,6 +38,7 @@ public class UnwrappedTest extends BaseTest
         }
     }
 
+    @Test
     public void testSimpleUnwrapped() throws JsonProcessingException
     {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");

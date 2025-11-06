@@ -4,7 +4,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Hibernate;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.data.Customer;
@@ -13,6 +14,8 @@ import com.fasterxml.jackson.datatype.hibernate5.jakarta.data.Payment;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ForceLazyLoadingTest extends BaseTest
 {

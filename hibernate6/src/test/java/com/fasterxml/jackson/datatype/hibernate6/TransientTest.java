@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.persistence.Transient;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for [#61]
@@ -24,6 +27,7 @@ public class TransientTest extends BaseTest
      /**********************************************************************
       */
 
+     @Test
      public void testSimpleTransient() throws Exception
      {
           // First, with defaults, which allow use of Transient

@@ -4,13 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate4.data.Payment;
 import org.hibernate.Hibernate;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.Map;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ForceLazyLoadingTest extends BaseTest
 {

@@ -13,6 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for [#97]
@@ -36,6 +39,7 @@ public class UnwrappedTest extends BaseTest
         }
     }
 
+    @Test
     public void testSimpleUnwrapped() throws JsonProcessingException
     {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");

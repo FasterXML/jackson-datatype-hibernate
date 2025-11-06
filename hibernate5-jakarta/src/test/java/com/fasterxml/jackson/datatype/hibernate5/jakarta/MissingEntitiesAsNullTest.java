@@ -11,9 +11,13 @@ import com.fasterxml.jackson.datatype.hibernate5.jakarta.data.Customer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 // [Issue#125]
 public class MissingEntitiesAsNullTest extends BaseTest {
+    @Test
     public void testMissingProductWhenMissing() throws Exception {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");
 
@@ -39,6 +43,7 @@ public class MissingEntitiesAsNullTest extends BaseTest {
         }
     }
 
+    @Test
     public void testProductWithValidForeignKey() throws Exception {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");
 
@@ -66,6 +71,7 @@ public class MissingEntitiesAsNullTest extends BaseTest {
 
     // caused by jakarta.persistence.EntityNotFoundException: Unable to find
     // com.fasterxml.jackson.datatype.hibernate5.jakarta.data.Product with id X10_1678
+    @Test
     public void testExceptionWithInvalidForeignKey() throws Exception {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");
 
@@ -90,6 +96,7 @@ public class MissingEntitiesAsNullTest extends BaseTest {
         }
     }
 
+    @Test
     public void testWriteAsNullWithInvalidForeignKey() throws Exception {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");
 

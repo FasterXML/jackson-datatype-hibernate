@@ -6,7 +6,8 @@ import java.util.Set;
 import com.fasterxml.jackson.datatype.hibernate6.data.Customer;
 import com.fasterxml.jackson.datatype.hibernate6.data.Payment;
 import org.hibernate.Hibernate;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +16,8 @@ import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module.Feature;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LazyLoadingTest extends BaseTest
 {
@@ -35,11 +38,10 @@ public class LazyLoadingTest extends BaseTest
             String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(customer);
             // should not force loading...
             Set<Payment> payments = customer.getPayments();
-            /*
-            System.out.println("--- JSON ---");
-            System.out.println(json);
-            System.out.println("--- /JSON ---");
-            */
+
+            //System.out.println("--- JSON ---");
+            //System.out.println(json);
+            //System.out.println("--- /JSON ---");
 
             assertFalse(Hibernate.isInitialized(payments));
             // TODO: verify
