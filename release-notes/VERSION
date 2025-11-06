@@ -11,12 +11,15 @@ For versions 3.x (for earlier see VERSION-2.x)
 No changes since 3.0
 
 3.0.2 (not yet released)
+
+- Official re-introduction of 3.x Hibernate modules
+
 3.0.1 (05-Nov-2025)
 
 No changes since 3.0.0
 
 3.0.0 (05-Nov-2025)
 
-#114: Initial conversion to 3.0
+#190: Initial conversion to 3.0
  (@pjfanning)
 - (hibernate5-jakarta/6/7) Convert from Moditect to native JPMS
