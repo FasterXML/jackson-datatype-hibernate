@@ -12,9 +12,10 @@ No changes since 3.0
 
 3.0.2 (not yet released)
 
+#190: Official re-introduction of 3.x Hibernate modules
 #196: Fix names of `META-INF/services` module files
  (contributed by @pjfanning)
-- Official re-introduction of 3.x Hibernate modules
+
 
 3.0.1 (05-Nov-2025)
 
