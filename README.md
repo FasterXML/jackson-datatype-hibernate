@@ -6,10 +6,7 @@ support JSON serialization and deserialization of Hibernate (https://hibernate.o
 
 ## Status
 
-Module is usable and supported for Jackson 2.x. and used by non-trivial number of developers and projects.
-
-Currently (October 2025) module is **NOT supported for Jackson 3.x** due to lack of active maintainer.
-It is considered Deprecated as part of [JSTEP-9](https://github.com/FasterXML/jackson-future-ideas/wiki/JSTEP-9).
+Module is usable and supported for Jackson 2.x and 3.x and used by non-trivial number of developers and projects.
 
 Note: Hibernate 4.x, 5.x, 6.x and 7.x are supported but they require different jars, and Maven artifact names (and jar names differ).
 
