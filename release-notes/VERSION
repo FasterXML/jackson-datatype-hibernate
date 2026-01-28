@@ -2,13 +2,18 @@ Project: jackson-datatype-hibernate
 
 For versions 3.x (for earlier see VERSION-2.x)
 
+Active Maintainer(s):
+
+* PJ Fanning (@pjfanning)
+
 ------------------------------------------------------------------------
 === Releases ===
 ------------------------------------------------------------------------
 
 3.1.0 (not yet released)
 
-No changes since 3.0
+#199: Switch to reload4j in tests
+ (contributed by @pjfanning)
 
 3.0.4 (21-Jan-2026)
 3.0.3 (28-Nov-2025)
