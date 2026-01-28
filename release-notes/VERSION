@@ -10,7 +10,7 @@ Active Maintainer(s):
 === Releases ===
 ------------------------------------------------------------------------
 
-3.1.0 (not yet released)
+3.1.0-rc1 (27-Jan-2026)
 
 #199: Switch to reload4j in tests
  (contributed by @pjfanning)

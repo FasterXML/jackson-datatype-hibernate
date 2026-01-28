@@ -3,9 +3,8 @@
   <parent>
     <groupId>tools.jackson</groupId>
     <artifactId>jackson-base</artifactId>
-    <version>3.1.0-rc1-SNAPSHOT</version>
+    <version>3.1.0-rc1</version>
   </parent>
-
   <groupId>tools.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate-parent</artifactId>
   <name>Hibernate module parent</name>
