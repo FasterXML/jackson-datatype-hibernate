@@ -58,7 +58,7 @@ public class ReplacePersistentCollectionTest extends BaseTest
             /*Customer result =*/ mapper.readValue(json, Customer.class);
             fail("Should throw exception");
         } catch (DatabindException e) {
-            verifyException(e, "failed to lazily initialize");
+            verifyException(e, "Cannot lazily initialize collection (no session)");
         }
     }
 
