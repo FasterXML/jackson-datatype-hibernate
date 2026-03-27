@@ -3,7 +3,7 @@
   <parent>
     <groupId>tools.jackson</groupId>
     <artifactId>jackson-base</artifactId>
-    <version>3.1.1</version>
+    <version>3.1.2-SNAPSHOT</version>
   </parent>
   <groupId>tools.jackson.datatype</groupId>
   <artifactId>jackson-datatype-hibernate-parent</artifactId>
@@ -12,7 +12,6 @@
   <packaging>pom</packaging>
   <description>Parent pom for shared settings for project sub-modules
   </description>
-
   <modules>
     <module>hibernate4</module>
     <module>hibernate5</module>
