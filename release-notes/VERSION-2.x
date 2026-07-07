@@ -1,0 +1,349 @@
+Project: jackson-datatype-hibernate
+
+------------------------------------------------------------------------
+=== Releases ===
+------------------------------------------------------------------------
+
+2.21.5 (06-Jul-2026)
+2.21.4 (28-May-2026)
+2.21.3 (28-Apr-2026)
+2.21.2 (20-Mar-2026)
+2.21.1 (22-Feb-2026)
+
+No changes since 2.21.0
+
+2.21.0 (18-Jan-2026)
+
+No changes since 2.20
+
+2.20.2 (19-Jan-2026)
+2.20.1 (30-Oct-2025)
+
+No changes since 2.20.0
+
+2.20.0 (28-Aug-2025)
+
+#184: Add `jackson-datatype-hibernate7` module for hibernate version 7
+ (requested by @Chris-1-000)
+ (contributed by @pjfanning)
+#186: Update hibernate 6 code to avoid deprecated code
+ (fixed by @pjfanning)
+- Generate SBOMs [JSTEP-14]
+- Build now requires JDK 17 (since Hibernate7 module requires it)
+
+2.19.4 (29-Oct-2025)
+2.19.3 (29-Oct-2025)
+2.19.2 (18-Jul-2025)
+2.19.1 (13-Jun-2025)
+
+No changes since 2.19.0
+
+2.19.0 (24-Apr-2025)
+
+- Hibernate deps:
+  * 5.x/JAXB: 5.3.29 -> 5.3.37
+  * 6.x: 6.2.3 -> 6.2.33
+- H2 test dependency to 2.3.232 (from 1.3.156)
+
+2.18.6 (22-Feb-2026)
+2.18.5 (27-Oct-2025)
+2.18.4 (06-May-2025)
+2.18.3 (28-Feb-2025)
+2.18.2 (27-Nov-2024)
+2.18.1 (28-Oct-2024)
+2.18.0 (26-Sep-2024)
+
+No changes since 2.17
+
+2.17.3 (01-Nov-2024)
+2.17.2 (05-Jul-2024)
+2.17.1 (04-May-2024)
+2.17.0 (12-Mar-2024)
+
+No changes since 2.16
+
+2.16.2 (09-Mar-2024)
+2.16.1 (24-Dec-2023)
+
+No changes since 2.16.0
+
+2.16.0 (15-Nov-2023)
+
+#140: `HibernateModule.REPLACE_PERSISTENT_COLLECTIONS` not working
+  when `FetchType.EAGER`
+- Hibernate deps:
+  * 4.x: 4.1.12 -> 4.3.11
+  * 5.x/JAXB: 5.3.28 -> 5.3.29
+  * 5.x/Jakarta: 5.5.9 -> 5.6.15
+  * 6.x: 6.1.5 -> 6.2.3
+
+2.15.4 (15-Feb-2024)
+2.15.3 (12-Oct-2023)
+2.15.2 (30-May-2023)
+2.15.1 (16-May-2023)
+
+No changes since 2.15.0
+
+2.15.0 (23-Apr-2023)
+
+#158: Add `jackson-datatype-hibernate6` for Hibernate 6
+ (contributed by Réda A)
+- Update pre-jakarta Hibernate 5.3.28 (from 5.2.10) due to CVE
+- Update Jakarta Hibernate to 5.5.9
+
+2.14.3 (05-May-2023)
+2.14.2 (28-Jan-2023)
+2.14.1 (21-Nov-2022)
+2.14.0 (05-Nov-2022)
+
+No changes since 2.13
+
+2.13.4 (03-Sep-2022)
+2.13.3 (14-May-2022)
+2.13.2 (06-Mar-2022)
+2.13.1 (19-Dec-2021)
+
+No changes since 2.13.0
+
+2.13.0 (30-Sep-2021)
+
+#139: Drop support for Hibernate 3.x from Jackson 2.13
+#144: Add new module (`jackson-datatype-hibernate5-jakarta`) to support
+  Jakarta EE for Hibernate 5.5
+ (contributed by Jon H)
+
+2.12.7 (26-May-2022)
+2.12.6 (15-Dec-2021)
+2.12.5 (27-Aug-2021)
+2.12.4 (06-Jul-2021)
+2.12.3 (12-Apr-2021)
+2.12.2 (03-Mar-2021)
+2.12.1 (08-Jan-2021)
+
+No changes since 2.12.0
+
+2.12.0 (29-Nov-2020)
+
+#136: Add feature `WRAP_IDENTIFIER_IN_OBJECT` to allow disabling of wrapping
+  of "id" attribute
+ (contributed by Jose B)
+- Add Gradle Module Metadata (https://blog.gradle.org/alignment-with-gradle-module-metadata)
+
+2.11.4 (12-Dec-2020)
+2.11.3 (02-Oct-2020)
+
+No changes since 2.11.2
+
+2.11.2 (02-Aug-2020)
+
+#97: `@JsonUnwrapped` fails for HibernateProxy instances
+ (reported by jwgmeligmeyling@github,
+  fix contributed by Vladimir T / Nemesis Software (http://nemesis.io))
+
+2.11.1 (25-Jun-2020)
+2.11.0 (26-Apr-2020)
+
+No changes since 2.10.x
+
+2.10.5 (21-Jul-2020)
+2.10.4 (03-May-2020)
+2.10.3 (03-Mar-2020)
+2.10.2 (05-Jan-2020)
+2.10.1 (09-Nov-2019)
+
+No changes since 2.10.0
+
+2.10.0 (26-Sep-2019)
+
+#125: Ignore missing entities when lazy loading is enabled, if newly added
+   `Feature.WRITE_MISSING_ENTITIES_AS_NULL` is enabled
+ (contributed by mobreza@github)
+- Update Hibernate5 javax/transaction-api dependency
+
+2.9.10 (21-Sep-2019)
+2.9.9 (16-May-2019)
+2.9.8 (15-Dec-2018)
+
+No changes since 2.9.7
+
+2.9.7 (19-Sep-2018)
+
+#111: Class cast exception on hibernate5 module (with Hibernate 5.1+)
+ (reported by tomaldbugz@github)
+
+2.9.6 (12-Jun-2018)
+2.9.5 (26-Mar-2018)
+2.9.4 (24-Jan-2018)
+2.9.3 (09-Dec-2017)
+2.9.2 (14-Oct-2017)
+2.9.1 (07-Sep-2017)
+2.9.0 (30-Jul-2017)
+
+No changes since 2.8
+
+2.8.7 (not yet released)
+
+#102: 2.8.6 NoSuchMethodException with Hibernate 5.2
+ (reported by Jordan G)
+
+2.8.6 (12-Jan-2017)
+
+#92: Add support for Hibernate 5.2
+ (reported by Mohsen K, fix contributed by mshima@github)
+
+2.8.5 (14-Nov-2016)
+2.8.4 (14-Oct-2016)
+2.8.3 (17-Sep-2016)
+
+No changes since 2.8.2
+
+2.8.2 (30-Aug-2016)
+
+#96: Improve `SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS` feature
+ (contributed by bedag-moo@github)
+
+2.8.1 (20-Jul-2016)
+2.8.0 (04-Jul-2016)
+
+No changes since 2.7
+
+2.7.8 (26-Sep-2016)
+2.7.7 (27-Aug-2016)
+2.7.6 (23-Jul-2016)
+2.7.5 (10-Jun-2016)
+2.7.4 (29-Apr-2016)
+2.7.3 (15-Mar-2016)
+
+No changes since 2.7.2
+
+2.7.2 (27-Feb-2016)
+
+#86: NoClassDefFoundError: org/hibernate/bytecode/internal/javassist/FieldHandler with hibernate 5.1
+ (reported by yorl1n@github)
+
+2.7.1 (02-Feb-2016)
+
+No changes since 2.7.0
+
+2.7.0 (10-Jan-2016)
+
+#72: Should ignore org.hibernate.bytecode.internal.javassist.FieldHandled.getFieldHandler()
+#79: Upgrade hibernate5 dep to latest Hibernate version, 5.0.6
+#81: Hibernate4Module causes Type Erasure
+ (reported by agorina@github)
+
+2.6.6 (05-Apr-2016)
+
+No changes since 2.6.5
+
+2.6.5 (19-Jan-2016)
+
+#70: Infinite recursion due to `@JsonIgnoreProperties` not passed to property
+ (reported, fix contributed by Tiago P)
+
+2.6.4 (07-Dec-2015)
+2.6.3 (12-Oct-2015)
+2.6.2 (15-Sep-2015)
+2.6.1 (09-Aug-2015)
+
+No changes since 2.6.0
+
+2.6.0 (19-Jul-2015)
+
+#67: Provide support for Hibernate 5.x (hibernate5 maven sub-module;
+  Hibernate5Module Jackson module)
+ (contributed by mtyurt@github)
+
+2.5.3 (24-Apr-2015)
+2.5.2 (29-Mar-2015)
+
+No changes since 2.5.1
+
+2.5.1 (06-Feb-2015)
+
+#65: Registered hibernateModule lead to 'NON_EMPTY' failure
+ (reported by lcyan@github)
+
+2.5.0 (01-Jan-2015)
+
+#25/#59: Allow passing of `SessionFactory` to help with forced lazy-loading
+ (contributed by eoger@github)
+
+2.4.6 (not released yet)
+
+2.4.5 (13-Jan-2015)
+2.4.4 (24-Nov-2014)
+2.4.3 (04-Oct-2014)
+2.4.2 (14-Aug-2014)
+2.4.1 (17-Jun-2014)
+
+No changes since 2.4.0
+
+2.4.0 (03-Jun-2014)
+
+#53: Add `Hibernate4Module.Feature.REQUIRE_EXPLICIT_LAZY_LOADING_MARKER` to
+  define whether `PersistentCollection`s without annotations should default
+  to Eager (true) or Lazy (false) handling.
+ (suggested by dmurat@github)
+
+2.3.3 (10-Apr-2014)
+
+#47: Feature.USE_TRANSIENT_ANNOTATION does not work
+ (repoted by StefanSos@github)
+
+2.3.2 (01-Mar-2014)
+2.3.1 (28-Dec-2013)
+
+No functional changes.
+
+2.3.0-1 (05-Dec-2013)
+
+#45: Hibernate3 package was empty due to incorrect OSGi include
+
+2.3.0 (14-Nov-2013)
+
+#36: Support `@ElementCollection` for specifying lazy-loading
+#44: NullPointerException when @OneToMany map is encountered
+ (reported by Patrick H)
+- Support handling of `JsonInclude(Include.NON_EMPTY)` for lazy-loaded Collections
+ (partially addresses #21)
+
+2.2.3 (23-Aug-2013)
+
+#39: Avoid NullPointerException when serializing ManyToOne proxies
+ (contributed by drvdijk@github)
+
+2.2.2 (28-May-2013)
+2.2.1 (04-May-2013)
+
+No functional changes.
+
+2.2.0 (23-Apr-2013)
+
+#15: @JsonTypeInfo results in differing type information used for locating serializer
+ (reported by justinhrobbins@github)
+#17/#27: Add `Hibernate4Module.Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS`,
+  ditto for Hibernate3
+ (contributed by 'radu-c@github' and 'goldenalfer@github')
+
+2.1.2 (08-Dec-2012)
+2.1.1 (13-Nov-2012)
+2.1.0 (08-Oct-2012)
+
+No fixes, just dependency updates.
+
+No new functionality.
+
+2.0.5 (10-Aug-2012)
+
+- [Issue-13]: NPE with PersistentCollectionSerialize
+- [Issue-14]: Incorrect handling of PersistentCollection
+
+2.0.2 (18-May-2012)
+
+No changes since 2.0.0, except for update core dependencies.
+
+2.0.0 (25-Mar-2012)
+
+The first official release for Hibernate 4.x datatypes.
+Requires Jackson 2.x.
