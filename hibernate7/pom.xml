@@ -8,7 +8,7 @@
   <parent>
     <groupId>tools.jackson.datatype</groupId>
     <artifactId>jackson-datatype-hibernate-parent</artifactId>
-    <version>3.1.5-SNAPSHOT</version>
+    <version>3.1.5</version>
   </parent>
   <artifactId>jackson-datatype-hibernate7</artifactId>
   <name>Jackson-datatype-hibernate7</name>
