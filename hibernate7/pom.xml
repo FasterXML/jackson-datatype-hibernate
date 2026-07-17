@@ -22,7 +22,7 @@ Hibernate (https://hibernate.org/) version 7.x with Jakarta data types.
     <packageVersion.dir>tools/jackson/datatype/hibernate7</packageVersion.dir>
     <packageVersion.package>${project.groupId}.hibernate7</packageVersion.package>
     <!-- Hibernate with Jakarta Persistence 3.0 -->
-    <hibernate.version>7.0.10.Final</hibernate.version>
+    <hibernate.version>7.4.1.Final</hibernate.version>
     <osgi.export>${project.groupId}.hibernate7</osgi.export>
   </properties>
 
