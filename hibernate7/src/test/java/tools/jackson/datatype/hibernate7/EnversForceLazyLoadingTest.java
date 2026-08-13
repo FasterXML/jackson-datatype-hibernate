@@ -11,7 +11,8 @@ import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.datatype.hibernate7.data.AuditedChild;
 import tools.jackson.datatype.hibernate7.data.AuditedParent;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests for [datatype-hibernate#204]: serializing Envers-audited entities with
@@ -86,8 +87,7 @@ public class EnversForceLazyLoadingTest extends BaseTest
             // If we get here, the serialization completed without infinite
             // recursion — verify the output is well-formed.
             assertNotNull(json);
-            assertTrue(json.contains("\"Parent-v1\""), "Should contain revision 1 name");
-            assertTrue(json.contains("\"children\""), "Should contain children array");
+            assertThat(json).contains("\"Parent-v1\"", "\"children\"", "\"child-1\"");
         }
     }
 }
