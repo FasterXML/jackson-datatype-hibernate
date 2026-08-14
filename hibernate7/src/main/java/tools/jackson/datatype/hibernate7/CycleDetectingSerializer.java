@@ -1,7 +1,7 @@
 package tools.jackson.datatype.hibernate7;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Set;
 
 import tools.jackson.core.JsonGenerator;
@@ -91,7 +91,7 @@ public class CycleDetectingSerializer<T> extends ValueSerializer<T>
             // null, so setAttribute creates a new ContextAttributes instance.
             // All subsequent calls mutate the map in-place, so the delegate
             // (which receives the same SerializationContext) sees our updates.
-            set = new HashSet<>();
+            set = Collections.newSetFromMap(new IdentityHashMap<>());
             ctxt.setAttribute(ATTR_KEY, set);
         }
         return set;

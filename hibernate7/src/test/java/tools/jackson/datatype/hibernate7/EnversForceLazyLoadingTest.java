@@ -90,4 +90,63 @@ public class EnversForceLazyLoadingTest extends BaseTest
             assertThat(json).contains("\"Parent-v1\"", "\"children\"", "\"child-1\"");
         }
     }
+
+    /**
+     * Verifies that the cycle detector uses identity ({@code ==}), not
+     * {@code equals()}, when tracking objects.  Two distinct
+     * {@link AuditedChild} instances with the same label are
+     * {@code .equals()} but not {@code ==}; both must appear in the output.
+     */
+    @Test
+    public void testEqualsButDistinctEntitiesBothSerialized() throws Exception
+    {
+        Configuration cfg = new Configuration()
+                .addAnnotatedClass(AuditedParent.class)
+                .addAnnotatedClass(AuditedChild.class)
+                .setProperty("hibernate.connection.url", "jdbc:h2:mem:enversIdentity;DB_CLOSE_DELAY=-1")
+                .setProperty("hibernate.connection.driver_class", "org.h2.Driver")
+                .setProperty("hibernate.hbm2ddl.auto", "create");
+
+        JsonMapper mapper = JsonMapper.builder()
+                .addModule(hibernateModule(true))
+                .build();
+
+        try (SessionFactory sf = cfg.buildSessionFactory()) {
+            Integer parentId = sf.fromTransaction(session -> {
+                AuditedParent parent = new AuditedParent("Parent");
+                // Two children with the same label — .equals() but not ==
+                AuditedChild c1 = new AuditedChild("same-label", parent);
+                AuditedChild c2 = new AuditedChild("same-label", parent);
+                parent.children.add(c1);
+                parent.children.add(c2);
+                session.persist(parent);
+                session.persist(c1);
+                session.persist(c2);
+                return parent.id;
+            });
+
+            String json = sf.fromTransaction(session -> {
+                AuditReader reader = AuditReaderFactory.get(session);
+                AuditedParent rev1 = reader.find(AuditedParent.class, parentId, 1);
+                return mapper.writeValueAsString(rev1);
+            });
+
+            assertNotNull(json);
+            // Both children must appear — the cycle detector must use ==,
+            // not .equals(), so the second child is NOT falsely skipped.
+            int count = countOccurrences(json, "\"same-label\"");
+            assertThat(count).as("both .equals() children should be serialized")
+                    .isGreaterThanOrEqualTo(2);
+        }
+    }
+
+    private static int countOccurrences(String s, String sub) {
+        int count = 0;
+        int idx = 0;
+        while ((idx = s.indexOf(sub, idx)) != -1) {
+            count++;
+            idx += sub.length();
+        }
+        return count;
+    }
 }
