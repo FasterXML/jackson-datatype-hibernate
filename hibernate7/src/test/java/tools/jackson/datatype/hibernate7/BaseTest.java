@@ -2,6 +2,8 @@ package tools.jackson.datatype.hibernate7;
 
 import java.util.Arrays;
 
+import org.hibernate.SessionFactory;
+
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 import org.apache.log4j.Logger;
@@ -43,6 +45,15 @@ public abstract class BaseTest
     protected Hibernate7Module hibernateModule(boolean forceLazyLoading, boolean nullMissingEntities)
     {
     	Hibernate7Module mod = new Hibernate7Module();
+        mod.configure(Hibernate7Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
+        mod.configure(Hibernate7Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL, nullMissingEntities);
+        return mod;
+    }
+
+    protected Hibernate7Module hibernateModule(boolean forceLazyLoading, boolean nullMissingEntities,
+            SessionFactory sessionFactory)
+    {
+        Hibernate7Module mod = new Hibernate7Module(sessionFactory);
         mod.configure(Hibernate7Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
         mod.configure(Hibernate7Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL, nullMissingEntities);
         return mod;
