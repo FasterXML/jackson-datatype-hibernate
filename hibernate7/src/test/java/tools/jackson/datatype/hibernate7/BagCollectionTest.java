@@ -67,7 +67,7 @@ public class BagCollectionTest extends BaseTest
         String json = mapper.writeValueAsString(detached);
         assertNotNull(json);
         // Should not contain PersistentBag type info
-        assertFalse(json.contains("org.hibernate.collection"), "JSON should not contain Hibernate collection type");
+        assertThat(json).doesNotContain("org.hibernate.collection");
         assertThat(json).contains("\"P1\"", "\"C1\"", "\"C2\"", "\"children\"");
     }
 }
