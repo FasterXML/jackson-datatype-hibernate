@@ -2,6 +2,8 @@ package tools.jackson.datatype.hibernate6;
 
 import java.util.Arrays;
 
+import org.hibernate.SessionFactory;
+
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 import org.apache.log4j.Logger;
@@ -47,7 +49,16 @@ public abstract class BaseTest
         mod.configure(Hibernate6Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL, nullMissingEntities);
         return mod;
     }
-    
+
+    protected Hibernate6Module hibernateModule(boolean forceLazyLoading, boolean nullMissingEntities,
+            SessionFactory sessionFactory)
+    {
+        Hibernate6Module mod = new Hibernate6Module(sessionFactory);
+        mod.configure(Hibernate6Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
+        mod.configure(Hibernate6Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL, nullMissingEntities);
+        return mod;
+    }
+
     protected void verifyException(Throwable e, String... matches)
     {
         String msg = e.getMessage();
