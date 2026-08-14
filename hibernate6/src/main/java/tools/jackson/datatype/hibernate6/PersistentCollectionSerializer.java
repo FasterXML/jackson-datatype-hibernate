@@ -11,7 +11,7 @@ import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.engine.spi.PersistenceContext;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.mapping.Bag;
+
 import org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionCoordinatorImpl;
 
 import tools.jackson.core.JsonGenerator;
@@ -153,8 +153,8 @@ public class PersistentCollectionSerializer
         if (value == null) { // is null ever passed?
             return true;
         }
-        if (value instanceof PersistentCollection) {
-            Object lazy = findLazyValue((PersistentCollection) value);
+        if (value instanceof PersistentCollection pc) {
+            Object lazy = findLazyValue(pc);
             return (lazy == null) || _serializer.isEmpty(provider, lazy);
         }
         return _serializer.isEmpty(provider, value);
@@ -204,11 +204,11 @@ public class PersistentCollectionSerializer
 
     @Override
     public boolean hasSingleElement(Object value) {
-        if (value instanceof Collection<?>) {
-            return ((Collection<?>) value).size() == 1;
+        if (value instanceof Collection<?> c) {
+            return c.size() == 1;
         }
-        if (value instanceof Map<?,?>) {
-            return ((Map<?,?>) value).size() == 1;
+        if (value instanceof Map<?,?> m) {
+            return m.size() == 1;
         }
         return false;
     }
@@ -222,8 +222,8 @@ public class PersistentCollectionSerializer
     @Override
     public void serialize(Object value, JsonGenerator g, SerializationContext provider)
     {
-        if (value instanceof PersistentCollection) {
-            value = findLazyValue((PersistentCollection) value);
+        if (value instanceof PersistentCollection pc) {
+            value = findLazyValue(pc);
             if (value == null) {
                 provider.defaultSerializeNullValue(g);
                 return;
@@ -242,8 +242,8 @@ public class PersistentCollectionSerializer
     public void serializeWithType(Object value, JsonGenerator g, SerializationContext provider,
             TypeSerializer typeSer)
     {
-        if (value instanceof PersistentCollection) {
-            value = findLazyValue((PersistentCollection) value);
+        if (value instanceof PersistentCollection pc) {
+            value = findLazyValue(pc);
             if (value == null) {
                 provider.defaultSerializeNullValue(g);
                 return;
@@ -369,16 +369,16 @@ public class PersistentCollectionSerializer
             return value;
         }
 
-        if (value instanceof Set) {
-            return convertToSet((Set<?>) value);
+        if (value instanceof Set<?> set) {
+            return convertToSet(set);
         }
 
-        if (value instanceof List || value instanceof Bag) {
-            return convertToList((List<?>) value);
+        if (value instanceof List<?> list) {
+            return convertToList(list);
         }
 
-        if (value instanceof Map) {
-            return convertToMap((Map<?, ?>) value);
+        if (value instanceof Map<?, ?> map) {
+            return convertToMap(map);
         }
 
         throw new IllegalArgumentException("Unsupported PersistentCollection subtype: " + value.getClass());
