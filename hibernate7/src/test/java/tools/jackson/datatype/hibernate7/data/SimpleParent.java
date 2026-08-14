@@ -6,9 +6,8 @@ import java.util.List;
 import jakarta.persistence.*;
 
 /**
- * Simple entity with one lazy collection, used to test that
- * {@code findLazyValue()} does not open a session for already-initialized
- * collections.
+ * Simple entity with one lazy List collection (bag), used to test
+ * {@code convertToJavaCollection()} with {@code REPLACE_PERSISTENT_COLLECTIONS}.
  */
 @Entity
 public class SimpleParent
