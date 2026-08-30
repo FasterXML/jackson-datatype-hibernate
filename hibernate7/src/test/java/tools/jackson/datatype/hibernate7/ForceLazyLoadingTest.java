@@ -27,7 +27,6 @@ import tools.jackson.datatype.hibernate7.data.SimpleParent;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ForceLazyLoadingTest extends BaseTest
@@ -106,7 +105,8 @@ public class ForceLazyLoadingTest extends BaseTest
             SessionOpenCounter counter = new SessionOpenCounter(sf);
             String json = mapperWith(counter.factory()).writeValueAsString(initialized);
 
-            assertThat(json).contains("\"P1\"", "\"C1\"");
+            assertTrue(json.contains("\"P1\""), json);
+            assertTrue(json.contains("\"C1\""), json);
             assertEquals(0, counter.openSessionCount(),
                     "Should not open a temporary session for an already initialized collection");
 
@@ -119,7 +119,8 @@ public class ForceLazyLoadingTest extends BaseTest
             counter = new SessionOpenCounter(sf);
             json = mapperWith(counter.factory()).writeValueAsString(uninitialized);
 
-            assertThat(json).contains("\"P1\"", "\"C1\"");
+            assertTrue(json.contains("\"P1\""), json);
+            assertTrue(json.contains("\"C1\""), json);
             assertEquals(1, counter.openSessionCount(),
                     "Should open exactly one temporary session to force-load the collection");
         }
