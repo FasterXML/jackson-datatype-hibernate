@@ -12,10 +12,10 @@ Active Maintainer(s):
 
 3.3.0 (not yet released)
 
-#207 fix envers issue for lazy loading and BidirectionalGraph
- (contributed by @pjfanning, w/ Claude code)
 #205 Upgrade Hibernate7 dependency to 7.4.1
  (contributed by @pjfanning)
+#207 fix envers issue for lazy loading and BidirectionalGraph
+ (contributed by @pjfanning, w/ Claude code)
 
 3.2.2 (14-Aug-2026)
 
