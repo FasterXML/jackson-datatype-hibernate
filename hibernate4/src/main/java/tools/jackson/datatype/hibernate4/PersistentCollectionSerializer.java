@@ -272,7 +272,10 @@ public class PersistentCollectionSerializer
             return null;
         }
 
-        if(_sessionFactory != null) {
+        // Only open a temporary session when the collection actually needs it:
+        // an already loaded collection would otherwise cost a JDBC connection
+        // and a transaction for a no-op initialization.
+        if (_sessionFactory != null && !coll.wasInitialized()) {
             Session session = openTemporarySessionForLoading(coll);
             initializeCollection(coll, session);
         }

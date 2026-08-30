@@ -279,7 +279,10 @@ public class PersistentCollectionSerializer
         if (!Feature.FORCE_LAZY_LOADING.enabledIn(_features) && !coll.wasInitialized()) {
             return null;
         }
-        if (_sessionFactory != null) {
+        // Only open a temporary session when the collection actually needs it:
+        // an already loaded collection would otherwise cost a JDBC connection
+        // and a transaction for a no-op initialization.
+        if (_sessionFactory != null && !coll.wasInitialized()) {
             // 08-Feb-2017, tatu: and not closing this is not problematic... ?
             Session session = openTemporarySessionForLoading(coll);
             initializeCollection(coll, session);

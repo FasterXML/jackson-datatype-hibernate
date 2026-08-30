@@ -279,9 +279,9 @@ public class PersistentCollectionSerializer
         if (!Hibernate7Module.Feature.FORCE_LAZY_LOADING.enabledIn(_features) && !coll.wasInitialized()) {
             return null;
         }
-        // Only open a temporary session when the collection actually needs
-        // initialization — avoids a needless JDBC connection + transaction
-        // for collections that are already loaded.
+        // Only open a temporary session when the collection actually needs it:
+        // an already loaded collection would otherwise cost a JDBC connection
+        // and a transaction for a no-op initialization.
         if (_sessionFactory != null && !coll.wasInitialized()) {
             // 08-Feb-2017, tatu: and not closing this is not problematic... ?
             Session session = openTemporarySessionForLoading(coll);
