@@ -65,4 +65,31 @@ public class UnwrappedTest extends BaseTest
             emf.close();
         }
     }
+
+    // [datatypes-hibernate#209]: the unwrapping serializer has to survive being cached,
+    //   so a second pass through the same mapper must not fall back to the raw one
+    @Test
+    public void testRepeatedUnwrappedSerialization() throws JacksonException
+    {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistenceUnit");
+        try {
+            EntityManager em = emf.createEntityManager();
+
+            ObjectMapper mapper = mapperWithModule(true);
+
+            Customer customer = em.find(Customer.class, 500);
+            HasUnwrapped<Product> value = new HasUnwrapped<>(customer.getMissingProduct());
+
+            String first = mapper.writeValueAsString(value);
+            // properties are unwrapped, so the wrapper's own property name is not written
+            assertFalse(first.contains("\"content\""), first);
+
+            // Second pass finds the serializer cached by the first one
+            String second = mapper.writeValueAsString(value);
+            assertEquals(first, second);
+
+        } finally {
+            emf.close();
+        }
+    }
 }

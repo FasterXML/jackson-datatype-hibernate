@@ -186,19 +186,21 @@ public class Hibernate7ProxySerializer
         /* 18-Oct-2013, tatu: Whether this is for the primary property or secondary is
          *   really anyone's guess at this point; proxies can exist at any level?
          */
-        PropertySerializerMap.SerializerAndMapResult result =
-                _dynamicSerializers.findAndAddPrimarySerializer(
-                        provider.constructType(type),
-                        provider,
-                        _property);
-        _dynamicSerializers = result.map;
-        ser = result.serializer;
-        // 14-Aug-2026: Apply unwrapping once and cache the result so we
-        // don't re-wrap on every call
-        if (_unwrapper != null) {
-            ser = ser.unwrappingSerializer(_unwrapper);
-            _dynamicSerializers = _dynamicSerializers.addSerializer(type, ser).map;
+        final JavaType valueType = provider.constructType(type);
+        if (_unwrapper == null) {
+            PropertySerializerMap.SerializerAndMapResult result =
+                    _dynamicSerializers.findAndAddPrimarySerializer(valueType, provider, _property);
+            _dynamicSerializers = result.map;
+            return result.serializer;
         }
+        // 31-Aug-2026, [datatypes-hibernate#209]: when unwrapping, resolve and cache by
+        //   hand. findAndAddPrimarySerializer() would add the raw serializer under this
+        //   same type first, and a lookup returns the first match for a type: later calls
+        //   would then get a serializer that writes START_OBJECT even though the
+        //   unwrapping property writer has already suppressed the property name.
+        ser = provider.findPrimaryPropertySerializer(valueType, _property)
+                .unwrappingSerializer(_unwrapper);
+        _dynamicSerializers = _dynamicSerializers.addSerializer(type, ser).map;
         return ser;
     }
 
