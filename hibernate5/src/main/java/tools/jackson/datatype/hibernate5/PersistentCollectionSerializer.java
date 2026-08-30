@@ -16,6 +16,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.engine.spi.PersistenceContext;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
@@ -314,19 +315,46 @@ public class PersistentCollectionSerializer
 //                .getTransactionFactory()
 //                .compatibleWithJtaSynchronization();
         //Above is removed after Hibernate 5
-        boolean isJTA = SessionReader.isJTA(session);
+        boolean isJTA = false;
 
-        if (!isJTA) {
-            session.beginTransaction();
+        try {
+            isJTA = SessionReader.isJTA(session);
+
+            if (!isJTA) {
+                session.beginTransaction();
+            }
+
+            coll.setCurrentSession(((SessionImplementor) session));
+            Hibernate.initialize(coll);
+
+            if (!isJTA) {
+                session.getTransaction().commit();
+            }
+        } catch (RuntimeException e) {
+            if (!isJTA) {
+                rollbackQuietly(session, e);
+            }
+            throw e;
+        } finally {
+            // Always close, even when initialization failed: otherwise the temporary
+            // session and its JDBC connection leak.
+            session.close();
         }
+    }
 
-        coll.setCurrentSession(((SessionImplementor) session));
-        Hibernate.initialize(coll);
-
-        if (!isJTA) {
-            session.getTransaction().commit();
+    /**
+     * Rolls back the temporary transaction if one is still active, without letting a
+     * secondary failure hide the one that actually broke initialization.
+     */
+    private void rollbackQuietly(Session session, RuntimeException failure) {
+        try {
+            Transaction tx = session.getTransaction();
+            if ((tx != null) && tx.isActive()) {
+                tx.rollback();
+            }
+        } catch (RuntimeException e) {
+            failure.addSuppressed(e);
         }
-        session.close();
     }
 
     /**

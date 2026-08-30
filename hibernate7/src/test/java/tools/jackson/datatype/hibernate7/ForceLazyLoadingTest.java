@@ -4,6 +4,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,7 +15,9 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
@@ -31,6 +36,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ForceLazyLoadingTest extends BaseTest
 {
+    private final static String DB_URL = "jdbc:h2:mem:lazyInit7;DB_CLOSE_DELAY=-1";
+
+    private final static String EMPTY_DB_URL = "jdbc:h2:mem:lazyInitEmpty7;DB_CLOSE_DELAY=-1";
+
     // [Issue#15]
     @Test
     public void testGetCustomerJson() throws Exception
@@ -39,10 +48,10 @@ public class ForceLazyLoadingTest extends BaseTest
 
         try {
             EntityManager em = emf.createEntityManager();
-
+            
             // false -> no forcing of lazy loading
             ObjectMapper mapper = mapperWithModule(true);
-
+            
             Customer customer = em.find(Customer.class, 103);
             assertFalse(Hibernate.isInitialized(customer.getPayments()));
             String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(customer);
@@ -63,7 +72,7 @@ public class ForceLazyLoadingTest extends BaseTest
             assertTrue(stuff.containsKey("payments"));
             assertTrue(stuff.containsKey("orders"));
             assertNull(stuff.get("orderes"));
-
+            
         } finally {
             emf.close();
         }
@@ -79,23 +88,13 @@ public class ForceLazyLoadingTest extends BaseTest
     @Test
     public void testTemporarySessionOnlyOpenedWhenNeeded() throws Exception
     {
-        try (SessionFactory sf = buildSimpleSessionFactory()) {
-            Integer parentId = sf.fromTransaction(session -> {
-                SimpleParent p = new SimpleParent("P1");
-                SimpleChild c = new SimpleChild("C1", p);
-                p.children.add(c);
-                session.persist(p);
-                session.persist(c);
-                return p.id;
-            });
+        SessionFactory sf = buildSimpleSessionFactory();
+        try {
+            Integer parentId = createParentWithChild(sf);
 
             // (1) Detached parent whose "children" was explicitly initialized while the
             //     loading session was still open
-            SimpleParent initialized = sf.fromTransaction(session -> {
-                SimpleParent p = session.find(SimpleParent.class, parentId);
-                Hibernate.initialize(p.children);
-                return p;
-            });
+            SimpleParent initialized = loadParent(sf, parentId, true);
             // Guard the premise: still a PersistentCollection, just a loaded one. Without
             // this the test would silently stop exercising anything if Hibernate ever
             // started swapping in a plain List on detach.
@@ -112,8 +111,7 @@ public class ForceLazyLoadingTest extends BaseTest
 
             // (2) Same entity, left uninitialized: here the temporary session is what
             //     makes FORCE_LAZY_LOADING work at all, so it must still be opened
-            SimpleParent uninitialized = sf.fromTransaction(session ->
-                    session.find(SimpleParent.class, parentId));
+            SimpleParent uninitialized = loadParent(sf, parentId, false);
             assertFalse(Hibernate.isInitialized(uninitialized.children));
 
             counter = new SessionOpenCounter(sf);
@@ -123,6 +121,78 @@ public class ForceLazyLoadingTest extends BaseTest
             assertTrue(json.contains("\"C1\""), json);
             assertEquals(1, counter.openSessionCount(),
                     "Should open exactly one temporary session to force-load the collection");
+        } finally {
+            sf.close();
+        }
+    }
+
+    private Integer createParentWithChild(SessionFactory sf)
+    {
+        Session session = sf.openSession();
+        try {
+            Transaction tx = session.beginTransaction();
+            SimpleParent p = new SimpleParent("P1");
+            SimpleChild c = new SimpleChild("C1", p);
+            p.children.add(c);
+            session.persist(p);
+            session.persist(c);
+            tx.commit();
+            return p.id;
+        } finally {
+            session.close();
+        }
+    }
+
+    private SimpleParent loadParent(SessionFactory sf, Integer id, boolean initializeChildren)
+    {
+        Session session = sf.openSession();
+        try {
+            Transaction tx = session.beginTransaction();
+            SimpleParent p = (SimpleParent) session.get(SimpleParent.class, id);
+            if (initializeChildren) {
+                Hibernate.initialize(p.children);
+            }
+            tx.commit();
+            return p;
+        } finally {
+            session.close();
+        }
+    }
+
+    /**
+     * A failure while force-loading must not leak the temporary session: the collection
+     * cannot be loaded here at all, and the session it was loaded through still has to be
+     * rolled back and closed.
+     */
+    @Test
+    public void testTemporarySessionClosedWhenInitializationFails() throws Exception
+    {
+        SimpleParent uninitialized;
+        SessionFactory sf = buildSimpleSessionFactory();
+        try {
+            uninitialized = loadParent(sf, createParentWithChild(sf), false);
+        } finally {
+            sf.close();
+        }
+
+        // Second factory carrying the same mappings over a database that has no tables,
+        // so force-loading the collection fails with a SQL error
+        SessionFactory emptySf = buildSessionFactory(EMPTY_DB_URL, "none");
+        try {
+            SessionOpenCounter counter = new SessionOpenCounter(emptySf);
+            ObjectMapper mapper = mapperWith(counter.factory());
+            try {
+                mapper.writeValueAsString(uninitialized);
+                fail("Should not pass: collection cannot be loaded");
+            } catch (Exception e) {
+                // expected
+            }
+
+            assertEquals(1, counter.openSessionCount());
+            assertFalse(counter.openedSessions().get(0).isOpen(),
+                    "Temporary session must be closed even when initialization fails");
+        } finally {
+            emptySf.close();
         }
     }
 
@@ -133,12 +203,17 @@ public class ForceLazyLoadingTest extends BaseTest
     }
 
     private SessionFactory buildSimpleSessionFactory() {
+        return buildSessionFactory(DB_URL, "create");
+    }
+
+    private SessionFactory buildSessionFactory(String url, String hbm2ddl) {
         return new Configuration()
                 .addAnnotatedClass(SimpleParent.class)
                 .addAnnotatedClass(SimpleChild.class)
-                .setProperty("hibernate.connection.url", "jdbc:h2:mem:lazyInit;DB_CLOSE_DELAY=-1")
+                .setProperty("hibernate.connection.url", url)
                 .setProperty("hibernate.connection.driver_class", "org.h2.Driver")
-                .setProperty("hibernate.hbm2ddl.auto", "create")
+                .setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
+                .setProperty("hibernate.hbm2ddl.auto", hbm2ddl)
                 .buildSessionFactory();
     }
 
@@ -152,6 +227,8 @@ public class ForceLazyLoadingTest extends BaseTest
     static class SessionOpenCounter implements InvocationHandler
     {
         private final SessionFactory _delegate;
+
+        private final List<Session> _opened = new ArrayList<Session>();
 
         private int _openSessionCount;
 
@@ -168,16 +245,27 @@ public class ForceLazyLoadingTest extends BaseTest
             return _openSessionCount;
         }
 
+        List<Session> openedSessions() {
+            return _opened;
+        }
+
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if ("openSession".equals(method.getName()) && (args == null || args.length == 0)) {
+            boolean isOpenSession = "openSession".equals(method.getName())
+                    && ((args == null) || (args.length == 0));
+            if (isOpenSession) {
                 ++_openSessionCount;
             }
+            Object result;
             try {
-                return method.invoke(_delegate, args);
+                result = method.invoke(_delegate, args);
             } catch (InvocationTargetException e) {
                 throw e.getCause();
             }
+            if (isOpenSession) {
+                _opened.add((Session) result);
+            }
+            return result;
         }
     }
 }

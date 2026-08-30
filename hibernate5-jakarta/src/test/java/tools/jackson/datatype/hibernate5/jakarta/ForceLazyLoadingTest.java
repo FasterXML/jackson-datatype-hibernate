@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +35,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ForceLazyLoadingTest extends BaseTest
 {
+    private final static String DB_URL = "jdbc:h2:mem:lazyInit5j;DB_CLOSE_DELAY=-1";
+
+    private final static String EMPTY_DB_URL = "jdbc:h2:mem:lazyInitEmpty5j;DB_CLOSE_DELAY=-1";
+
     // [Issue#15]
     @Test
     public void testGetCustomerJson() throws Exception
@@ -152,6 +158,43 @@ public class ForceLazyLoadingTest extends BaseTest
         }
     }
 
+    /**
+     * A failure while force-loading must not leak the temporary session: the collection
+     * cannot be loaded here at all, and the session it was loaded through still has to be
+     * rolled back and closed.
+     */
+    @Test
+    public void testTemporarySessionClosedWhenInitializationFails() throws Exception
+    {
+        SimpleParent uninitialized;
+        SessionFactory sf = buildSimpleSessionFactory();
+        try {
+            uninitialized = loadParent(sf, createParentWithChild(sf), false);
+        } finally {
+            sf.close();
+        }
+
+        // Second factory carrying the same mappings over a database that has no tables,
+        // so force-loading the collection fails with a SQL error
+        SessionFactory emptySf = buildSessionFactory(EMPTY_DB_URL, "none");
+        try {
+            SessionOpenCounter counter = new SessionOpenCounter(emptySf);
+            ObjectMapper mapper = mapperWith(counter.factory());
+            try {
+                mapper.writeValueAsString(uninitialized);
+                fail("Should not pass: collection cannot be loaded");
+            } catch (Exception e) {
+                // expected
+            }
+
+            assertEquals(1, counter.openSessionCount());
+            assertFalse(counter.openedSessions().get(0).isOpen(),
+                    "Temporary session must be closed even when initialization fails");
+        } finally {
+            emptySf.close();
+        }
+    }
+
     private ObjectMapper mapperWith(SessionFactory sessionFactory) {
         return JsonMapper.builder()
                 .addModule(hibernateModule(true, false, sessionFactory))
@@ -159,13 +202,17 @@ public class ForceLazyLoadingTest extends BaseTest
     }
 
     private SessionFactory buildSimpleSessionFactory() {
+        return buildSessionFactory(DB_URL, "create");
+    }
+
+    private SessionFactory buildSessionFactory(String url, String hbm2ddl) {
         return new Configuration()
                 .addAnnotatedClass(SimpleParent.class)
                 .addAnnotatedClass(SimpleChild.class)
-                .setProperty("hibernate.connection.url", "jdbc:h2:mem:lazyInit5j;DB_CLOSE_DELAY=-1")
+                .setProperty("hibernate.connection.url", url)
                 .setProperty("hibernate.connection.driver_class", "org.h2.Driver")
                 .setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
-                .setProperty("hibernate.hbm2ddl.auto", "create")
+                .setProperty("hibernate.hbm2ddl.auto", hbm2ddl)
                 .buildSessionFactory();
     }
 
@@ -179,6 +226,8 @@ public class ForceLazyLoadingTest extends BaseTest
     static class SessionOpenCounter implements InvocationHandler
     {
         private final SessionFactory _delegate;
+
+        private final List<Session> _opened = new ArrayList<Session>();
 
         private int _openSessionCount;
 
@@ -195,16 +244,27 @@ public class ForceLazyLoadingTest extends BaseTest
             return _openSessionCount;
         }
 
+        List<Session> openedSessions() {
+            return _opened;
+        }
+
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if ("openSession".equals(method.getName()) && (args == null || args.length == 0)) {
+            boolean isOpenSession = "openSession".equals(method.getName())
+                    && ((args == null) || (args.length == 0));
+            if (isOpenSession) {
                 ++_openSessionCount;
             }
+            Object result;
             try {
-                return method.invoke(_delegate, args);
+                result = method.invoke(_delegate, args);
             } catch (InvocationTargetException e) {
                 throw e.getCause();
             }
+            if (isOpenSession) {
+                _opened.add((Session) result);
+            }
+            return result;
         }
     }
 }
