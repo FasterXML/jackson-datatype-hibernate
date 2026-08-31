@@ -112,10 +112,16 @@ public class CycleDetectingSerializer<T> extends ValueSerializer<T>
         }
     }
 
+    /**
+     * Returns the delegate's unwrapping serializer undecorated, deliberately.
+     * An unwrapping serializer writes no field name, so it has no place to put
+     * a {@code null} cycle placeholder; and skipping tracking for this one hop
+     * cannot cause unbounded recursion, since any entity reached as a regular
+     * property is tracked by its own wrapper. Wrapping here would only replace
+     * a legitimate second occurrence of the value with {@code null}.
+     */
     @Override
     public ValueSerializer<T> unwrappingSerializer(NameTransformer unwrapper) {
-        // Delegate unwrapping to the inner serializer — cycle detection
-        // for unwrapped properties is handled by the parent object's wrapper.
         return _delegate.unwrappingSerializer(unwrapper);
     }
 
@@ -127,6 +133,17 @@ public class CycleDetectingSerializer<T> extends ValueSerializer<T>
     @Override
     public boolean isUnwrappingSerializer() {
         return _delegate.isUnwrappingSerializer();
+    }
+
+    /**
+     * Must expose the delegate: {@code BeanSerializerBase._asBeanSerializer}
+     * walks this chain to reach the inner bean serializer, and without it the
+     * unwrapped-property name-clash check ([databind#2883]) silently passes
+     * for wrapped entities.
+     */
+    @Override
+    public ValueSerializer<?> getDelegatee() {
+        return _delegate;
     }
 
     /**

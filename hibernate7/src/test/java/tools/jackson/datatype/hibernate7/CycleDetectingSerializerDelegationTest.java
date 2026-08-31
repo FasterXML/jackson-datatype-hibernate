@@ -7,16 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.InvalidDefinitionException;
 import tools.jackson.databind.annotation.JsonSerialize;
 import tools.jackson.databind.util.StdConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests that {@link CycleDetectingSerializer} forwards the parts of the
@@ -91,6 +94,49 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
         public IdParent parent;
     }
 
+    /**
+     * Bidirectional pair reached through {@code @JsonUnwrapped}: {@code Node}
+     * unwraps its {@code holder}, whose {@code node} points back at the
+     * original {@code Node} instance.
+     */
+    @Entity
+    static class Node {
+        @Id
+        public Integer nodeId = 30;
+
+        public String name = "node";
+
+        @JsonUnwrapped
+        public Holder holder;
+    }
+
+    @Entity
+    static class Holder {
+        @Id
+        public Integer holderId = 40;
+
+        public String tag = "held";
+
+        public Node node;
+    }
+
+    // Unwrapped property whose name collides with an enclosing one: the
+    // [databind#2883] check must still fire through the wrapper
+    @Entity
+    static class ClashOuter {
+        @Id
+        public Integer id = 50;
+
+        @JsonUnwrapped
+        public ClashInner inner = new ClashInner();
+    }
+
+    @Entity
+    static class ClashInner {
+        @Id
+        public Integer id = 60;
+    }
+
     // [datatype-hibernate#204]: resolve() must reach the wrapped bean serializer
     @Test
     public void testConverterAppliedOnWrappedEntity() throws Exception
@@ -130,5 +176,48 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
         // Back-reference must serialize as the parent's object id (10), not null
         assertThat(json).contains("\"parent\":10");
         assertThat(json).doesNotContain("\"parent\":null");
+    }
+
+    /**
+     * Characterization: a graph whose cycle passes through a
+     * {@code @JsonUnwrapped} entity property still terminates.  Skipping
+     * tracking for the unwrapped hop is safe because the next entity reached
+     * as a regular property is tracked by its own wrapper.
+     */
+    @Test
+    public void testCycleThroughUnwrappedProperty() throws Exception
+    {
+        Node node = new Node();
+        Holder holder = new Holder();
+        node.holder = holder;
+        holder.node = node;
+
+        ObjectMapper mapper = mapperWithModule(true);
+        String json = mapper.writeValueAsString(node);
+
+        // Completes without unbounded recursion, and the unwrapped properties
+        // are hoisted into the enclosing Object
+        assertThat(json).contains("\"name\":\"node\"", "\"tag\":\"held\"");
+        // Back-reference to the in-progress Node is nulled, not recursed into
+        assertThat(json).contains("\"node\":null");
+    }
+
+    /**
+     * The wrapper must not hide the inner bean serializer from
+     * {@code BeanSerializerBase._asBeanSerializer}, which walks
+     * {@code getDelegatee()} to run the [databind#2883] unwrapped-property
+     * name-clash check.  Without {@code getDelegatee()} the chain walk stops
+     * at the wrapper and the check silently passes.
+     */
+    @Test
+    public void testUnwrappedNameClashStillReported() throws Exception
+    {
+        ObjectMapper mapper = mapperWithModule(true);
+        try {
+            mapper.writeValueAsString(new ClashOuter());
+            fail("Should have reported unwrapped property name conflict");
+        } catch (InvalidDefinitionException e) {
+            verifyException(e, "and another property have the same name");
+        }
     }
 }
