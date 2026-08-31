@@ -5,6 +5,7 @@ import java.util.IdentityHashMap;
 import java.util.Set;
 
 import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
@@ -29,6 +30,34 @@ public class CycleDetectingSerializer<T> extends ValueSerializer<T>
 
     public CycleDetectingSerializer(ValueSerializer<T> delegate) {
         _delegate = delegate;
+    }
+
+    /**
+     * Must delegate resolution: the cache resolves the outermost (wrapping)
+     * serializer, so without this {@code BeanSerializerBase.resolve()} would
+     * never run for wrapped entities -- dropping {@code @JsonSerialize(converter=...)},
+     * {@code nullsUsing} handling and any-getter contextualization.
+     */
+    @Override
+    public void resolve(SerializationContext ctxt) {
+        _delegate.resolve(ctxt);
+    }
+
+    /**
+     * Must delegate contextualization for the same reason as {@link #resolve};
+     * otherwise per-property {@code @JsonIgnoreProperties}, {@code @JsonFilter}
+     * and {@code @JsonIdentityInfo} overrides are silently ignored for wrapped
+     * entities.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public ValueSerializer<?> createContextual(SerializationContext ctxt, BeanProperty property)
+    {
+        ValueSerializer<?> del = _delegate.createContextual(ctxt, property);
+        if (del == _delegate) {
+            return this;
+        }
+        return new CycleDetectingSerializer<T>((ValueSerializer<T>) del);
     }
 
     @Override
