@@ -53,8 +53,7 @@ public class Hibernate7SerializerModifier
         // enums, and primitive/wrapper types which cannot participate in
         // entity-level cycles.
         if (beanDesc != null) {
-            BeanDescription bd = beanDesc.get();
-            if (bd.getBeanClass().getAnnotation(Entity.class) != null) {
+            if (beanDesc.getBeanClass().getAnnotation(Entity.class) != null) {
                 return new CycleDetectingSerializer<>(serializer);
             }
         }
