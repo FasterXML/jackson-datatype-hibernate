@@ -13,10 +13,13 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import org.junit.jupiter.api.Test;
 
+import tools.jackson.core.JacksonException;
+
 import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.exc.InvalidDefinitionException;
+import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import tools.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import tools.jackson.databind.annotation.JsonSerialize;
@@ -29,8 +32,9 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Tests that {@link CycleDetectingSerializer} forwards the parts of the
  * {@code ValueSerializer} contract that {@code BeanSerializerBase} relies on.
  * The modifier wraps <em>every</em> {@code @Entity} bean serializer when
- * {@code FORCE_LAZY_LOADING} is enabled, so anything the wrapper fails to
- * delegate is silently dropped for all entity types.
+ * {@code REPLACE_CYCLES_WITH_NULL} and {@code FORCE_LAZY_LOADING} are enabled,
+ * so anything the wrapper fails to delegate is silently dropped for all entity
+ * types.
  *<p>
  * No Hibernate session is needed here: the wrapping decision is made purely
  * from the {@code @Entity} annotation.
@@ -141,11 +145,58 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
         public Integer id = 60;
     }
 
+    /**
+     * {@code REPLACE_CYCLES_WITH_NULL} is disabled by default, so enabling only
+     * {@code FORCE_LAZY_LOADING} must leave serialization behaviour unchanged:
+     * the cycle is reported as an error rather than silently written as
+     * {@code null}.
+     */
+    @Test
+    public void testCycleDetectionDisabledByDefault() throws Exception
+    {
+        Node node = new Node();
+        Holder holder = new Holder();
+        node.holder = holder;
+        holder.node = node;
+
+        ObjectMapper mapper = mapperWithModule(true);
+        try {
+            mapper.writeValueAsString(node);
+            fail("Should have failed on cycle without REPLACE_CYCLES_WITH_NULL");
+        } catch (JacksonException e) {
+            verifyException(e, "nesting depth");
+        }
+    }
+
+    /**
+     * {@code REPLACE_CYCLES_WITH_NULL} has no effect on its own: without
+     * {@code FORCE_LAZY_LOADING} there are no forced-loaded back-references to
+     * guard against, so no wrapping is done.
+     */
+    @Test
+    public void testCycleDetectionRequiresForceLazyLoading() throws Exception
+    {
+        Node node = new Node();
+        Holder holder = new Holder();
+        node.holder = holder;
+        holder.node = node;
+
+        Hibernate7Module mod = hibernateModule(false);
+        mod.configure(Hibernate7Module.Feature.REPLACE_CYCLES_WITH_NULL, true);
+        ObjectMapper mapper = JsonMapper.builder().addModule(mod).build();
+        try {
+            mapper.writeValueAsString(node);
+            fail("Should have failed on cycle without FORCE_LAZY_LOADING");
+        } catch (JacksonException e) {
+            verifyException(e, "nesting depth");
+        }
+    }
+
     // [datatype-hibernate#204]: resolve() must reach the wrapped bean serializer
     @Test
     public void testConverterAppliedOnWrappedEntity() throws Exception
     {
-        ObjectMapper mapper = mapperWithModule(true);
+        ObjectMapper mapper = mapperWithCycleDetection();
         String json = mapper.writeValueAsString(new ConverterEntity());
         assertThat(json).contains("\"name\":\"SHOUTY\"");
     }
@@ -154,7 +205,7 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
     @Test
     public void testPerPropertyIgnoralAppliedOnWrappedEntity() throws Exception
     {
-        ObjectMapper mapper = mapperWithModule(true);
+        ObjectMapper mapper = mapperWithCycleDetection();
         String json = mapper.writeValueAsString(new IgnoredPropsEntity());
         assertThat(json).contains("\"visible\":\"yes\"");
         assertThat(json).doesNotContain("secret");
@@ -174,7 +225,7 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
         child.parent = parent;
         parent.children.add(child);
 
-        ObjectMapper mapper = mapperWithModule(true);
+        ObjectMapper mapper = mapperWithCycleDetection();
         String json = mapper.writeValueAsString(parent);
 
         // Back-reference must serialize as the parent's object id (10), not null
@@ -196,7 +247,7 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
         node.holder = holder;
         holder.node = node;
 
-        ObjectMapper mapper = mapperWithModule(true);
+        ObjectMapper mapper = mapperWithCycleDetection();
         String json = mapper.writeValueAsString(node);
 
         // Completes without unbounded recursion, and the unwrapped properties
@@ -216,7 +267,7 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
     @Test
     public void testUnwrappedNameClashStillReported() throws Exception
     {
-        ObjectMapper mapper = mapperWithModule(true);
+        ObjectMapper mapper = mapperWithCycleDetection();
         try {
             mapper.writeValueAsString(new ClashOuter());
             fail("Should have reported unwrapped property name conflict");
@@ -235,7 +286,7 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
     @Test
     public void testFormatVisitorSeesEntityAsObject() throws Exception
     {
-        ObjectMapper mapper = mapperWithModule(true);
+        ObjectMapper mapper = mapperWithCycleDetection();
 
         final List<String> visitedProps = new ArrayList<>();
         final boolean[] sawObject = { false };

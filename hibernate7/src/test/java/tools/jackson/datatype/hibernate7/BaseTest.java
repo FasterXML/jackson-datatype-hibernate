@@ -50,6 +50,22 @@ public abstract class BaseTest
         return mod;
     }
 
+    /**
+     * Module with both {@code FORCE_LAZY_LOADING} and {@code REPLACE_CYCLES_WITH_NULL}
+     * enabled, for tests that exercise cycle detection.
+     */
+    protected Hibernate7Module hibernateModuleWithCycleDetection()
+    {
+        Hibernate7Module mod = hibernateModule(true);
+        mod.configure(Hibernate7Module.Feature.REPLACE_CYCLES_WITH_NULL, true);
+        return mod;
+    }
+
+    protected ObjectMapper mapperWithCycleDetection()
+    {
+        return JsonMapper.builder().addModule(hibernateModuleWithCycleDetection()).build();
+    }
+
     protected Hibernate7Module hibernateModule(boolean forceLazyLoading, boolean nullMissingEntities,
             SessionFactory sessionFactory)
     {

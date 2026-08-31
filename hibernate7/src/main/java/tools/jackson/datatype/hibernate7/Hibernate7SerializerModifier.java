@@ -38,15 +38,21 @@ public class Hibernate7SerializerModifier
 
     /**
      * Wraps bean serializers for {@code @Entity}-annotated types with a
-     * cycle-detecting wrapper when {@code FORCE_LAZY_LOADING} is enabled.
-     * This prevents infinite recursion in bidirectional entity graphs
-     * (see [datatype-hibernate#204]).
+     * cycle-detecting wrapper when both {@code REPLACE_CYCLES_WITH_NULL} and
+     * {@code FORCE_LAZY_LOADING} are enabled. This prevents infinite recursion
+     * in bidirectional entity graphs (see [datatype-hibernate#204]).
+     *<p>
+     * {@code REPLACE_CYCLES_WITH_NULL} is disabled by default since replacing a
+     * back-reference with {@code null} is a behavioral change; and it only has
+     * effect together with {@code FORCE_LAZY_LOADING}, which is what causes the
+     * lazy back-references to be initialized and followed in the first place.
      */
     @Override
     public ValueSerializer<?> modifySerializer(SerializationConfig config,
             BeanDescription.Supplier beanDesc, ValueSerializer<?> serializer)
     {
-        if (!Hibernate7Module.Feature.FORCE_LAZY_LOADING.enabledIn(_features)) {
+        if (!Hibernate7Module.Feature.REPLACE_CYCLES_WITH_NULL.enabledIn(_features)
+                || !Hibernate7Module.Feature.FORCE_LAZY_LOADING.enabledIn(_features)) {
             return serializer;
         }
         // Only wrap entity bean serializers — skip collections, maps, arrays,

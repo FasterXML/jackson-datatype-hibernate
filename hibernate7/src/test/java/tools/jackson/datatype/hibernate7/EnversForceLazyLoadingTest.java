@@ -51,7 +51,7 @@ public class EnversForceLazyLoadingTest extends BaseTest
                 .setProperty("hibernate.hbm2ddl.auto", "create");
 
         JsonMapper mapper = JsonMapper.builder()
-                .addModule(hibernateModule(true))
+                .addModule(hibernateModuleWithCycleDetection())
                 .build();
 
         try (SessionFactory sf = cfg.buildSessionFactory()) {
@@ -108,7 +108,7 @@ public class EnversForceLazyLoadingTest extends BaseTest
                 .setProperty("hibernate.hbm2ddl.auto", "create");
 
         JsonMapper mapper = JsonMapper.builder()
-                .addModule(hibernateModule(true))
+                .addModule(hibernateModuleWithCycleDetection())
                 .build();
 
         try (SessionFactory sf = cfg.buildSessionFactory()) {
