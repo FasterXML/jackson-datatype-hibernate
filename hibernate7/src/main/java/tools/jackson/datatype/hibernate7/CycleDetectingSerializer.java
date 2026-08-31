@@ -21,6 +21,8 @@ import tools.jackson.databind.util.NameTransformer;
  * <p>
  * This addresses infinite recursion in bidirectional JPA entity graphs
  * when {@code FORCE_LAZY_LOADING} is enabled (see [datatype-hibernate#204]).
+ *
+ * @since 3.3
  */
 public class CycleDetectingSerializer<T> extends ValueSerializer<T>
 {
@@ -28,8 +30,15 @@ public class CycleDetectingSerializer<T> extends ValueSerializer<T>
 
     private final ValueSerializer<T> _delegate;
 
+    /**
+     * Whether the delegate handles cycles itself via Object Ids
+     * (that is, the entity is annotated with {@code @JsonIdentityInfo}).
+     */
+    private final boolean _delegateUsesObjectId;
+
     public CycleDetectingSerializer(ValueSerializer<T> delegate) {
         _delegate = delegate;
+        _delegateUsesObjectId = delegate.usesObjectId();
     }
 
     /**
@@ -64,6 +73,10 @@ public class CycleDetectingSerializer<T> extends ValueSerializer<T>
     public void serialize(T value, JsonGenerator g, SerializationContext ctxt)
         throws DatabindException
     {
+        if (_delegateUsesObjectId) {
+            _delegate.serialize(value, g, ctxt);
+            return;
+        }
         Set<Object> serializing = _getSerializingSet(ctxt);
         // Identity-based check: same object instance on the current path = cycle
         if (serializing.contains(value)) {
@@ -82,6 +95,10 @@ public class CycleDetectingSerializer<T> extends ValueSerializer<T>
     public void serializeWithType(T value, JsonGenerator g, SerializationContext ctxt,
             TypeSerializer typeSer) throws DatabindException
     {
+        if (_delegateUsesObjectId) {
+            _delegate.serializeWithType(value, g, ctxt, typeSer);
+            return;
+        }
         Set<Object> serializing = _getSerializingSet(ctxt);
         if (serializing.contains(value)) {
             ctxt.defaultSerializeNullValue(g);
@@ -110,6 +127,16 @@ public class CycleDetectingSerializer<T> extends ValueSerializer<T>
     @Override
     public boolean isUnwrappingSerializer() {
         return _delegate.isUnwrappingSerializer();
+    }
+
+    /**
+     * Must reflect the delegate: {@code BeanPropertyWriter._handleSelfReference}
+     * calls this on the outermost serializer to decide whether a direct
+     * self-reference is already handled by Object Id.
+     */
+    @Override
+    public boolean usesObjectId() {
+        return _delegateUsesObjectId;
     }
 
     @SuppressWarnings("unchecked")

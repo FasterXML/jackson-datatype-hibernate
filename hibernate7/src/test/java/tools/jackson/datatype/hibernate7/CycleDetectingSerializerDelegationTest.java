@@ -3,7 +3,12 @@ package tools.jackson.datatype.hibernate7;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import org.junit.jupiter.api.Test;
 
@@ -64,6 +69,28 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
         public String secret = "no";
     }
 
+    @Entity
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    static class IdParent {
+        @Id
+        public Integer id = 10;
+
+        public String name = "parent";
+
+        public List<IdChild> children = new ArrayList<>();
+    }
+
+    @Entity
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    static class IdChild {
+        @Id
+        public Integer id = 20;
+
+        public String label = "child";
+
+        public IdParent parent;
+    }
+
     // [datatype-hibernate#204]: resolve() must reach the wrapped bean serializer
     @Test
     public void testConverterAppliedOnWrappedEntity() throws Exception
@@ -81,5 +108,27 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
         String json = mapper.writeValueAsString(new IgnoredPropsEntity());
         assertThat(json).contains("\"visible\":\"yes\"");
         assertThat(json).doesNotContain("secret");
+    }
+
+    /**
+     * Entities using {@code @JsonIdentityInfo} already handle cycles via Object
+     * Id -- the recommended remedy for bidirectional JPA graphs.  Cycle
+     * detection must step aside for them, or the back-reference is replaced
+     * with {@code null} instead of the object id.
+     */
+    @Test
+    public void testObjectIdBackReferenceNotNulled() throws Exception
+    {
+        IdParent parent = new IdParent();
+        IdChild child = new IdChild();
+        child.parent = parent;
+        parent.children.add(child);
+
+        ObjectMapper mapper = mapperWithModule(true);
+        String json = mapper.writeValueAsString(parent);
+
+        // Back-reference must serialize as the parent's object id (10), not null
+        assertThat(json).contains("\"parent\":10");
+        assertThat(json).doesNotContain("\"parent\":null");
     }
 }
