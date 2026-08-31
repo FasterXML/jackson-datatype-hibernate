@@ -54,7 +54,7 @@ public class Hibernate7SerializerModifier
         // entity-level cycles.
         if (beanDesc != null) {
             if (beanDesc.getClassAnnotations().get(Entity.class) != null) {
-                return new CycleDetectingSerializer<>(serializer);
+                return new CycleDetectingSerializer(serializer);
             }
         }
         return serializer;

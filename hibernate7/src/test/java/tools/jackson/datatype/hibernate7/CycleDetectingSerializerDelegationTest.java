@@ -13,8 +13,12 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import org.junit.jupiter.api.Test;
 
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.exc.InvalidDefinitionException;
+import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
+import tools.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import tools.jackson.databind.annotation.JsonSerialize;
 import tools.jackson.databind.util.StdConverter;
 
@@ -219,5 +223,44 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
         } catch (InvalidDefinitionException e) {
             verifyException(e, "and another property have the same name");
         }
+    }
+
+    /**
+     * Schema generation walks the serializer via
+     * {@code acceptJsonFormatVisitor}.  Left at the {@code ValueSerializer}
+     * default the wrapper reports "any format" and every entity collapses to
+     * an untyped node; forwarded, the entity is visited as an Object with its
+     * properties.
+     */
+    @Test
+    public void testFormatVisitorSeesEntityAsObject() throws Exception
+    {
+        ObjectMapper mapper = mapperWithModule(true);
+
+        final List<String> visitedProps = new ArrayList<>();
+        final boolean[] sawObject = { false };
+
+        JsonFormatVisitorWrapper visitor = new JsonFormatVisitorWrapper.Base() {
+            @Override
+            public JsonObjectFormatVisitor expectObjectFormat(JavaType type) {
+                sawObject[0] = true;
+                return new JsonObjectFormatVisitor.Base(getContext()) {
+                    @Override
+                    public void optionalProperty(BeanProperty prop) {
+                        visitedProps.add(prop.getName());
+                    }
+
+                    @Override
+                    public void property(BeanProperty prop) {
+                        visitedProps.add(prop.getName());
+                    }
+                };
+            }
+        };
+
+        mapper.acceptJsonFormatVisitor(ConverterEntity.class, visitor);
+
+        assertThat(sawObject[0]).as("entity should be visited as an Object").isTrue();
+        assertThat(visitedProps).contains("id", "name");
     }
 }

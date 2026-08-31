@@ -5,11 +5,10 @@ import java.util.IdentityHashMap;
 import java.util.Set;
 
 import tools.jackson.core.JsonGenerator;
-import tools.jackson.databind.BeanProperty;
-import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
 import tools.jackson.databind.jsontype.TypeSerializer;
+import tools.jackson.databind.ser.std.DelegatingSerializer;
 import tools.jackson.databind.util.NameTransformer;
 
 /**
@@ -21,14 +20,17 @@ import tools.jackson.databind.util.NameTransformer;
  * <p>
  * This addresses infinite recursion in bidirectional JPA entity graphs
  * when {@code FORCE_LAZY_LOADING} is enabled (see [datatype-hibernate#204]).
- *
- * @since 3.3
+ * <p>
+ * Extends {@link DelegatingSerializer} so that the full {@code ValueSerializer}
+ * contract -- {@code resolve()}, {@code createContextual()}, {@code handledType()},
+ * {@code getDelegatee()}, {@code properties()}, {@code acceptJsonFormatVisitor()}
+ * and the mutant factories -- reaches the wrapped bean serializer.  The modifier
+ * wraps <em>every</em> {@code @Entity} bean serializer, so anything not forwarded
+ * here is silently dropped for all entity types.
  */
-public class CycleDetectingSerializer<T> extends ValueSerializer<T>
+public class CycleDetectingSerializer extends DelegatingSerializer
 {
     private static final Object ATTR_KEY = CycleDetectingSerializer.class;
-
-    private final ValueSerializer<T> _delegate;
 
     /**
      * Whether the delegate handles cycles itself via Object Ids
@@ -36,45 +38,36 @@ public class CycleDetectingSerializer<T> extends ValueSerializer<T>
      */
     private final boolean _delegateUsesObjectId;
 
-    public CycleDetectingSerializer(ValueSerializer<T> delegate) {
-        _delegate = delegate;
+    public CycleDetectingSerializer(ValueSerializer<?> delegate) {
+        super(delegate);
         _delegateUsesObjectId = delegate.usesObjectId();
     }
 
-    /**
-     * Must delegate resolution: the cache resolves the outermost (wrapping)
-     * serializer, so without this {@code BeanSerializerBase.resolve()} would
-     * never run for wrapped entities -- dropping {@code @JsonSerialize(converter=...)},
-     * {@code nullsUsing} handling and any-getter contextualization.
-     */
     @Override
-    public void resolve(SerializationContext ctxt) {
-        _delegate.resolve(ctxt);
+    protected ValueSerializer<Object> newDelegatingInstance(ValueSerializer<?> newDelegatee) {
+        return new CycleDetectingSerializer(newDelegatee);
     }
 
     /**
-     * Must delegate contextualization for the same reason as {@link #resolve};
-     * otherwise per-property {@code @JsonIgnoreProperties}, {@code @JsonFilter}
-     * and {@code @JsonIdentityInfo} overrides are silently ignored for wrapped
-     * entities.
+     * Returns the delegate's unwrapping serializer undecorated, deliberately
+     * overriding {@link DelegatingSerializer}'s re-wrapping behaviour.
+     * An unwrapping serializer writes no field name, so it has no place to put
+     * a {@code null} cycle placeholder; and skipping tracking for this one hop
+     * cannot cause unbounded recursion, since any entity reached as a regular
+     * property is tracked by its own wrapper.  Wrapping here would only replace
+     * a legitimate second occurrence of the value with {@code null}.
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public ValueSerializer<?> createContextual(SerializationContext ctxt, BeanProperty property)
-    {
-        ValueSerializer<?> del = _delegate.createContextual(ctxt, property);
-        if (del == _delegate) {
-            return this;
-        }
-        return new CycleDetectingSerializer<T>((ValueSerializer<T>) del);
+    public ValueSerializer<Object> unwrappingSerializer(NameTransformer unwrapper) {
+        return _delegatee.unwrappingSerializer(unwrapper);
     }
 
     @Override
-    public void serialize(T value, JsonGenerator g, SerializationContext ctxt)
-        throws DatabindException
+    public void serialize(Object value, JsonGenerator g, SerializationContext ctxt)
     {
+        // Entities using @JsonIdentityInfo already handle their own cycles
         if (_delegateUsesObjectId) {
-            _delegate.serialize(value, g, ctxt);
+            _delegatee.serialize(value, g, ctxt);
             return;
         }
         Set<Object> serializing = _getSerializingSet(ctxt);
@@ -85,18 +78,18 @@ public class CycleDetectingSerializer<T> extends ValueSerializer<T>
         }
         serializing.add(value);
         try {
-            _delegate.serialize(value, g, ctxt);
+            _delegatee.serialize(value, g, ctxt);
         } finally {
             serializing.remove(value);
         }
     }
 
     @Override
-    public void serializeWithType(T value, JsonGenerator g, SerializationContext ctxt,
-            TypeSerializer typeSer) throws DatabindException
+    public void serializeWithType(Object value, JsonGenerator g, SerializationContext ctxt,
+            TypeSerializer typeSer)
     {
         if (_delegateUsesObjectId) {
-            _delegate.serializeWithType(value, g, ctxt, typeSer);
+            _delegatee.serializeWithType(value, g, ctxt, typeSer);
             return;
         }
         Set<Object> serializing = _getSerializingSet(ctxt);
@@ -106,54 +99,10 @@ public class CycleDetectingSerializer<T> extends ValueSerializer<T>
         }
         serializing.add(value);
         try {
-            _delegate.serializeWithType(value, g, ctxt, typeSer);
+            _delegatee.serializeWithType(value, g, ctxt, typeSer);
         } finally {
             serializing.remove(value);
         }
-    }
-
-    /**
-     * Returns the delegate's unwrapping serializer undecorated, deliberately.
-     * An unwrapping serializer writes no field name, so it has no place to put
-     * a {@code null} cycle placeholder; and skipping tracking for this one hop
-     * cannot cause unbounded recursion, since any entity reached as a regular
-     * property is tracked by its own wrapper. Wrapping here would only replace
-     * a legitimate second occurrence of the value with {@code null}.
-     */
-    @Override
-    public ValueSerializer<T> unwrappingSerializer(NameTransformer unwrapper) {
-        return _delegate.unwrappingSerializer(unwrapper);
-    }
-
-    @Override
-    public boolean isEmpty(SerializationContext provider, T value) {
-        return _delegate.isEmpty(provider, value);
-    }
-
-    @Override
-    public boolean isUnwrappingSerializer() {
-        return _delegate.isUnwrappingSerializer();
-    }
-
-    /**
-     * Must expose the delegate: {@code BeanSerializerBase._asBeanSerializer}
-     * walks this chain to reach the inner bean serializer, and without it the
-     * unwrapped-property name-clash check ([databind#2883]) silently passes
-     * for wrapped entities.
-     */
-    @Override
-    public ValueSerializer<?> getDelegatee() {
-        return _delegate;
-    }
-
-    /**
-     * Must reflect the delegate: {@code BeanPropertyWriter._handleSelfReference}
-     * calls this on the outermost serializer to decide whether a direct
-     * self-reference is already handled by Object Id.
-     */
-    @Override
-    public boolean usesObjectId() {
-        return _delegateUsesObjectId;
     }
 
     @SuppressWarnings("unchecked")
