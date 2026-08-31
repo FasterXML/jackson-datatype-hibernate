@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import org.junit.jupiter.api.Test;
 
-import tools.jackson.core.JacksonException;
+import tools.jackson.core.exc.StreamConstraintsException;
 
 import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.JavaType;
@@ -163,7 +163,7 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
         try {
             mapper.writeValueAsString(node);
             fail("Should have failed on cycle without REPLACE_CYCLES_WITH_NULL");
-        } catch (JacksonException e) {
+        } catch (StreamConstraintsException e) {
             verifyException(e, "nesting depth");
         }
     }
@@ -187,7 +187,7 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
         try {
             mapper.writeValueAsString(node);
             fail("Should have failed on cycle without FORCE_LAZY_LOADING");
-        } catch (JacksonException e) {
+        } catch (StreamConstraintsException e) {
             verifyException(e, "nesting depth");
         }
     }
