@@ -19,14 +19,8 @@ import tools.jackson.databind.util.NameTransformer;
  * recursing.
  * <p>
  * This addresses infinite recursion in bidirectional JPA entity graphs
- * when {@code FORCE_LAZY_LOADING} is enabled (see [datatype-hibernate#204]).
- * <p>
- * Extends {@link DelegatingSerializer} so that the full {@code ValueSerializer}
- * contract -- {@code resolve()}, {@code createContextual()}, {@code handledType()},
- * {@code getDelegatee()}, {@code properties()}, {@code acceptJsonFormatVisitor()}
- * and the mutant factories -- reaches the wrapped bean serializer.  The modifier
- * wraps <em>every</em> {@code @Entity} bean serializer, so anything not forwarded
- * here is silently dropped for all entity types.
+ * (see [datatype-hibernate#204]), and is enabled by
+ * {@link Hibernate7Module.Feature#REPLACE_CYCLES_WITH_NULL}.
  *
  * @since 3.3
  */
@@ -51,21 +45,20 @@ public class CycleDetectingSerializer extends DelegatingSerializer
     }
 
     /**
-     * Returns the delegate's unwrapping serializer undecorated, deliberately
-     * overriding {@link DelegatingSerializer}'s re-wrapping behaviour: an
-     * unwrapping serializer writes no field name, so it has no place to put a
-     * {@code null} cycle placeholder, and wrapping here would only replace a
-     * legitimate second occurrence of the value with {@code null}.
+     * Returns the delegate's unwrapping serializer undecorated: an unwrapping
+     * serializer writes no field name, so it has no place to put a {@code null}
+     * cycle placeholder, and wrapping it would only replace a legitimate second
+     * occurrence of the value with {@code null}.
      *<p>
-     * Skipping tracking for the unwrapped hop is safe as long as the cycle
-     * contains at least one regular (non-unwrapped) hop, since the next entity
-     * reached as a regular property is tracked by its own wrapper.  A cycle in
-     * which <i>every</i> hop is {@code @JsonUnwrapped} is not tracked at all
-     * and still recurses without bound; that is a known limitation rather than
-     * a regression, as Jackson fails the same way without this module.
+     * Skipping tracking for the unwrapped hop is safe as long as the cycle has
+     * at least one regular (non-unwrapped) hop, since the next entity reached
+     * as a regular property is tracked by its own wrapper.  A cycle in which
+     * <i>every</i> hop is {@code @JsonUnwrapped} is not tracked at all and
+     * still recurses without bound -- a known limitation rather than a
+     * regression, as Jackson fails the same way without this module.
      *<p>
-     * When the delegate has no unwrapped variant it returns itself, and this
-     * wrapper is kept: nothing was unwrapped, so cycle detection still applies.
+     * When the delegate has no unwrapped variant it returns itself; this
+     * wrapper is then kept, since nothing was actually unwrapped.
      */
     @Override
     public ValueSerializer<Object> unwrappingSerializer(NameTransformer unwrapper) {
