@@ -10,9 +10,22 @@ Contributors
 
 PJ Fanning (@pjfanning)
 
-* Contributed #114: Initial conversion to 3.0
+* Contributed #190: Initial conversion to 3.0
  (3.0.0)
-
-
-
+* Contributed #196: Fix names of `META-INF/services` module files
+ (3.0.2)
+* Contributed #199: Switch to reload4j in tests
+ (3.1.0)
+* Contributed #205: Upgrade Hibernate7 dependency to 7.4.1
+ (3.3.0)
+* Contributed #207: Add `Hibernate7Module.Feature.REPLACE_CYCLES_WITH_NULL` to
+  handle bi-directional graphs
+ (3.3.0)
+* Contributed #208: Avoid creating an unnecessary temporary Session when
+  force-loading an already initialized collection; do not leak it if loading fails
+ (3.3.0)
+* Contributed #209: Fix `findSerializer()` bypassing the `PropertySerializerMap`
+  cache, and cache the unwrapping serializer instead of re-creating it on every write
+ (3.3.0)
+[... and more]
 
