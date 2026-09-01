@@ -297,16 +297,24 @@ public class PersistentCollectionSerializer
         final SessionFactory sf = _sessionFactory;
         final Session session = sf.openSession();
 
-        PersistenceContext persistenceContext = ((SessionImplementor) session).getPersistenceContext();
-        persistenceContext.setDefaultReadOnly(true);
-        session.setFlushMode(FlushMode.MANUAL);
+        try {
+            PersistenceContext persistenceContext = ((SessionImplementor) session).getPersistenceContext();
+            persistenceContext.setDefaultReadOnly(true);
+            session.setFlushMode(FlushMode.MANUAL);
 
-        persistenceContext.addUninitializedDetachedCollection(
-                ((SessionFactoryImplementor) _sessionFactory).getCollectionPersister(coll.getRole()),
-                coll
-        );
+            persistenceContext.addUninitializedDetachedCollection(
+                    ((SessionFactoryImplementor) _sessionFactory).getCollectionPersister(coll.getRole()),
+                    coll
+            );
 
-        return session;
+            return session;
+        } catch (RuntimeException e) {
+            // Setup after openSession() can fail -- an unknown collection role, or a
+            // SessionFactory that is not a SessionFactoryImplementor -- and the session
+            // is already open by then, so it would leak without this.
+            closeQuietly(session, e);
+            throw e;
+        }
     }
 
     private void initializeCollection(PersistentCollection coll, Session session) {
@@ -317,6 +325,7 @@ public class PersistentCollectionSerializer
 //                .compatibleWithJtaSynchronization();
         //Above is removed after Hibernate 5
         boolean isJTA = false;
+        RuntimeException failure = null;
 
         try {
             isJTA = SessionReader.isJTA(session);
@@ -332,6 +341,7 @@ public class PersistentCollectionSerializer
                 session.getTransaction().commit();
             }
         } catch (RuntimeException e) {
+            failure = e;
             if (!isJTA) {
                 rollbackQuietly(session, e);
             }
@@ -339,7 +349,7 @@ public class PersistentCollectionSerializer
         } finally {
             // Always close, even when initialization failed: otherwise the temporary
             // session and its JDBC connection leak.
-            session.close();
+            closeQuietly(session, failure);
         }
     }
 
@@ -354,6 +364,22 @@ public class PersistentCollectionSerializer
                 tx.rollback();
             }
         } catch (RuntimeException e) {
+            failure.addSuppressed(e);
+        }
+    }
+
+    /**
+     * Closes the temporary session without letting a close failure hide the exception
+     * that actually broke initialization: a {@code close()} that throws from a
+     * {@code finally} block would otherwise discard the pending exception entirely.
+     */
+    private void closeQuietly(Session session, RuntimeException failure) {
+        try {
+            session.close();
+        } catch (RuntimeException e) {
+            if (failure == null) {
+                throw e;
+            }
             failure.addSuppressed(e);
         }
     }

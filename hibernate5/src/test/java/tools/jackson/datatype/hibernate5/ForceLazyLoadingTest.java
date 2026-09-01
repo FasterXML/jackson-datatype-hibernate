@@ -192,6 +192,35 @@ public class ForceLazyLoadingTest extends BaseTest
         }
     }
 
+    /**
+     * The temporary session must also be closed when setup *after* {@code openSession()}
+     * fails, not just when the load itself does: that setup runs one frame above
+     * {@code initializeCollection()}, so its {@code finally} does not cover it.
+     */
+    @Test
+    public void testTemporarySessionClosedWhenSetupFails() throws Exception
+    {
+        SessionFactory sf = buildSimpleSessionFactory();
+        try {
+            SimpleParent uninitialized = loadParent(sf, createParentWithChild(sf), false);
+
+            SessionOpenCounter counter = new SessionOpenCounter(sf);
+            ObjectMapper mapper = mapperWith(counter.narrowFactory());
+            try {
+                mapper.writeValueAsString(uninitialized);
+                fail("Should not pass: factory is not a SessionFactoryImplementor");
+            } catch (Exception e) {
+                // expected
+            }
+
+            assertEquals(1, counter.openSessionCount());
+            assertFalse(counter.openedSessions().get(0).isOpen(),
+                    "Temporary session must be closed when post-open setup fails");
+        } finally {
+            sf.close();
+        }
+    }
+
     private ObjectMapper mapperWith(SessionFactory sessionFactory) {
         return JsonMapper.builder()
                 .addModule(hibernateModule(true, false, sessionFactory))
@@ -235,6 +264,16 @@ public class ForceLazyLoadingTest extends BaseTest
         SessionFactory factory() {
             return (SessionFactory) Proxy.newProxyInstance(getClass().getClassLoader(),
                     new Class<?>[] { SessionFactoryImplementor.class }, this);
+        }
+
+        /**
+         * Factory view implementing only {@link SessionFactory}, so that the
+         * {@code SessionFactoryImplementor} cast made while wiring up the temporary
+         * session's persistence context fails.
+         */
+        SessionFactory narrowFactory() {
+            return (SessionFactory) Proxy.newProxyInstance(getClass().getClassLoader(),
+                    new Class<?>[] { SessionFactory.class }, this);
         }
 
         int openSessionCount() {
