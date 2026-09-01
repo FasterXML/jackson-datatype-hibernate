@@ -95,7 +95,29 @@ public class Hibernate7Module extends tools.jackson.databind.JacksonModule
          *
          * @since 2.12
          */
-        WRAP_IDENTIFIER_IN_OBJECT(true)
+        WRAP_IDENTIFIER_IN_OBJECT(true),
+
+        /**
+         * Feature that may be enabled to detect cyclic object references between
+         * {@code @Entity} beans during serialization, writing {@code null} in place
+         * of the second (back-reference) occurrence instead of recursing into it.
+         * Without detection, a bidirectional entity graph recurses until the
+         * generator's nesting depth limit is hit (see [datatype-hibernate#204]).
+         *<p>
+         * Takes effect independently of {@link #FORCE_LAZY_LOADING}: that feature is
+         * one way such a graph gets traversed, but not the only one.
+         *<p>
+         * Note that this changes output: a back-reference that would otherwise fail
+         * is written as {@code null}, which does not necessarily round-trip.
+         * {@code @JsonIdentityInfo} entities handle their own cycles and are left
+         * alone; Object Ids, {@code @JsonBackReference} or {@code @JsonIgnore} remain
+         * the more faithful remedy.
+         *<p>
+         * Default value is false, for backwards compatibility.
+         *
+         * @since 3.3
+         */
+        REPLACE_CYCLES_WITH_NULL(false)
         ;
 
         final boolean _defaultState;

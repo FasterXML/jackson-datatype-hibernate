@@ -1,5 +1,7 @@
 package tools.jackson.datatype.hibernate7;
 
+import jakarta.persistence.Entity;
+
 import tools.jackson.databind.BeanDescription;
 import tools.jackson.databind.ValueSerializer;
 import tools.jackson.databind.SerializationConfig;
@@ -32,5 +34,38 @@ public class Hibernate7SerializerModifier
     public ValueSerializer<?> modifyMapSerializer(SerializationConfig config,
             MapType valueType, BeanDescription.Supplier beanDesc, ValueSerializer<?> serializer) {
         return new PersistentCollectionSerializer(valueType, serializer, _features, _sessionFactory);
+    }
+
+    /**
+     * Wraps bean serializers for {@code @Entity}-annotated types with a
+     * cycle-detecting wrapper when {@code REPLACE_CYCLES_WITH_NULL} is enabled.
+     * This prevents infinite recursion in bidirectional entity graphs
+     * (see [datatype-hibernate#204]).
+     *<p>
+     * {@code REPLACE_CYCLES_WITH_NULL} is disabled by default since replacing a
+     * back-reference with {@code null} is a behavioral change. It is deliberately
+     * NOT also conditioned on {@code FORCE_LAZY_LOADING}: that feature is one way
+     * bidirectional graphs get traversed, but not the only one. Envers returns
+     * {@code ListProxy} for {@code @Audited(targetAuditMode = NOT_AUDITED)}
+     * associations, which implements {@link java.util.List} but not
+     * {@code PersistentCollection}, so {@link PersistentCollectionSerializer}
+     * never short-circuits it and the graph is walked eagerly however
+     * {@code FORCE_LAZY_LOADING} is set.
+     */
+    @Override
+    public ValueSerializer<?> modifySerializer(SerializationConfig config,
+            BeanDescription.Supplier beanDesc, ValueSerializer<?> serializer)
+    {
+        if (Hibernate7Module.Feature.REPLACE_CYCLES_WITH_NULL.enabledIn(_features)) {
+            // Only wrap entity bean serializers — skip collections, maps, arrays,
+            // enums, and primitive/wrapper types which cannot participate in
+            // entity-level cycles.
+            if (beanDesc != null) {
+                if (beanDesc.getClassAnnotations().get(Entity.class) != null) {
+                    return new CycleDetectingSerializer(serializer);
+                }
+            }
+        }
+        return serializer;
     }
 }

@@ -2,6 +2,8 @@ package tools.jackson.datatype.hibernate7;
 
 import java.util.Arrays;
 
+import org.hibernate.SessionFactory;
+
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 import org.apache.log4j.Logger;
@@ -43,6 +45,31 @@ public abstract class BaseTest
     protected Hibernate7Module hibernateModule(boolean forceLazyLoading, boolean nullMissingEntities)
     {
     	Hibernate7Module mod = new Hibernate7Module();
+        mod.configure(Hibernate7Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
+        mod.configure(Hibernate7Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL, nullMissingEntities);
+        return mod;
+    }
+
+    /**
+     * Module with both {@code FORCE_LAZY_LOADING} and {@code REPLACE_CYCLES_WITH_NULL}
+     * enabled, for tests that exercise cycle detection.
+     */
+    protected Hibernate7Module hibernateModuleWithCycleDetection()
+    {
+        Hibernate7Module mod = hibernateModule(true);
+        mod.configure(Hibernate7Module.Feature.REPLACE_CYCLES_WITH_NULL, true);
+        return mod;
+    }
+
+    protected ObjectMapper mapperWithCycleDetection()
+    {
+        return JsonMapper.builder().addModule(hibernateModuleWithCycleDetection()).build();
+    }
+
+    protected Hibernate7Module hibernateModule(boolean forceLazyLoading, boolean nullMissingEntities,
+            SessionFactory sessionFactory)
+    {
+        Hibernate7Module mod = new Hibernate7Module(sessionFactory);
         mod.configure(Hibernate7Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
         mod.configure(Hibernate7Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL, nullMissingEntities);
         return mod;
