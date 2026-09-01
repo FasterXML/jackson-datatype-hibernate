@@ -2,6 +2,8 @@ package tools.jackson.datatype.hibernate4;
 
 import java.util.Arrays;
 
+import org.hibernate.SessionFactory;
+
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -33,6 +35,15 @@ public abstract class BaseTest
     protected Hibernate4Module hibernateModule(boolean forceLazyLoading, boolean nullMissingEntities)
     {
         Hibernate4Module mod = new Hibernate4Module();
+        mod.configure(Hibernate4Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
+        mod.configure(Hibernate4Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL, nullMissingEntities);
+        return mod;
+    }
+
+    protected Hibernate4Module hibernateModule(boolean forceLazyLoading, boolean nullMissingEntities,
+            SessionFactory sessionFactory)
+    {
+        Hibernate4Module mod = new Hibernate4Module(sessionFactory);
         mod.configure(Hibernate4Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
         mod.configure(Hibernate4Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL, nullMissingEntities);
         return mod;

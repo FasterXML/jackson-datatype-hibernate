@@ -17,6 +17,9 @@ Active Maintainer(s):
 #207: Add `Hibernate7Module.Feature.REPLACE_CYCLES_WITH_NULL` to
   handle bi-directional graphs
  (contributed by @pjfanning, w/ Claude code)
+#208: Avoid creating an unnecessary temporary Session when force-loading
+  an already initialized collection; do not leak it if loading fails
+ (contributed by @pjfanning, w/ Claude code)
 
 3.2.2 (14-Aug-2026)
 
