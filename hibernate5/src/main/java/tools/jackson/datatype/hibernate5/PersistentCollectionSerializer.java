@@ -16,6 +16,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.engine.spi.PersistenceContext;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
@@ -278,7 +279,10 @@ public class PersistentCollectionSerializer
         if (!Feature.FORCE_LAZY_LOADING.enabledIn(_features) && !coll.wasInitialized()) {
             return null;
         }
-        if (_sessionFactory != null) {
+        // Only open a temporary session when the collection actually needs it:
+        // an already loaded collection would otherwise cost a JDBC connection
+        // and a transaction for a no-op initialization.
+        if (_sessionFactory != null && !coll.wasInitialized()) {
             // 08-Feb-2017, tatu: and not closing this is not problematic... ?
             Session session = openTemporarySessionForLoading(coll);
             initializeCollection(coll, session);
@@ -292,16 +296,24 @@ public class PersistentCollectionSerializer
         final SessionFactory sf = _sessionFactory;
         final Session session = sf.openSession();
 
-        PersistenceContext persistenceContext = ((SessionImplementor) session).getPersistenceContext();
-        persistenceContext.setDefaultReadOnly(true);
-        session.setFlushMode(FlushMode.MANUAL);
+        try {
+            PersistenceContext persistenceContext = ((SessionImplementor) session).getPersistenceContext();
+            persistenceContext.setDefaultReadOnly(true);
+            session.setFlushMode(FlushMode.MANUAL);
 
-        persistenceContext.addUninitializedDetachedCollection(
-                ((SessionFactoryImplementor) _sessionFactory).getCollectionPersister(coll.getRole()),
-                coll
-        );
+            persistenceContext.addUninitializedDetachedCollection(
+                    ((SessionFactoryImplementor) _sessionFactory).getCollectionPersister(coll.getRole()),
+                    coll
+            );
 
-        return session;
+            return session;
+        } catch (Throwable t) {
+            // Setup after openSession() can fail -- an unknown collection role, or a
+            // SessionFactory that is not a SessionFactoryImplementor -- and the session
+            // is already open by then, so it would leak without this.
+            closeQuietly(session, t);
+            throw t;
+        }
     }
 
     private void initializeCollection(PersistentCollection coll, Session session) {
@@ -311,19 +323,64 @@ public class PersistentCollectionSerializer
 //                .getTransactionFactory()
 //                .compatibleWithJtaSynchronization();
         //Above is removed after Hibernate 5
-        boolean isJTA = SessionReader.isJTA(session);
+        boolean isJTA = false;
+        Throwable failure = null;
 
-        if (!isJTA) {
-            session.beginTransaction();
+        try {
+            isJTA = SessionReader.isJTA(session);
+
+            if (!isJTA) {
+                session.beginTransaction();
+            }
+
+            coll.setCurrentSession(((SessionImplementor) session));
+            Hibernate.initialize(coll);
+
+            if (!isJTA) {
+                session.getTransaction().commit();
+            }
+        } catch (Throwable t) {
+            failure = t;
+            if (!isJTA) {
+                rollbackQuietly(session, t);
+            }
+            throw t;
+        } finally {
+            // Always close, even when initialization failed: otherwise the temporary
+            // session and its JDBC connection leak.
+            closeQuietly(session, failure);
         }
+    }
 
-        coll.setCurrentSession(((SessionImplementor) session));
-        Hibernate.initialize(coll);
-
-        if (!isJTA) {
-            session.getTransaction().commit();
+    /**
+     * Rolls back the temporary transaction if one is still active, without letting a
+     * secondary failure hide the one that actually broke initialization.
+     */
+    private void rollbackQuietly(Session session, Throwable failure) {
+        try {
+            Transaction tx = session.getTransaction();
+            if ((tx != null) && tx.isActive()) {
+                tx.rollback();
+            }
+        } catch (RuntimeException e) {
+            failure.addSuppressed(e);
         }
-        session.close();
+    }
+
+    /**
+     * Closes the temporary session without letting a close failure hide the exception
+     * that actually broke initialization: a {@code close()} that throws from a
+     * {@code finally} block would otherwise discard the pending exception entirely.
+     */
+    private void closeQuietly(Session session, Throwable failure) {
+        try {
+            session.close();
+        } catch (RuntimeException e) {
+            if (failure == null) {
+                throw e;
+            }
+            failure.addSuppressed(e);
+        }
     }
 
     /**

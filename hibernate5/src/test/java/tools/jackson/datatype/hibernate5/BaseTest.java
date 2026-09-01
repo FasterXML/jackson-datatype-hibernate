@@ -2,6 +2,8 @@ package tools.jackson.datatype.hibernate5;
 
 import java.util.Arrays;
 
+import org.hibernate.SessionFactory;
+
 import org.apache.log4j.Logger;
 
 import tools.jackson.databind.ObjectMapper;
@@ -44,6 +46,15 @@ public abstract class BaseTest
     protected Hibernate5Module hibernateModule(boolean forceLazyLoading, boolean nullMissingEntities)
     {
         Hibernate5Module mod = new Hibernate5Module();
+        mod.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
+        mod.configure(Hibernate5Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL, nullMissingEntities);
+        return mod;
+    }
+
+    protected Hibernate5Module hibernateModule(boolean forceLazyLoading, boolean nullMissingEntities,
+            SessionFactory sessionFactory)
+    {
+        Hibernate5Module mod = new Hibernate5Module(sessionFactory);
         mod.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, forceLazyLoading);
         mod.configure(Hibernate5Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL, nullMissingEntities);
         return mod;
