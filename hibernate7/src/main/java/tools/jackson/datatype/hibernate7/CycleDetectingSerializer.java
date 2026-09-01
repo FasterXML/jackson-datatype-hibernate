@@ -27,6 +27,8 @@ import tools.jackson.databind.util.NameTransformer;
  * and the mutant factories -- reaches the wrapped bean serializer.  The modifier
  * wraps <em>every</em> {@code @Entity} bean serializer, so anything not forwarded
  * here is silently dropped for all entity types.
+ *
+ * @since 3.3
  */
 public class CycleDetectingSerializer extends DelegatingSerializer
 {

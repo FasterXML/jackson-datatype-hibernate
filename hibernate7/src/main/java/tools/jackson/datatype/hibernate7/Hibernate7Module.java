@@ -101,24 +101,19 @@ public class Hibernate7Module extends tools.jackson.databind.JacksonModule
          * Feature that may be enabled to detect cyclic object references between
          * {@code @Entity} beans during serialization, writing {@code null} in place
          * of the second (back-reference) occurrence instead of recursing into it.
+         * Without detection, a bidirectional entity graph recurses until the
+         * generator's nesting depth limit is hit (see [datatype-hibernate#204]).
          *<p>
-         * Without detection, following a bidirectional entity graph recurses until
-         * the generator's nesting depth limit is hit (see [datatype-hibernate#204]).
-         * {@link #FORCE_LAZY_LOADING} is one way such a graph gets traversed, by
-         * initializing and following lazy back-references, but it is not the only
-         * one: Envers returns a {@code ListProxy} for
-         * {@code @Audited(targetAuditMode = NOT_AUDITED)} associations, which is not
-         * a {@code PersistentCollection} and so is walked eagerly however
-         * {@code FORCE_LAZY_LOADING} is set. This feature therefore takes effect
-         * independently of it.
+         * Takes effect independently of {@link #FORCE_LAZY_LOADING}: that feature is
+         * one way such a graph gets traversed, but not the only one.
          *<p>
-         * Note that this changes serialized output: a back-reference that would
-         * otherwise fail is written as {@code null}, which does not necessarily
-         * round-trip. Entities annotated with {@code @JsonIdentityInfo} handle their
-         * own cycles and are left alone; using Object Ids, {@code @JsonBackReference}
-         * or {@code @JsonIgnore} remains the more faithful remedy.
+         * Note that this changes output: a back-reference that would otherwise fail
+         * is written as {@code null}, which does not necessarily round-trip.
+         * {@code @JsonIdentityInfo} entities handle their own cycles and are left
+         * alone; Object Ids, {@code @JsonBackReference} or {@code @JsonIgnore} remain
+         * the more faithful remedy.
          *<p>
-         * Default value is false (no cycle detection), for backwards compatibility.
+         * Default value is false, for backwards compatibility.
          *
          * @since 3.3
          */

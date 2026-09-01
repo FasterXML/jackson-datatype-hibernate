@@ -56,15 +56,14 @@ public class Hibernate7SerializerModifier
     public ValueSerializer<?> modifySerializer(SerializationConfig config,
             BeanDescription.Supplier beanDesc, ValueSerializer<?> serializer)
     {
-        if (!Hibernate7Module.Feature.REPLACE_CYCLES_WITH_NULL.enabledIn(_features)) {
-            return serializer;
-        }
-        // Only wrap entity bean serializers — skip collections, maps, arrays,
-        // enums, and primitive/wrapper types which cannot participate in
-        // entity-level cycles.
-        if (beanDesc != null) {
-            if (beanDesc.getClassAnnotations().get(Entity.class) != null) {
-                return new CycleDetectingSerializer(serializer);
+        if (Hibernate7Module.Feature.REPLACE_CYCLES_WITH_NULL.enabledIn(_features)) {
+            // Only wrap entity bean serializers — skip collections, maps, arrays,
+            // enums, and primitive/wrapper types which cannot participate in
+            // entity-level cycles.
+            if (beanDesc != null) {
+                if (beanDesc.getClassAnnotations().get(Entity.class) != null) {
+                    return new CycleDetectingSerializer(serializer);
+                }
             }
         }
         return serializer;
