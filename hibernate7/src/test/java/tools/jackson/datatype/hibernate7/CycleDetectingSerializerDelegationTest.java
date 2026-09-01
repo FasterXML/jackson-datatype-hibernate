@@ -169,12 +169,15 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
     }
 
     /**
-     * {@code REPLACE_CYCLES_WITH_NULL} has no effect on its own: without
-     * {@code FORCE_LAZY_LOADING} there are no forced-loaded back-references to
-     * guard against, so no wrapping is done.
+     * {@code REPLACE_CYCLES_WITH_NULL} takes effect on its own, without
+     * {@code FORCE_LAZY_LOADING}.  These two entities are plain in-memory
+     * objects with no Hibernate session involved at all, yet they still form a
+     * cycle -- so gating detection on {@code FORCE_LAZY_LOADING} would leave it
+     * unguarded.  The same holds for Envers {@code ListProxy} collections,
+     * which are walked eagerly however that feature is set.
      */
     @Test
-    public void testCycleDetectionRequiresForceLazyLoading() throws Exception
+    public void testCycleDetectionIndependentOfForceLazyLoading() throws Exception
     {
         Node node = new Node();
         Holder holder = new Holder();
@@ -184,12 +187,10 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
         Hibernate7Module mod = hibernateModule(false);
         mod.configure(Hibernate7Module.Feature.REPLACE_CYCLES_WITH_NULL, true);
         ObjectMapper mapper = JsonMapper.builder().addModule(mod).build();
-        try {
-            mapper.writeValueAsString(node);
-            fail("Should have failed on cycle without FORCE_LAZY_LOADING");
-        } catch (StreamConstraintsException e) {
-            verifyException(e, "nesting depth");
-        }
+
+        String json = mapper.writeValueAsString(node);
+        assertThat(json).contains("\"name\":\"node\"", "\"tag\":\"held\"");
+        assertThat(json).contains("\"node\":null");
     }
 
     // [datatype-hibernate#204]: resolve() must reach the wrapped bean serializer

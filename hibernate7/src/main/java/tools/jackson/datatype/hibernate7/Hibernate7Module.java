@@ -102,10 +102,15 @@ public class Hibernate7Module extends tools.jackson.databind.JacksonModule
          * {@code @Entity} beans during serialization, writing {@code null} in place
          * of the second (back-reference) occurrence instead of recursing into it.
          *<p>
-         * This is only relevant when {@link #FORCE_LAZY_LOADING} is also enabled: lazy
-         * back-references in bidirectional entity graphs are then initialized and
-         * followed, which without detection recurses until the generator's nesting
-         * depth limit is hit (see [datatype-hibernate#204]).
+         * Without detection, following a bidirectional entity graph recurses until
+         * the generator's nesting depth limit is hit (see [datatype-hibernate#204]).
+         * {@link #FORCE_LAZY_LOADING} is one way such a graph gets traversed, by
+         * initializing and following lazy back-references, but it is not the only
+         * one: Envers returns a {@code ListProxy} for
+         * {@code @Audited(targetAuditMode = NOT_AUDITED)} associations, which is not
+         * a {@code PersistentCollection} and so is walked eagerly however
+         * {@code FORCE_LAZY_LOADING} is set. This feature therefore takes effect
+         * independently of it.
          *<p>
          * Note that this changes serialized output: a back-reference that would
          * otherwise fail is written as {@code null}, which does not necessarily

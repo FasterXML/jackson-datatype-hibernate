@@ -140,6 +140,54 @@ public class EnversForceLazyLoadingTest extends BaseTest
         }
     }
 
+    /**
+     * {@code REPLACE_CYCLES_WITH_NULL} must take effect on its own, without
+     * {@code FORCE_LAZY_LOADING}.  The [datatype-hibernate#204] recursion is not
+     * caused by forced lazy loading: Envers returns a {@code ListProxy} for
+     * {@code @Audited(targetAuditMode = NOT_AUDITED)} associations, which is not
+     * a {@code PersistentCollection}, so {@code PersistentCollectionSerializer}
+     * never short-circuits it and the graph is walked eagerly regardless.
+     */
+    @Test
+    public void testCycleDetectionWithoutForceLazyLoading() throws Exception
+    {
+        Configuration cfg = new Configuration()
+                .addAnnotatedClass(AuditedParent.class)
+                .addAnnotatedClass(AuditedChild.class)
+                .setProperty("hibernate.connection.url", "jdbc:h2:mem:enversNoForceLazy;DB_CLOSE_DELAY=-1")
+                .setProperty("hibernate.connection.driver_class", "org.h2.Driver")
+                .setProperty("hibernate.hbm2ddl.auto", "create");
+
+        // Cycle detection ON, FORCE_LAZY_LOADING OFF (the module default)
+        Hibernate7Module mod = new Hibernate7Module();
+        mod.configure(Hibernate7Module.Feature.REPLACE_CYCLES_WITH_NULL, true);
+        JsonMapper mapper = JsonMapper.builder().addModule(mod).build();
+
+        try (SessionFactory sf = cfg.buildSessionFactory()) {
+            Integer parentId = sf.fromTransaction(session -> {
+                AuditedParent parent = new AuditedParent("Parent-v1");
+                AuditedChild c1 = new AuditedChild("child-1", parent);
+                parent.children.add(c1);
+                session.persist(parent);
+                session.persist(c1);
+                return parent.id;
+            });
+
+            sf.inTransaction(session -> {
+                session.find(AuditedParent.class, parentId).name = "Parent-v2";
+            });
+
+            String json = sf.fromTransaction(session -> {
+                AuditReader reader = AuditReaderFactory.get(session);
+                AuditedParent rev1 = reader.find(AuditedParent.class, parentId, 1);
+                return mapper.writeValueAsString(rev1);
+            });
+
+            assertNotNull(json);
+            assertThat(json).contains("\"Parent-v1\"");
+        }
+    }
+
     private static int countOccurrences(String s, String sub) {
         int count = 0;
         int idx = 0;
