@@ -310,12 +310,12 @@ public class PersistentCollectionSerializer
             );
 
             return session;
-        } catch (RuntimeException e) {
+        } catch (Throwable t) {
             // Setup after openSession() can fail -- an unknown collection role, or a
             // SessionFactory that is not a SessionFactoryImplementor -- and the session
             // is already open by then, so it would leak without this.
-            closeQuietly(session, e);
-            throw e;
+            closeQuietly(session, t);
+            throw t;
         }
     }
 
@@ -327,7 +327,7 @@ public class PersistentCollectionSerializer
 //                .compatibleWithJtaSynchronization();
         //Above is removed after Hibernate 5
         boolean isJTA = false;
-        RuntimeException failure = null;
+        Throwable failure = null;
 
         try {
             isJTA = SessionReader.isJTA(session);
@@ -342,12 +342,12 @@ public class PersistentCollectionSerializer
             if (!isJTA) {
                 session.getTransaction().commit();
             }
-        } catch (RuntimeException e) {
-            failure = e;
+        } catch (Throwable t) {
+            failure = t;
             if (!isJTA) {
-                rollbackQuietly(session, e);
+                rollbackQuietly(session, t);
             }
-            throw e;
+            throw t;
         } finally {
             // Always close, even when initialization failed: otherwise the temporary
             // session and its JDBC connection leak.
@@ -359,7 +359,7 @@ public class PersistentCollectionSerializer
      * Rolls back the temporary transaction if one is still active, without letting a
      * secondary failure hide the one that actually broke initialization.
      */
-    private void rollbackQuietly(Session session, RuntimeException failure) {
+    private void rollbackQuietly(Session session, Throwable failure) {
         try {
             Transaction tx = session.getTransaction();
             if ((tx != null) && tx.isActive()) {
@@ -375,7 +375,7 @@ public class PersistentCollectionSerializer
      * that actually broke initialization: a {@code close()} that throws from a
      * {@code finally} block would otherwise discard the pending exception entirely.
      */
-    private void closeQuietly(Session session, RuntimeException failure) {
+    private void closeQuietly(Session session, Throwable failure) {
         try {
             session.close();
         } catch (RuntimeException e) {

@@ -72,7 +72,7 @@ public class ForceLazyLoadingTest extends BaseTest
             assertTrue(stuff.containsKey("payments"));
             assertTrue(stuff.containsKey("orders"));
             assertNull(stuff.get("orderes"));
-            
+
         } finally {
             emf.close();
         }
