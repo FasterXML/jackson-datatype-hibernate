@@ -17,7 +17,11 @@ import tools.jackson.core.exc.StreamConstraintsException;
 
 import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.JavaType;
+import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.util.NameTransformer;
 import tools.jackson.databind.exc.InvalidDefinitionException;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
@@ -26,6 +30,7 @@ import tools.jackson.databind.annotation.JsonSerialize;
 import tools.jackson.databind.util.StdConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -314,5 +319,36 @@ public class CycleDetectingSerializerDelegationTest extends BaseTest
 
         assertThat(sawObject[0]).as("entity should be visited as an Object").isTrue();
         assertThat(visitedProps).contains("id", "name");
+    }
+
+    /**
+     * Stub whose {@code unwrappingSerializer()} keeps the {@link ValueSerializer}
+     * default of returning {@code this} -- i.e. it has no unwrapped variant.
+     */
+    static class NoUnwrapSerializer extends ValueSerializer<Object> {
+        @Override
+        public void serialize(Object value, JsonGenerator g, SerializationContext ctxt) { }
+
+        @Override
+        public Class<Object> handledType() { return Object.class; }
+    }
+
+    /**
+     * {@code unwrappingSerializer()} must keep the cycle-detecting wrapper when
+     * the delegate has no unwrapped variant.  {@code ValueSerializer}'s default
+     * returns {@code this}, so returning the delegate's result unconditionally
+     * would discard cycle detection for that property's whole subtree even
+     * though nothing was actually unwrapped.
+     */
+    @Test
+    public void testUnwrappingKeepsWrapperWhenDelegateCannotUnwrap() throws Exception
+    {
+        NoUnwrapSerializer delegate = new NoUnwrapSerializer();
+        CycleDetectingSerializer wrapper = new CycleDetectingSerializer(delegate);
+
+        ValueSerializer<?> result = wrapper.unwrappingSerializer(NameTransformer.NOP);
+
+        assertSame(wrapper, result,
+                "wrapper must be kept when the delegate has no unwrapped variant");
     }
 }

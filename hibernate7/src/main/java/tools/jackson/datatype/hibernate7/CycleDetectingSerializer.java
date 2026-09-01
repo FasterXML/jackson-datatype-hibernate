@@ -50,16 +50,28 @@ public class CycleDetectingSerializer extends DelegatingSerializer
 
     /**
      * Returns the delegate's unwrapping serializer undecorated, deliberately
-     * overriding {@link DelegatingSerializer}'s re-wrapping behaviour.
-     * An unwrapping serializer writes no field name, so it has no place to put
-     * a {@code null} cycle placeholder; and skipping tracking for this one hop
-     * cannot cause unbounded recursion, since any entity reached as a regular
-     * property is tracked by its own wrapper.  Wrapping here would only replace
-     * a legitimate second occurrence of the value with {@code null}.
+     * overriding {@link DelegatingSerializer}'s re-wrapping behaviour: an
+     * unwrapping serializer writes no field name, so it has no place to put a
+     * {@code null} cycle placeholder, and wrapping here would only replace a
+     * legitimate second occurrence of the value with {@code null}.
+     *<p>
+     * Skipping tracking for the unwrapped hop is safe as long as the cycle
+     * contains at least one regular (non-unwrapped) hop, since the next entity
+     * reached as a regular property is tracked by its own wrapper.  A cycle in
+     * which <i>every</i> hop is {@code @JsonUnwrapped} is not tracked at all
+     * and still recurses without bound; that is a known limitation rather than
+     * a regression, as Jackson fails the same way without this module.
+     *<p>
+     * When the delegate has no unwrapped variant it returns itself, and this
+     * wrapper is kept: nothing was unwrapped, so cycle detection still applies.
      */
     @Override
     public ValueSerializer<Object> unwrappingSerializer(NameTransformer unwrapper) {
-        return _delegatee.unwrappingSerializer(unwrapper);
+        ValueSerializer<Object> unwrapping = _delegatee.unwrappingSerializer(unwrapper);
+        if (unwrapping == _delegatee) {
+            return this;
+        }
+        return unwrapping;
     }
 
     @Override
