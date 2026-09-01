@@ -2,7 +2,7 @@ package tools.jackson.datatype.hibernate7;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.Collections;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
@@ -175,26 +175,33 @@ public class Hibernate7ProxySerializer
          *  annotations to indicate type, should take that into account.
          */
         Class<?> type = value.getClass();
-        /* we will use a map to contain serializers found so far, keyed by type:
+        /* We will use a map to contain serializers found so far, keyed by type:
          * this avoids potentially costly lookup from global caches and/or construction
-         * of new serializers
+         * of new serializers. Check the local cache first before doing full resolution.
          */
+        ValueSerializer<Object> ser = _dynamicSerializers.serializerFor(type);
+        if (ser != null) {
+            return ser;
+        }
         /* 18-Oct-2013, tatu: Whether this is for the primary property or secondary is
          *   really anyone's guess at this point; proxies can exist at any level?
          */
-        PropertySerializerMap.SerializerAndMapResult result =
-                _dynamicSerializers.findAndAddPrimarySerializer(
-                        provider.constructType(type),
-                        provider,
-                        _property);
-        if (_dynamicSerializers != result.map) {
+        final JavaType valueType = provider.constructType(type);
+        if (_unwrapper == null) {
+            PropertySerializerMap.SerializerAndMapResult result =
+                    _dynamicSerializers.findAndAddPrimarySerializer(valueType, provider, _property);
             _dynamicSerializers = result.map;
+            return result.serializer;
         }
-        if (_unwrapper != null)
-        {
-            return result.serializer.unwrappingSerializer(_unwrapper);
-        }
-        return result.serializer;
+        // 31-Aug-2026, [datatypes-hibernate#209]: when unwrapping, resolve and cache by
+        //   hand. findAndAddPrimarySerializer() would add the raw serializer under this
+        //   same type first, and a lookup returns the first match for a type: later calls
+        //   would then get a serializer that writes START_OBJECT even though the
+        //   unwrapping property writer has already suppressed the property name.
+        ser = provider.findPrimaryPropertySerializer(valueType, _property)
+                .unwrappingSerializer(_unwrapper);
+        _dynamicSerializers = _dynamicSerializers.addSerializer(type, ser).map;
+        return ser;
     }
 
     /**
@@ -208,9 +215,7 @@ public class Hibernate7ProxySerializer
             if (_serializeIdentifier) {
                 final Object idValue = init.getIdentifier();
                 if (_wrappedIdentifier) {
-                    HashMap<String, Object> map = new HashMap<>();
-                    map.put(getIdentifierPropertyName(init), idValue);
-                    return map;
+                    return Collections.singletonMap(getIdentifierPropertyName(init), idValue);
                 } else {
                     return idValue;
                 }
