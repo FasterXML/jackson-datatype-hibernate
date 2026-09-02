@@ -101,7 +101,8 @@ public class HibernateAnnotationIntrospector extends AnnotationIntrospector
         public FieldHandlerChecker() {
             Class<?> cls = null;
             try {
-                cls = Class.forName(FIELD_HANDLER_INTERFACE);
+                cls = Class.forName(FIELD_HANDLER_INTERFACE, false,
+                        FieldHandlerChecker.class.getClassLoader());
             } catch (Throwable t) { }
             _handlerClass = cls;
         }

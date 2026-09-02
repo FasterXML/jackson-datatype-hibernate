@@ -6,7 +6,8 @@ public class Hibernate7Version
         try {
             // Use Version.getVersionString() instead of Package.getImplementationVersion()
             // because the latter returns null in JPMS/module-info contexts
-            Class<?> versionClass = Class.forName("org.hibernate.Version");
+            Class<?> versionClass = Class.forName("org.hibernate.Version",
+                    false, Hibernate7Version.class.getClassLoader());
             return (String) versionClass.getMethod("getVersionString").invoke(null);
         } catch (Exception e) {
             // Should not happen: hibernate not found in the classpath
@@ -22,10 +23,12 @@ public class Hibernate7Version
 
     public static Class<?> getTransactionCoordinatorClass() {
         try {
-            return Class.forName("org.hibernate.resource.transaction.TransactionCoordinator");
+            return Class.forName("org.hibernate.resource.transaction.TransactionCoordinator",
+                    false, Hibernate7Version.class.getClassLoader());
         } catch (ClassNotFoundException e) {
             try {
-                return Class.forName("org.hibernate.resource.transaction.spi.TransactionCoordinator");
+                return Class.forName("org.hibernate.resource.transaction.spi.TransactionCoordinator",
+                        false, Hibernate7Version.class.getClassLoader());
             } catch (Exception e2) {
                 // should never happen
                 throw new RuntimeException(e); 

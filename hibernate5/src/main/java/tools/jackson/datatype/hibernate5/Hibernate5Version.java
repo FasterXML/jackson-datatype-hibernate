@@ -4,7 +4,8 @@ public class Hibernate5Version {
 
     public static String getHibernateVersion(){
         try {
-            return Class.forName("org.hibernate.Version").getPackage().getImplementationVersion();
+            return Class.forName("org.hibernate.Version", false, Hibernate5Version.class.getClassLoader())
+                    .getPackage().getImplementationVersion();
         } catch (Exception e) {
             // Should not happen: hibernate not found in the classpath
             throw new RuntimeException(e);
@@ -24,10 +25,12 @@ public class Hibernate5Version {
 
     public static Class<?> getTransactionCoordinatorClass() {
         try {
-            return Class.forName("org.hibernate.resource.transaction.TransactionCoordinator");
+            return Class.forName("org.hibernate.resource.transaction.TransactionCoordinator",
+                    false, Hibernate5Version.class.getClassLoader());
         } catch (ClassNotFoundException e) {
             try {
-                return Class.forName("org.hibernate.resource.transaction.spi.TransactionCoordinator");
+                return Class.forName("org.hibernate.resource.transaction.spi.TransactionCoordinator",
+                        false, Hibernate5Version.class.getClassLoader());
             } catch (Exception e2) {
                 // should never happen
                 throw new RuntimeException(e); 
