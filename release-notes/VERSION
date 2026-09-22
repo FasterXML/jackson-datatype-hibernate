@@ -24,6 +24,10 @@ Active Maintainer(s):
   cache the unwrapping serializer instead of re-creating it on every write
  (contributed by @pjfanning, w/ Claude code)
 
+3.2.3 (21-Sep-2026)
+
+No changes since 3.2.2
+
 3.2.2 (14-Aug-2026)
 
 No changes since 3.2.1
