@@ -4,10 +4,6 @@ Project: jackson-datatype-hibernate
 === Releases ===
 ------------------------------------------------------------------------
 
-2.21.0 (not yet released)
-
-No changes since 2.20
-
 2.20.2 (19-Jan-2026)
 2.20.1 (30-Oct-2025)
 
