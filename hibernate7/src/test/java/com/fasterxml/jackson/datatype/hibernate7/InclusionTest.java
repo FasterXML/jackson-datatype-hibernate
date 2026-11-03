@@ -22,7 +22,7 @@ public class InclusionTest extends BaseTest
     public void testInclusion() throws Exception
     {
         final ObjectMapper mapper = mapperWithModule(false);
-        mapper.setSerializationInclusion(Include.NON_EMPTY);
+        mapper.setDefaultPropertyInclusion(Include.NON_EMPTY);
         String json = mapper.writeValueAsString(new Mock());
         assertEquals("{\"id\":13}", json);
     }
