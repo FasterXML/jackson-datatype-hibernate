@@ -10,7 +10,7 @@ Active Maintainer(s):
 === Releases ===
 ------------------------------------------------------------------------
 
-3.3.0 (not yet released)
+3.3.0 (07-Nov-2026)
 
 #205: Upgrade Hibernate7 dependency to 7.4.1
  (contributed by @pjfanning)
