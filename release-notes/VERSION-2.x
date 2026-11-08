@@ -8,7 +8,7 @@ Active Maintainer(s):
 === Releases ===
 ------------------------------------------------------------------------
 
-2.23.0 (not yet released)
+2.23.0 (07-Nov-2026)
 
 No changes since 2.22
 
